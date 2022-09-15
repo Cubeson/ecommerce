@@ -42,7 +42,6 @@ namespace Server.Endpoints
             }
             catch(InvalidOperationException)
             {}
-            
             if(userDB == null) return Results.Problem(ProvidedDataIncorrect);
             var hash = PasswordUtility.GenerateHash(userDTO.Password, userDB.PasswordSalt);
             if (!userDB.Password.Equals(hash)) return Results.Problem(ProvidedDataIncorrect);
