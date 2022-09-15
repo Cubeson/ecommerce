@@ -4,14 +4,14 @@ using Server.Models;
 
 namespace Server.Endpoints
 {
-    internal static class ProductEndpoint
+    public static class ProductEndpoint
     {
         internal static void Register(WebApplication app)
         {
             app.MapGet("/Product/id/{id}", GetProductById);
         }
 
-        internal static async ValueTask<Product?> GetProductById(int id, ShopContext context)
+        public static async ValueTask<Product?> GetProductById(int id, ShopContext context)
         {
             return await context.Products.FindAsync(id);
         }

@@ -1,22 +1,19 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Server.Data;
+﻿using Server.Data;
 using Server.DTO;
 using System.Security.Cryptography;
-using System.Text;
 using Server.Models;
-using System;
 using Server.Utility;
 
 namespace Server.Endpoints
 {
-    internal static class UserEndpoint
+    public static class UserEndpoint
     {
         internal static void Register(WebApplication app)
         {
             app.MapPost("/User/Create/{user}", CreateUser);
             app.MapPost("/User/Login/{user}", LoginUser);
         }
-        internal static IResult CreateUser(UserCreateDTO userDTO, ShopContext context)
+        public static IResult CreateUser(UserCreateDTO userDTO, ShopContext context)
         {
             if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
@@ -36,9 +33,16 @@ namespace Server.Endpoints
         }
         private static string ProvidedDataIncorrect = "Provided data is incorrect";
 
-        internal static IResult LoginUser(UserLoginDTO userDTO, ShopContext context)
+        public static IResult LoginUser(UserLoginDTO userDTO, ShopContext context)
         {
-            var userDB = context.Users.First(u => u.Email.Equals(userDTO.Email));
+            User? userDB = null;
+            try
+            {
+                userDB = context.Users.First(u => u.Email.Equals(userDTO.Email));
+            }
+            catch(InvalidOperationException)
+            {}
+            
             if(userDB == null) return Results.Problem(ProvidedDataIncorrect);
             var hash = PasswordUtility.GenerateHash(userDTO.Password, userDB.PasswordSalt);
             if (!userDB.Password.Equals(hash)) return Results.Problem(ProvidedDataIncorrect);

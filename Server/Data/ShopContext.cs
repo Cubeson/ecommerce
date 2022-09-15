@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Server.Models;
 using System.Configuration;
 
@@ -10,7 +11,14 @@ namespace Server.Data
         }
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
-        
+
+        public static DbContextOptions<ShopContext> GetInMemoryOptions(string DBName)
+        {
+            return new DbContextOptionsBuilder<ShopContext>()
+                .UseInMemoryDatabase(DBName)
+                .Options;
+        }
 
     }
+
 }
