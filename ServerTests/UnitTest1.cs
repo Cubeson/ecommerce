@@ -1,4 +1,6 @@
 using Microsoft.AspNetCore.Http;
+using Server.Utility;
+
 namespace ServerTests
 {
     public class UnitTest1
@@ -20,9 +22,10 @@ namespace ServerTests
             {
                 var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
                 var result = UserEndpoint.CreateUser(user1, context);
-                var resultStatusCode = result.GetOkObjectResultStatusCode();
-                var expectedStatusCode = Results.Ok().GetOkObjectResultStatusCode();
-                Assert.Equal(expectedStatusCode, resultStatusCode);
+                var responseBody = result.GetOkObjectResultValue<ResponseBody>();
+                var statusActual = responseBody?.Status;
+                var statusExpected = "0";
+                Assert.Equal(statusExpected, statusActual);
                 var found = context.Users.Any(u => u.Email.Equals(user1.Email));
                 Assert.True(found);
             }
@@ -41,9 +44,10 @@ namespace ServerTests
                 var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
                 UserEndpoint.CreateUser(user1, context);
                 var result = UserEndpoint.LoginUser(new UserLoginDTO(user1.Email, user1.Password), context);
-                var resultStatusCode = result.GetOkObjectResultStatusCode();
-                var expectedStatusCode = Results.Ok().GetOkObjectResultStatusCode();
-                Assert.Equal(expectedStatusCode, resultStatusCode);
+                var responseBody = result.GetOkObjectResultValue<ResponseBody>();
+                var statusActual = responseBody?.Status;
+                var statusExpected = "0";
+                Assert.Equal(statusExpected, statusActual);
             }
         }
         /*
@@ -59,7 +63,10 @@ namespace ServerTests
                 var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
                 UserEndpoint.CreateUser(user1, context);
                 var result = UserEndpoint.LoginUser(new UserLoginDTO(user1.Email, "BadPassword"), context);
-                Assert.NotEqual(Results.Ok().GetOkObjectResultStatusCode(), result.GetOkObjectResultStatusCode());
+                var responseBody = result.GetOkObjectResultValue<ResponseBody>();
+                var statusActual = responseBody?.Status;
+                var statusExpected = "1";
+                Assert.Equal(statusExpected, statusActual);
             }
         }
         /*
@@ -72,15 +79,19 @@ namespace ServerTests
         {
             using (var context = new ShopContext(ShopContext.GetInMemoryOptions("CreateUserWithExistingEmail")))
             {
+                var count = context.Users.Count();
+                Assert.Equal(0, count);
+
                 var email = "JanKowalski@gmail.com";
                 var user1 = new UserCreateDTO("Jan", "Kowalski", email, "pass123");
                 var user2 = new UserCreateDTO("Anna", "Kowalska", email, "coolpass1");
                 var result1 = UserEndpoint.CreateUser(user1, context);
-                Assert.Equal(Results.Ok().GetOkObjectResultStatusCode(),result1.GetOkObjectResultStatusCode());
                 var result2 = UserEndpoint.CreateUser(user2, context);
-                Assert.NotEqual(Results.Ok().GetOkObjectResultStatusCode(), result2.GetOkObjectResultStatusCode());
-                var count = context.Users.Count(x => x.Email.Equals(email));
-                Assert.Equal(1, count);
+                var responseBody = result2.GetOkObjectResultValue<ResponseBody>();
+                var statusActual = responseBody?.Status;
+                var statusExpected = "1";
+                Assert.Equal(statusExpected, statusActual);
+
             }
         }
     }

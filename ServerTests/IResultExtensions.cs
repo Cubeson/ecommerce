@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Server.Utility;
 
 namespace ServerTests
 {
@@ -20,6 +21,13 @@ namespace ServerTests
         public static T? GetOkObjectResultValue<T>(this IResult result)
         {
             return (T?)Type.GetType("Microsoft.AspNetCore.Http.Result.OkObjectResult, Microsoft.AspNetCore.Http.Results")?
+                .GetProperty("Value",
+                        System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?
+                        .GetValue(result);
+        }
+        public static ResponseBody? GetOkObjectResultValue(this IResult result)
+        {
+            return (ResponseBody?)Type.GetType("Microsoft.AspNetCore.Http.Result.OkObjectResult, Microsoft.AspNetCore.Http.Results")?
                 .GetProperty("Value",
                         System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Public)?
                         .GetValue(result);

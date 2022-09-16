@@ -10,14 +10,15 @@ namespace Server.Endpoints
     {
         internal static void Register(WebApplication app)
         {
-            app.MapPost("/User/Create/{user}", CreateUser);
-            app.MapPost("/User/Login/{user}", LoginUser);
+            app.MapPost("/User/Create/", CreateUser);
+            app.MapPost("/User/Login/", LoginUser);
         }
         public static IResult CreateUser(UserCreateDTO userDTO, ShopContext context)
         {
             if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
-                return Results.Problem("User with provided email address already exists: " + userDTO.Email);
+                return Results.Ok(new ResponseBody("1", "This email is already in use"));
+                //return Results.Problem("User with provided email address already exists: " + userDTO.Email);
             }
             using(var sha256 = SHA256.Create())
             {
@@ -27,7 +28,7 @@ namespace Server.Endpoints
                 var user = new User(0,userDTO.FirstName,userDTO.LastName,userDTO.Email,hash,salt);
                 context.Users.Add(user);
                 context.SaveChanges();
-                return Results.Ok("Created new user");
+                return Results.Ok(new ResponseBody("0", "Created new user"));
             }
             
         }
@@ -42,10 +43,11 @@ namespace Server.Endpoints
             }
             catch(InvalidOperationException)
             {}
-            if(userDB == null) return Results.Problem(ProvidedDataIncorrect);
+            //if(userDB == null) return Results.Problem(ProvidedDataIncorrect);
+            if (userDB == null) return Results.Ok(new ResponseBody("1", ProvidedDataIncorrect));
             var hash = PasswordUtility.GenerateHash(userDTO.Password, userDB.PasswordSalt);
-            if (!userDB.Password.Equals(hash)) return Results.Problem(ProvidedDataIncorrect);
-            return Results.Ok("Logged in: " + userDB.FirstName + " " + userDB.LastName);
+            if (!userDB.Password.Equals(hash)) return Results.Ok(new ResponseBody("1", ProvidedDataIncorrect));
+            return Results.Ok(new ResponseBody("0", "Logged in: " + userDB.FirstName + " " + userDB.LastName));
         }
 
     }

@@ -12,6 +12,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Text;
 using Newtonsoft.Json;
+using Network;
+
 public class OmegaScript : MonoBehaviour
 {
     public GameObject plane;
@@ -37,29 +39,30 @@ public class OmegaScript : MonoBehaviour
     void Start()
     {
 
-        var urls = RequestImagesURL();
-        using(WebClient webclient = new WebClient())
-        {
-            var images = JsonConvert.DeserializeObject<Images[]>(urls); 
-            foreach (var image in images)
-            {
-                try
-                {
-                    byte[] data = webclient.DownloadData(image.url);
-                    Texture2D tx = new Texture2D(1, 1);
-                    ImageConversion.LoadImage(tx, data);
-                    TexturesManager.GetInstance.Add(tx);
-                }
-                catch (WebException ex)
-                {
-                    Debug.Log(ex);
-                }
-            }
-        }
+        //var urls = RequestImagesURL();
+        //using(WebClient webclient = new WebClient())
+        //{
+        //    var images = JsonConvert.DeserializeObject<Images[]>(urls); 
+        //    foreach (var image in images)
+        //    {
+        //        try
+        //        {
+        //            byte[] data = webclient.DownloadData(image.url);
+        //            Texture2D tx = new Texture2D(1, 1);
+        //            ImageConversion.LoadImage(tx, data);
+        //        }
+        //        catch (WebException ex)
+        //        {
+        //            Debug.Log(ex);
+        //        }
+        //    }
+        //}
 
         void Update()
         {
+            //if (!Input.GetKeyDown(KeyCode.S)) return;
 
+            //UserEndpoint.CreateUser();
         }
     }
 }

@@ -15,12 +15,6 @@ public class ItemImageScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (timer < 0f)
-        {
-            mat.mainTexture = TexturesManager.GetInstance.getNext();
-            timer = 1f;
-        }
-        else timer -= Time.deltaTime;
 
     }
 }
