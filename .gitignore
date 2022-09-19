@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Unity Temporary files
+[Tt]emp/
+
+# Server Resources files (3D models)
+Server/Resources

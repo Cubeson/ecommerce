@@ -53,16 +53,18 @@
     <UnityVersion>2020.3.26f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\Network\Server.cs" />
     <Compile Include="Assets\OmegaScript.cs" />
+    <Compile Include="Assets\Scripts\Network\DTO\UserLoginDTO.cs" />
+    <Compile Include="Assets\Scripts\ButtonClick.cs" />
     <Compile Include="Assets\PrefabManager.cs" />
+    <Compile Include="Assets\Scripts\ButtonCreateUser.cs" />
+    <Compile Include="Assets\Scripts\Network\UserEndpoint.cs" />
     <Compile Include="Assets\ItemImageScript.cs" />
     <Compile Include="Assets\DB\models\Images.cs" />
-    <Compile Include="Assets\Scripts\Network\Server.cs" />
-    <Compile Include="Assets\Scripts\Network\UserEndpoint.cs" />
     <Compile Include="Assets\Scripts\Network\DTO\UserCreateDTO.cs" />
-    <Compile Include="Assets\Scripts\Network\DTO\UserLoginDTO.cs" />
-    <Compile Include="Assets\Scripts\ButtonCreateUser.cs" />
-    <Compile Include="Assets\Scripts\ButtonClick.cs" />
+    <Compile Include="Assets\Scripts\Example.cs" />
+    <Compile Include="Assets\Scripts\Network\ProductEndpoint.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -289,6 +291,9 @@
     </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@2.0.0\Runtime\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="AssimpNet">
+      <HintPath>Library\PackageCache\com.donghok.meshimporter@d3b2be29d6\Runtime\Plugins\AssimpNet\AssimpNet.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib">
       <HintPath>D:\Unity\2020.3.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\mscorlib.dll</HintPath>
@@ -667,6 +672,9 @@
     </Reference>
     <Reference Include="UnityEngine.UI">
       <HintPath>Library\ScriptAssemblies\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="donghok.meshimporter">
+      <HintPath>Library\ScriptAssemblies\donghok.meshimporter.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

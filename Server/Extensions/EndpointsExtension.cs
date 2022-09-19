@@ -9,7 +9,7 @@ namespace Server.Extensions
         internal static void RegisterEndpoints(this WebApplication app)
         {
             app.MapGet("/", c =>{ return Task.Run(() => c.Response.Redirect("/swagger"));});
-            app.MapGet("/HelloWorld" , () => "Hello World!");
+            app.MapGet("/HelloWorld" , () => Path.GetFullPath("resources"));
             ProductEndpoint.Register(app);
             UserEndpoint.Register(app);
 

@@ -10,6 +10,7 @@ namespace Server.Models
         public string Description { get; set; } = string.Empty;
         [Column(TypeName = "decimal(6,2)")]
         public decimal Price { get; set; }
+        //public Model3DInfo? Model { get; set; }
         public string Filename { get; set; } = string.Empty;
     }
 }

@@ -18,5 +18,6 @@ public class ButtonClick : MonoBehaviour
         var op =request.SendWebRequest();
         while (!op.isDone) { }
         Debug.Log(op.webRequest.downloadHandler.text);
+
     }
 }
