@@ -4,6 +4,7 @@ using Server.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
 var services = builder.Services;
 services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();

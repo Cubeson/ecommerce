@@ -5,21 +5,72 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637991838359416209
-    m_Hash: 3992636821
+      ticks: 637994537767069266
+    m_Hash: 587073742
   m_LockFileStatus:
     m_FilePath: C:/Users/Jakub/Dokumenty/Unity/ecommerce/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637991838453374019
-    m_Hash: 3028577513
+      ticks: 637994537767208693
+    m_Hash: 2755836596
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
   m_Packages:
     m_ResolvedPackages:
+    - packageId: com.donghok.meshimporter@https://github.com/eastskykang/UnityMeshImporter.git
+      testable: 0
+      isDirectDependency: 1
+      version: 0.1.1
+      source: 5
+      resolvedPath: C:\Users\Jakub\Dokumenty\Unity\ecommerce\Library\PackageCache\com.donghok.meshimporter@d3b2be29d6
+      assetPath: Packages/com.donghok.meshimporter
+      name: com.donghok.meshimporter
+      displayName: Unity Mesh Importer
+      author:
+        name: Dongho Kang
+        email: eastsky.kang@gmail.com
+        url: https://donghok.me/UnityMeshImporter/
+      category: 
+      type: 
+      description: 'This package provides runtime mesh importer for Unity using AssimpNet.
+
+        It
+        creates UnityEngine.GameObject from mesh files.'
+      status: 4
+      errors: []
+      versions:
+        all: []
+        compatible: []
+        verified: 
+      dependencies: []
+      resolvedDependencies: []
+      keywords:
+      - Mesh
+      - Assimp
+      - Runtime importer
+      registry:
+        id: 
+        name: 
+        url: 
+        scopes: []
+        isDefault: 0
+        capabilities: 0
+      hasRegistry: 0
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 0
+      documentationUrl: 
+      hasRepository: 0
+      repository:
+        type: 
+        url: 
+        revision: 
+        path: 
     - packageId: com.unity.collab-proxy@1.15.7
       testable: 0
       isDirectDependency: 1
@@ -291,12 +342,12 @@ m_PackageAssets:
         url: https://github.cds.internal.unity3d.com/unity/com.unity.ide.rider.git
         revision: abb44f053e9a41d2e00e149e32a19bcec76e98b4
         path: 
-    - packageId: com.unity.ide.visualstudio@2.0.12
+    - packageId: com.unity.ide.visualstudio@2.0.16
       testable: 0
       isDirectDependency: 1
-      version: 2.0.12
+      version: 2.0.16
       source: 1
-      resolvedPath: C:\Users\Jakub\Dokumenty\Unity\ecommerce\Library\PackageCache\com.unity.ide.visualstudio@2.0.12
+      resolvedPath: C:\Users\Jakub\Dokumenty\Unity\ecommerce\Library\PackageCache\com.unity.ide.visualstudio@2.0.16
       assetPath: Packages/com.unity.ide.visualstudio
       name: com.unity.ide.visualstudio
       displayName: Visual Studio Editor
@@ -378,13 +429,13 @@ m_PackageAssets:
       entitlements:
         isAllowed: 1
       isAssetStorePackage: 0
-      datePublishedTicks: 637720564750000000
+      datePublishedTicks: 637914298680000000
       documentationUrl: 
       hasRepository: 1
       repository:
         type: git
         url: https://github.cds.internal.unity3d.com/unity/com.unity.ide.visualstudio.git
-        revision: 8d436ff053b9c59677b5e9799208143553cd02d9
+        revision: c01855ef6461b821ab0226135e96a4ee86de96be
         path: 
     - packageId: com.unity.ide.vscode@1.2.4
       testable: 0
@@ -2588,57 +2639,6 @@ m_PackageAssets:
         url: 
         revision: 
         path: 
-    - packageId: com.donghok.meshimporter@https://github.com/eastskykang/UnityMeshImporter.git
-      testable: 0
-      isDirectDependency: 1
-      version: 0.1.1
-      source: 5
-      resolvedPath: C:\Users\Jakub\Dokumenty\Unity\ecommerce\Library\PackageCache\com.donghok.meshimporter@d3b2be29d6
-      assetPath: Packages/com.donghok.meshimporter
-      name: com.donghok.meshimporter
-      displayName: Unity Mesh Importer
-      author:
-        name: Dongho Kang
-        email: eastsky.kang@gmail.com
-        url: https://donghok.me/UnityMeshImporter/
-      category: 
-      type: 
-      description: 'This package provides runtime mesh importer for Unity using AssimpNet.
-
-        It
-        creates UnityEngine.GameObject from mesh files.'
-      status: 4
-      errors: []
-      versions:
-        all: []
-        compatible: []
-        verified: 
-      dependencies: []
-      resolvedDependencies: []
-      keywords:
-      - Mesh
-      - Assimp
-      - Runtime importer
-      registry:
-        id: 
-        name: 
-        url: 
-        scopes: []
-        isDefault: 0
-        capabilities: 0
-      hasRegistry: 0
-      hideInEditor: 1
-      entitlements:
-        isAllowed: 1
-      isAssetStorePackage: 0
-      datePublishedTicks: 0
-      documentationUrl: 
-      hasRepository: 0
-      repository:
-        type: 
-        url: 
-        revision: 
-        path: 
     - packageId: com.unity.modules.subsystems@1.0.0
       testable: 0
       isDirectDependency: 0
@@ -2933,6 +2933,7 @@ m_PackageAssets:
         - 1.4.0
         - 1.4.1
         - 1.4.2
+        - 1.4.3
         compatible:
         - 1.0.1
         - 1.1.0-pre.7
@@ -2948,6 +2949,7 @@ m_PackageAssets:
         - 1.4.0
         - 1.4.1
         - 1.4.2
+        - 1.4.3
         verified: 1.0.1
       dependencies:
       - name: com.unity.modules.unitywebrequest

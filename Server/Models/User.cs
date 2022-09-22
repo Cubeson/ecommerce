@@ -4,6 +4,7 @@ namespace Server.Models
 {
     public sealed record User
     {
+        public User() { }
         public User(int id, string firstName, string lastName, string email, string password, string passwordSalt)
         {
             Id = id;
@@ -13,6 +14,7 @@ namespace Server.Models
             Password = password;
             PasswordSalt = passwordSalt;
         }
+
         [Key]
         public int Id { get; set; }
         public string FirstName { get; set; } = string.Empty;

@@ -14,7 +14,7 @@ public class ButtonClick : MonoBehaviour
         btn.onClick.AddListener(fn);
     }
     void fn() {
-        var request = UnityWebRequest.Get(Server.Url + "HelloWorld");
+        var request = UnityWebRequest.Get(ServerUrl.Url + "HelloWorld");
         var op =request.SendWebRequest();
         while (!op.isDone) { }
         Debug.Log(op.webRequest.downloadHandler.text);

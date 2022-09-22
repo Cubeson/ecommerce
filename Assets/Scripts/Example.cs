@@ -15,25 +15,15 @@ public class Example : MonoBehaviour
     {
         Directory.CreateDirectory(dir);
         FileStream file;
-        //file = File.Create("temp/file.txt");
-        //byte[] x1 = Encoding.ASCII.GetBytes("Hello World");
-        //file.Write(x1, 0, x1.Length);
-        //file.Close();
-        //
-        //string meshFile = "temp/file.txt";
-        //file = File.OpenRead(meshFile);
-        //byte[] x2 = new byte[20];
-        //file.Read(x2, 0, 5);
-        //Debug.Log(Encoding.ASCII.GetString(x2));
-        //Debug.Log(Path.GetFullPath(meshFile));
-
-        //var product = ProductEndpoint.
-
+        var productDTO = ProductEndpoint.GetProductInfo(1);
+        if (productDTO == null) return;
+        var name = productDTO.Name;
         var bytes = ProductEndpoint.DownloadProduct(1);
-        file = File.Create(dir+"file.fbx");
+
+        file = File.Create(dir + name + ".fbx");
         file.Write(bytes,0,bytes.Length);
         file.Close();
-        var ob = MeshImporter.Load(dir+ "file.fbx");
+        var ob = MeshImporter.Load(dir + name + ".fbx");
 
     }
 

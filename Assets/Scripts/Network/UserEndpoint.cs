@@ -15,7 +15,7 @@ namespace Network
              * UnityWebRequest.Post somehow breaks json body 
              * using Put and changing method to Post bypasses this issue
              */
-            var request = Put(Server.Url + "User/Create/", json);
+            var request = Put(ServerUrl.Url + "User/Create/", json);
             request.method = "Post";
             
             request.SetRequestHeader("Content-Type", "application/json");
