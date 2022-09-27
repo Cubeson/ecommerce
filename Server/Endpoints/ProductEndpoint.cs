@@ -15,8 +15,9 @@ namespace Server.Endpoints
         internal static void Register(WebApplication app)
         {
             app.MapGet("/Product/id/{id}",GetProductById);
-            app.MapGet("/Download/id/{id}", DownloadProduct);
-            app.MapGet("/Product/all", GetProductsLatest);
+            app.MapGet("/Download/model/{id}", DownloadProductModel);
+            app.MapGet("/Download/thumbnail/{id}", DownloadProductThumbnail);
+            app.MapGet("/Product/latest/{limit}", GetProductsLatest);
             app.MapPost("/Product/add",AddProductAsync).Accepts<IFormFile>("multipart/form-data");
         }
 
@@ -26,7 +27,7 @@ namespace Server.Endpoints
             if (product == null) return null;
             return new ProductDTO(product);
         }
-        public static IResult DownloadProduct(int id,ShopContext context)
+        public static IResult DownloadProductModel(int id,ShopContext context)
         {
             var product = context.Products.First(p => p.Id == id);
 
@@ -34,11 +35,18 @@ namespace Server.Endpoints
 
             return Results.File(dir+"/"+product.Name+"/"+FileModelString+"."+product.FileFormat);
         }
-        public static IResult GetProductsLatest(ShopContext context)
+        public static IResult DownloadProductThumbnail(int id, ShopContext context)
         {
-            var products = context.Products.OrderByDescending(p => p.DateCreated).ToArray();
-            var resp = JsonConvert.SerializeObject(products);
-            return Results.Ok(resp);
+            var product = context.Products.First(p => p.Id == id);
+
+            var dir = Directory.GetCurrentDirectory() + "/resources/";
+
+            return Results.File(dir + "/" + product.Name + "/" + FilethumbnailString + "." + "png");
+        }
+        public static IResult GetProductsLatest(int limit, ShopContext context)
+        {
+            var products = context.Products.OrderByDescending(p => p.DateCreated).Take(limit).ToArray().Select(p => new ProductDTO(p));
+            return Results.Ok(products);
         }
 
         public static async Task<IResult> AddProductAsync(IFormFile fileModelUpload,IFormFile thumbnailUpload,

@@ -367,3 +367,6 @@ FodyWeavers.xsd
 
 # Server Resources files (3D models)
 Server/Resources
+
+# Unity downloads from server
+downloads

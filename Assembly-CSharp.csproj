@@ -53,23 +53,23 @@
     <UnityVersion>2020.3.26f1</UnityVersion>
   </PropertyGroup>
   <ItemGroup>
-    <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
+    <Analyzer Include="D:\vs2022\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Network\ServerUrl.cs" />
+    <Compile Include="Assets\Scripts\Network\DTO\ProductDTO.cs" />
     <Compile Include="Assets\OmegaScript.cs" />
     <Compile Include="Assets\Scripts\Example.cs" />
     <Compile Include="Assets\Scripts\Network\DTO\UserLoginDTO.cs" />
+    <Compile Include="Assets\Scripts\Gallery\GalleryMainScript.cs" />
     <Compile Include="Assets\Scripts\ButtonClick.cs" />
     <Compile Include="Assets\PrefabManager.cs" />
     <Compile Include="Assets\Scripts\Network\ProductEndpoint.cs" />
     <Compile Include="Assets\Scripts\ButtonCreateUser.cs" />
     <Compile Include="Assets\Scripts\Network\UserEndpoint.cs" />
     <Compile Include="Assets\ItemImageScript.cs" />
-    <Compile Include="Assets\DB\models\Images.cs" />
     <Compile Include="Assets\Scripts\Network\DTO\UserCreateDTO.cs" />
-    <Compile Include="Assets\Scripts\Network\DTO\ProductDTO.cs" />
-    <Compile Include="Assets\Scripts\Gallery\GalleryMainScript.cs" />
+    <Compile Include="Assets\Scripts\Utility\StaticStrings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

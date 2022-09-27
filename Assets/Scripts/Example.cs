@@ -18,7 +18,7 @@ public class Example : MonoBehaviour
         var productDTO = ProductEndpoint.GetProductInfo(1);
         if (productDTO == null) return;
         var name = productDTO.Name;
-        var bytes = ProductEndpoint.DownloadProduct(1);
+        var bytes = ProductEndpoint.DownloadProductModel(1);
 
         file = File.Create(dir + name + ".fbx");
         file.Write(bytes,0,bytes.Length);
