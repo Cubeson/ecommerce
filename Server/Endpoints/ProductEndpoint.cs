@@ -12,9 +12,9 @@ using System.Xml.Linq;
 
 namespace Server.Endpoints
 {
-    public static class ProductEndpoint
+    public sealed class ProductEndpoint : IApi
     {
-        internal static void Register(WebApplication app)
+        public void Register(WebApplication app)
         {
             app.MapGet("/Product/id/{id}", GetProductById);
             app.MapGet("/Download/model/{id}", DownloadProductModel);
@@ -26,13 +26,13 @@ namespace Server.Endpoints
 
         }
 
-        public static async ValueTask<ProductDTO?> GetProductById(int id, ShopContext context)
+        public async ValueTask<ProductDTO?> GetProductById(int id, ShopContext context)
         {
             var product = await context.Products.FindAsync(id);
             if (product == null) return null;
             return new ProductDTO(product);
         }
-        public static IResult DownloadProductModel(int id, ShopContext context)
+        public IResult DownloadProductModel(int id, ShopContext context)
         {
             var product = context.Products.First(p => p.Id == id);
 
@@ -40,7 +40,7 @@ namespace Server.Endpoints
 
             return Results.File(dir + "/" + product.Name + "/" + FileModelString + "." + product.FileFormat);
         }
-        public static IResult DownloadProductThumbnail(int id, ShopContext context)
+        public IResult DownloadProductThumbnail(int id, ShopContext context)
         {
             var product = context.Products.First(p => p.Id == id);
 
@@ -48,7 +48,7 @@ namespace Server.Endpoints
 
             return Results.File(dir + "/" + product.Name + "/" + FilethumbnailString + "." + "png");
         }
-        public static IResult DownloadProductTextures(int id, ShopContext context)
+        public IResult DownloadProductTextures(int id, ShopContext context)
         {
             var product = context.Products.First(p => p.Id == id);
 
@@ -56,7 +56,7 @@ namespace Server.Endpoints
 
             return Results.File(dir + "/" + product.Name + "/" + FileArchiveString + "." + "zip");
         }
-        public static IResult GetProductsLatest(int limit, ShopContext context)
+        public IResult GetProductsLatest(int limit, ShopContext context)
         {
             var products = context.Products.OrderByDescending(p => p.DateCreated).Take(limit).ToArray().Select(p => new ProductDTO(p));
             return Results.Ok(products);
@@ -158,9 +158,9 @@ namespace Server.Endpoints
 
             }
         }
-        public static async Task<IResult> AddProduct(AddProductRequest request, ShopContext context)
+        public async Task<IResult> AddProduct(AddProductRequest request, ShopContext context)
         {
-            if(request.GetError() != null) { return Results.Ok(request.GetError()); }
+            if(request.GetError() != null) { return Results.BadRequest(request.GetError()); }
  
             Directory.CreateDirectory("Resources/"+request.Name);
             var fileModelUploadStream = request.FileModel?.OpenReadStream();
@@ -190,7 +190,7 @@ namespace Server.Endpoints
             context.Products.Add(product);
             context.SaveChanges();
 
-            return Results.Ok(new ResponseBody("0", "Added new product"));
+            return Results.Ok("Added new product");
         }
     }
 }

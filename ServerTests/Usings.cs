@@ -1,4 +1,9 @@
 global using Xunit;
 global using Server.Data;
 global using Server.DTO;
-global using Server.Endpoints;
+global using Microsoft.EntityFrameworkCore;
+global using System.Net;
+global using System.Net.Http.Json;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using Microsoft.Extensions.DependencyInjection;
+global using Microsoft.Extensions.DependencyInjection.Extensions;
