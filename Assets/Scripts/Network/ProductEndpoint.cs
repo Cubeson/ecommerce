@@ -47,5 +47,11 @@ namespace Network
             while (!op.isDone) { }
             return op.webRequest.downloadHandler.data;
         }
+        public static byte[] DownloadProductTexturesArchive(int id)
+        {
+            var op = Get(ServerUrl.Url + "Download/textures/" + id).SendWebRequest();
+            while (!op.isDone) { }
+            return op.webRequest.downloadHandler.data;
+        }
     }
 }

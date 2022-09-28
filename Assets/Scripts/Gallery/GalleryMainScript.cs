@@ -1,8 +1,11 @@
 using Network;
 using Network.DTO;
+using Newtonsoft.Json;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityMeshImporter;
@@ -39,49 +42,31 @@ public class GalleryMainScript : MonoBehaviour
         {
             SetSlotName(slots[i], products[i].Name);
             Directory.CreateDirectory("downloads/" + products[i].Name);
-            /*
-             * Thumbnail
-             */
+            byte[] imageData;
+            string fPath = "downloads/" + products[i].Name + "/" + StaticStrings.FilethumbnailString + ".png";
+            if (!File.Exists("downloads/" + products[i].Name + "/.meta"))
             {
-                string fPath = "downloads/" + products[i].Name + "/" + StaticStrings.FilethumbnailString + ".png";
-                byte[] imageData = null;
-                if (File.Exists(fPath))
-                {
-                    imageData = File.ReadAllBytes(fPath);
-                }
-                else
-                {
-                    imageData = ProductEndpoint.DownloadProductThumbnail(products[i].Id);
-                    FileStream imageFile = File.OpenWrite(fPath);
-                    imageFile.Write(imageData, 0, imageData.Length);
-                    imageFile.Close();
-                }
-                var tx = new Texture2D(1, 1);
-                tx.LoadImage(imageData);
-                var sprite = Sprite.Create(tx, new Rect(0, 0, tx.width, tx.height), new Vector2(tx.width / 2, tx.height / 2));
-                SetSlotThumbnail(slots[i], sprite);
-            }
-            /*
-             * 3D Model
-             */
-            {
-                string fPath = "downloads/" + products[i].Name + "/" + StaticStrings.FileModelString + "." + products[i].FileFormat;
-                byte[] modelData = null;
-                if (File.Exists(fPath))
-                {
-                    //modelData = File.ReadAllBytes(fPath);
-                }
-                else
-                {
-                    modelData = ProductEndpoint.DownloadProductModel(products[i].Id);
-                    FileStream imageFile = File.OpenWrite(fPath);
-                    imageFile.Write(modelData, 0, modelData.Length);
-                    imageFile.Close();
-                }
-                Debug.Log(fPath);
-                MeshImporter.Load(fPath);
-            }
+                var meta = File.Create("downloads/" + products[i].Name + "/.meta");
+                ProductMetadata metadata = new ProductMetadata(DateTime.Now, 0);
+                string json = JsonConvert.SerializeObject(metadata);
+                byte[] bytes = Encoding.ASCII.GetBytes(json);
+                meta.Write(bytes, 0, bytes.Length);
+                meta.Close();
 
+                imageData = ProductEndpoint.DownloadProductThumbnail(products[i].Id);
+                FileStream imageFile = File.OpenWrite(fPath);
+                imageFile.Write(imageData, 0, imageData.Length);
+                imageFile.Close();
+            }
+            else
+            {
+                imageData = File.ReadAllBytes(fPath);
+            }
+            var tx = new Texture2D(1, 1);
+            tx.LoadImage(imageData);
+            var sprite = Sprite.Create(tx, new Rect(0, 0, tx.width, tx.height), new Vector2(tx.width / 2, tx.height / 2));
+            SetSlotThumbnail(slots[i], sprite);
+            SetSlotProduct(slots[i], products[i]);
         }
     }
     private void SetSlotName(GameObject slot, string name)
@@ -91,6 +76,10 @@ public class GalleryMainScript : MonoBehaviour
     private void SetSlotThumbnail(GameObject slot, Sprite sprite)
     {
         slot.GetComponent<Image>().overrideSprite = sprite;
+    }
+    private void SetSlotProduct(GameObject slot, ProductDTO product)
+    {
+        slot.GetComponent<SlotScript>().product = product;
     }
 
     private void HideSlots(int count)

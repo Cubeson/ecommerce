@@ -5,6 +5,7 @@ namespace Server.Models
 {
     public sealed record Product
     {
+
         public Product() { }
         public Product(int id, string name, string description, decimal price, DateTime dateCreated, DateTime dateModified)
         {

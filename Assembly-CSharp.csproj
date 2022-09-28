@@ -70,6 +70,12 @@
     <Compile Include="Assets\ItemImageScript.cs" />
     <Compile Include="Assets\Scripts\Network\DTO\UserCreateDTO.cs" />
     <Compile Include="Assets\Scripts\Utility\StaticStrings.cs" />
+    <Compile Include="Assets\Scripts\Gallery\SlotScript.cs" />
+    <Compile Include="Assets\Scripts\Gallery\CurrentModel.cs" />
+    <Compile Include="Assets\Scripts\Utility\Metadata.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\csc.rsp" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -647,6 +653,9 @@
     </Reference>
     <Reference Include="System.Xml.XPath.XDocument">
       <HintPath>D:\Unity\2020.3.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\Facades\System.Xml.XPath.XDocument.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Compression.FileSystem">
+      <HintPath>D:\Unity\2020.3.26f1\Editor\Data\MonoBleedingEdge\lib\mono\4.7.1-api\System.IO.Compression.FileSystem.dll</HintPath>
     </Reference>
     <Reference Include="donghok.meshimporter">
       <HintPath>Library\ScriptAssemblies\donghok.meshimporter.dll</HintPath>
