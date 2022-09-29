@@ -13,17 +13,18 @@ public class Example : MonoBehaviour
     private static readonly string dir = "tempfiles/";
     void Start()
     {
-        Directory.CreateDirectory(dir);
-        FileStream file;
-        var productDTO = ProductEndpoint.GetProductInfo(1);
-        if (productDTO == null) return;
-        var name = productDTO.Name;
-        var bytes = ProductEndpoint.DownloadProductModel(1);
-
-        file = File.Create(dir + name + ".fbx");
-        file.Write(bytes,0,bytes.Length);
-        file.Close();
-        var ob = MeshImporter.Load(dir + name + ".fbx");
+        ProductEndpoint.Temp();
+        //Directory.CreateDirectory(dir);
+        //FileStream file;
+        //var productDTO = ProductEndpoint.GetProductInfo(1);
+        //if (productDTO == null) return;
+        //var name = productDTO.Name;
+        //var bytes = ProductEndpoint.DownloadProductModel(1);
+        //
+        //file = File.Create(dir + name + ".fbx");
+        //file.Write(bytes,0,bytes.Length);
+        //file.Close();
+        //var ob = MeshImporter.Load(dir + name + ".fbx");
 
     }
 

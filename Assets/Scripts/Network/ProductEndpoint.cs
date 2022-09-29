@@ -4,11 +4,30 @@ using Debug = UnityEngine.Debug;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Generic;
+using UnityEngine.Networking;
+using System.IO;
 
 namespace Network
 {
     internal static class ProductEndpoint
     {
+        public static void Temp()
+        {
+            var formData = new List<IMultipartFormSection>();
+            formData.Add(new MultipartFormDataSection("name","Unity"));
+            formData.Add(new MultipartFormDataSection("description","UnityDesc"));
+            formData.Add(new MultipartFormDataSection("price","10"));
+
+            var fModel = File.ReadAllBytes("Resources/model.fbx");
+            var fThumbnail = File.ReadAllBytes("Resources/thumbnail.png");
+            var fArchive = File.ReadAllBytes("Resources/archive.zip");
+            formData.Add(new MultipartFormFileSection("fileModel", fModel ,"model.fbx", "application/octet-stream"));
+            formData.Add(new MultipartFormFileSection("fileThumbnail", fThumbnail, "thumbnail.png", "image/png"));
+            //formData.Add(new MultipartFormFileSection("fileTexturesArchive", fArchive, "archive.zip", "application/x-zip-compressed"));
+            formData.Add(new MultipartFormFileSection("fileTexturesArchive", fArchive, "archive.zip", "application/zip"));
+            var op = Post(ServerUrl.Url + "Product/add", formData).SendWebRequest();
+            Debug.Log(op.webRequest.downloadHandler.text);
+        }
         public static ProductDTO GetProductInfo(int id)
         {
             var op = Get(ServerUrl.Url + "Product/id/" + id).SendWebRequest();

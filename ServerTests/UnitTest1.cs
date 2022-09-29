@@ -1,94 +1,112 @@
 namespace ServerTests;
  public class UnitTest1
  {
-     /*
-      * Po stworzeniu u¿ytkownika, powinien o siê znaleœæ w bazie danych
-      * 
-      */
-     [Fact]
-     public async Task HelloWorld()
+    /// <summary>
+    /// <para>Po stworzeniu u¿ytkownika, powinien o siê znaleœæ w bazie danych</para>
+    /// </summary>
+    [Fact]
+     public async void AddNewUserAsync()
      {
-         string testName = "HelloWorld";
-         var app = TestWebApplicationFactory.Create(testName);
-         var client = app.CreateClient();
-         var response = await client.GetAsync("/Hello");
-         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-     }
-
-     [Fact]
-     public async Task AddNewUserAsync()
-     {
-         string testName = "AddNewUserAsync";
-         var app = TestWebApplicationFactory.Create(testName);
-         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
-         var client = app.CreateClient();
-         var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
-         var result = await client.PostAsJsonAsync("/User/Create/", user1);
-         var statusCode = result.StatusCode;
-         var statusExpected = HttpStatusCode.OK;
-         Assert.Equal(statusExpected, statusCode);
+        string testName = "AddNewUserAsync";
+        var app = TestWebApplicationFactory.Create(testName);
+        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
+        var client = app.CreateClient();
+        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
+        var result = await client.PostAsJsonAsync("/User/Create/", user1);
+        var statusCode = result.StatusCode;
+        var statusExpected = HttpStatusCode.OK;
+        Assert.Equal(statusExpected, statusCode);
 
      }
-
-     /*
-      * Po stworzeniu u¿ytkownika, powinno byæ mo¿liwe zalogowanie siê tym samym has³em
-      * 
-      * After creating new user, it should be possible to log in with the same password
-      */
-     [Fact]
-     public async Task CreateAndLoginUserAsync()
+    /// <summary>
+    /// <para>Po stworzeniu u¿ytkownika, powinno byæ mo¿liwe zalogowanie siê tym samym has³em</para>
+    /// <para>After creating new user, it should be possible to log in with the same password</para>
+    /// </summary>
+    [Fact]
+     public async void CreateAndLoginUserAsync()
      {
-         string testName = "CreateAndLoginUserAsync";
-         var app = TestWebApplicationFactory.Create(testName);
-         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
-         var client = app.CreateClient();
-         var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
-         var response1 = await client.PostAsJsonAsync("/User/Create", user1);
-         var response2 = await client.PostAsJsonAsync("/User/Login" , new UserLoginDTO(user1.Email, user1.Password));
-         var statusActual = response2.StatusCode;
-         var statusExpected = HttpStatusCode.OK;
-         Assert.Equal(statusExpected, statusActual);
+        string testName = "CreateAndLoginUserAsync";
+        var app = TestWebApplicationFactory.Create(testName);
+        
+        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
+        var client = app.CreateClient();
+        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
+        var response1 = await client.PostAsJsonAsync("/User/Create", user1);
+        var response2 = await client.PostAsJsonAsync("/User/Login" , new UserLoginDTO(user1.Email, user1.Password));
+        var statusActual = response2.StatusCode;
+        var statusExpected = HttpStatusCode.OK;
+        Assert.Equal(statusExpected, statusActual);
      }
-     /*
-      * Inne has³a przy tworzeniu u¿ytkownika i logowaniu siê
-      * 
-      * Different passwords for creating user and logging in
-      */
-     [Fact]
+
+    /// <summary>
+    /// <para>Inne has³a przy tworzeniu u¿ytkownika i logowaniu siê</para>
+    /// <para>Different passwords for creating user and logging in</para>
+    /// </summary>
+    [Fact]
      public async void CreateAndLoginUserBadPassword()
      {
-         string testName = "CreateAndLoginUserBadPassword";
-         var app = TestWebApplicationFactory.Create(testName);
-         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
-         var client = app.CreateClient();
-         var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
-         var response1 = await client.PostAsJsonAsync("/User/Create", user1);
-         var response2 = await client.PostAsJsonAsync("/User/Login", new UserLoginDTO(user1.Email, "BadPassword"));
-         var statusActual = response2.StatusCode;
-         var statusExpected = HttpStatusCode.BadRequest;
-         Assert.Equal(statusExpected, statusActual);
+        string testName = "CreateAndLoginUserBadPassword";
+        var app = TestWebApplicationFactory.Create(testName);
+        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
+        var client = app.CreateClient();
+        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass123");
+        var response1 = await client.PostAsJsonAsync("/User/Create", user1);
+        var response2 = await client.PostAsJsonAsync("/User/Login", new UserLoginDTO(user1.Email, "BadPassword"));
+        var statusActual = response2.StatusCode;
+        var statusExpected = HttpStatusCode.BadRequest;
+        Assert.Equal(statusExpected, statusActual);
      }
-     /*
-      * Utworzenie u¿ytkownika z emailem istniej¹cym ju¿ w bazie danych nie powinno byæ mo¿liwe
-      * 
-      * Creating an user with an email that already exists in database shouldn't be possible
-      */
-     [Fact]
+
+    /// <summary>
+    /// <para>Utworzenie u¿ytkownika z emailem istniej¹cym ju¿ w bazie danych nie powinno byæ mo¿liwe</para> 
+    /// <para>Creating an user with an email that already exists in database shouldn't be possible</para>
+    /// </summary>
+    [Fact]
      public async void CreateUserWithExistingEmail()
      {
-         string testName = "CreateUserWithExistingEmail";
-         var app = TestWebApplicationFactory.Create(testName);
-         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
-         var client = app.CreateClient();
+        string testName = "CreateUserWithExistingEmail";
+        var app = TestWebApplicationFactory.Create(testName);
+        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
+        var client = app.CreateClient();
 
-         var email = "JanKowalski@gmail.com";
-         var user1 = new UserCreateDTO("Jan", "Kowalski", email, "pass123");
-         var user2 = new UserCreateDTO("Anna", "Kowalska", email, "coolpass1");
-         var response1 = await client.PostAsJsonAsync("/User/Create",user1);
-         var response2 = await client.PostAsJsonAsync("/User/Create", user2);
-         var statusActual = response2.StatusCode;
-         var statusExpected = HttpStatusCode.BadRequest;
-         Assert.Equal(statusExpected, statusActual);
+        var email = "JanKowalski@gmail.com";
+        var user1 = new UserCreateDTO("Jan", "Kowalski", email, "pass123");
+        var user2 = new UserCreateDTO("Anna", "Kowalska", email, "coolpass1");
+        var response1 = await client.PostAsJsonAsync("/User/Create",user1);
+        var response2 = await client.PostAsJsonAsync("/User/Create", user2);
+        var statusActual = response2.StatusCode;
+        var statusExpected = HttpStatusCode.BadRequest;
+        Assert.Equal(statusExpected, statusActual);
 
      }
+    /// <summary>
+    /// <para>Stworzenie nowego produktu wysy³aj¹c wszystkie informacje poprawnie powinno zakoñczyæ siê sukcesem</para>
+    /// <para>Creating a new product by sending all information correctly should end with success </para>
+    /// </summary>
+    [Fact]
+    public async void AddNewProduct()
+    {
+        string testName = "AddNewProduct";
+        var app = TestWebApplicationFactory.Create(testName);
+        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
+        var client = app.CreateClient();
+        MultipartFormDataContent form = new MultipartFormDataContent();
+        form.Add(new StringContent("Name"), "name");
+        form.Add(new StringContent("Desc"), "description");
+        form.Add(new StringContent("10"), "price");
+
+        var fThumbnail = File.ReadAllBytes("../../../Resources/shiba/thumbnail.png");
+        form.Add(new ByteArrayContent(fThumbnail, 0, fThumbnail.Length), "fileThumbnail","thumbnail.png");
+
+        var fModel = File.ReadAllBytes("../../../Resources/shiba/model.fbx");
+        form.Add(new ByteArrayContent(fModel, 0, fModel.Length), "fileModel", "model.fbx");
+
+        var fArchive = File.ReadAllBytes("../../../Resources/shiba/archive.zip");
+        form.Add(new ByteArrayContent(fArchive, 0, fArchive.Length), "fileTexturesArchive", "archive.zip");
+        var response = await client.PostAsync("/Product/add", form);
+        var msg = await response.Content.ReadAsStringAsync();
+        var statusActual = response.StatusCode;
+        var statusExpected = HttpStatusCode.OK;
+        Assert.Equal(statusExpected, statusActual);
+    }
  }
