@@ -13,7 +13,9 @@ public class Example : MonoBehaviour
     private static readonly string dir = "tempfiles/";
     void Start()
     {
-        ProductEndpoint.Temp();
+        Application.OpenURL("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
+
+        //ProductEndpoint.Temp();
         //Directory.CreateDirectory(dir);
         //FileStream file;
         //var productDTO = ProductEndpoint.GetProductInfo(1);

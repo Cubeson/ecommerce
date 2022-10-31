@@ -3,6 +3,7 @@ using Server.DTO;
 using System.Security.Cryptography;
 using Server.Models;
 using Server.Utility;
+using System.Net.Mail;
 
 namespace Server.Api
 {
@@ -15,6 +16,19 @@ namespace Server.Api
         }
         public IResult CreateUser(UserCreateDTO userDTO, ShopContext context)
         {
+
+            if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
+            {
+                return Results.BadRequest("Invalid name");
+            }
+            if (!Validator.IsValidPassword(userDTO.Password)){
+                return Results.BadRequest("Invalid password");
+            }
+
+            if(!Validator.isValidEmail(userDTO.Email)) {
+                return Results.BadRequest("Invalid email");
+            }
+
             if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
                 return Results.BadRequest("This email is already in use");
