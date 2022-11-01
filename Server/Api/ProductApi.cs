@@ -1,21 +1,20 @@
 ﻿using Server.Data;
 using Server.DTO;
 using Server.Models;
-using static Server.Utility.StaticStrings;
-using Server.CustomRequests;
+using static Server.Utility.Constants;
 
 namespace Server.Api;
 public sealed class ProductApi : IApi
 {
     public void Register(WebApplication app)
     {
-        app.MapGet("/Product/id/{id}", GetProductById);
-        app.MapGet("/Download/model/{id}", DownloadProductModel);
-        app.MapGet("/Download/thumbnail/{id}", DownloadProductThumbnail);
-        app.MapGet("/Download/textures/{id}", DownloadProductTextures);
-        app.MapGet("/Product/latest/{limit}", GetProductsLatest);
+        app.MapGet("api/Product/id/{id}", GetProductById);
+        app.MapGet("api/Download/model/{id}", DownloadProductModel);
+        app.MapGet("api/Download/thumbnail/{id}", DownloadProductThumbnail);
+        app.MapGet("api/Download/textures/{id}", DownloadProductTextures);
+        app.MapGet("api/Product/latest/{limit}", GetProductsLatest);
         //app.MapPost("/Product/add", AddProductAsync).Accepts<IFormFile>("multipart/form-data");
-        app.MapPost("/Product/add", AddProduct).Accepts<AddProductRequest>("multipart/form-data");
+        app.MapPost("api/Product/add", AddProduct).Accepts<AddProductRequest>("multipart/form-data");
 
     }
 

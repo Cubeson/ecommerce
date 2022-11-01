@@ -12,6 +12,12 @@ namespace Server.Data
         public DbSet<User> Users { get; set; } = null!;
         public DbSet<Product> Products { get; set; } = null!;
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            builder.Entity<User>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+        }
         public static DbContextOptions<ShopContext> GetInMemoryOptions(string DBName)
         {
             return new DbContextOptionsBuilder<ShopContext>()

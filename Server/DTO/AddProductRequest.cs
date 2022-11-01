@@ -5,7 +5,7 @@ using System.IO.Compression;
 using System.Reflection;
 using System.Text;
 
-namespace Server.CustomRequests
+namespace Server.DTO
 {
     public class AddProductRequest
     {

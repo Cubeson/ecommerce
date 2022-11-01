@@ -4,6 +4,9 @@ using System.Security.Cryptography;
 using Server.Models;
 using Server.Utility;
 using System.Net.Mail;
+using Microsoft.AspNetCore.Mvc;
+using Server.Services.TokenService;
+using System.Security.Claims;
 
 namespace Server.Api
 {
@@ -11,8 +14,8 @@ namespace Server.Api
     {
         public void Register(WebApplication app)
         {
-            app.MapPost("/User/Create/", CreateUser);
-            app.MapPost("/User/Login/", LoginUser);
+            app.MapPost("api/User/Create/", CreateUser);
+            app.MapPost("api/User/Login/", LoginUser);
         }
         public IResult CreateUser(UserCreateDTO userDTO, ShopContext context)
         {
@@ -48,20 +51,30 @@ namespace Server.Api
         }
         private string ProvidedDataIncorrect = "Provided data is incorrect";
 
-        public IResult LoginUser(UserLoginDTO userDTO, ShopContext context)
+        public IResult LoginUser(UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
-            User? userDB = null;
-            try
+            var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
+            if (user == null) return Results.BadRequest(ProvidedDataIncorrect);
+            var hash = PasswordUtility.GenerateHash(userDTO.Password, user.PasswordSalt);
+            if (!user.Password.Equals(hash)) return Results.BadRequest(ProvidedDataIncorrect);
+
+            var claims = new List<Claim>
             {
-                userDB = context.Users.First(u => u.Email.Equals(userDTO.Email));
-            }
-            catch(InvalidOperationException)
-            {}
-            //if(userDB == null) return Results.Problem(ProvidedDataIncorrect);
-            if (userDB == null) return Results.BadRequest(ProvidedDataIncorrect);
-            var hash = PasswordUtility.GenerateHash(userDTO.Password, userDB.PasswordSalt);
-            if (!userDB.Password.Equals(hash)) return Results.BadRequest(ProvidedDataIncorrect);
-            return Results.Ok("Logged in: " + userDB.FirstName + " " + userDB.LastName);
+                new Claim(ClaimTypes.Name, user.Email),
+                new Claim(ClaimTypes.Role, "User")
+            };
+            var accessToken = tokenService.GenerateAccessToken(claims);
+            var refreshToken = tokenService.GenerateRefreshToken();
+
+            user.RefreshToken = refreshToken;
+            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
+            context.SaveChanges();
+
+            return Results.Ok(new AuthenticatedResponse
+            {
+                Token = accessToken,
+                RefreshToken = refreshToken
+            });
         }
 
     }
