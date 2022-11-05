@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 namespace Server.Models
 {
-    public sealed record Product
+    public class Product
     {
 
         public Product() { }

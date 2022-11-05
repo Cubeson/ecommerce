@@ -16,8 +16,30 @@ namespace Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.9")
+                .HasAnnotation("ProductVersion", "6.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
+
+            modelBuilder.Entity("Server.Models.PasswordReset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ExpirationDate")
+                        .HasColumnType("datetime");
+
+                    b.Property<string>("ResetID")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordResets");
+                });
 
             modelBuilder.Entity("Server.Models.Product", b =>
                 {
@@ -89,6 +111,22 @@ namespace Server.Migrations
                         .IsUnique();
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("Server.Models.PasswordReset", b =>
+                {
+                    b.HasOne("Server.Models.User", "User")
+                        .WithMany("PasswordResets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Server.Models.User", b =>
+                {
+                    b.Navigation("PasswordResets");
                 });
 #pragma warning restore 612, 618
         }

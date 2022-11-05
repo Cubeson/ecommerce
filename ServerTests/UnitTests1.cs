@@ -27,7 +27,7 @@ namespace ServerTests
         {
             var fac = TestWebApplicationFactory.Create("");
             var client = fac.CreateClient();
-            var secret = SecretKey.GetSecret();
+            var secret = JWTSecretKey.Get();
             Assert.NotNull(secret.Key);
         }
     }

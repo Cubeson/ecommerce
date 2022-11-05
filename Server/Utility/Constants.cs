@@ -8,5 +8,8 @@
 
         public static readonly double TokenExpirationTimeMinutes = 15d;
         public static readonly double RefreshTokenExpirationTimeDays = 3d;
+
+        public static readonly double PasswordResetLifetimeMinutes = 15d;
+
     }
 }

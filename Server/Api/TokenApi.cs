@@ -46,16 +46,7 @@ namespace Server.Api
             user.RefreshToken = null;
             context.SaveChanges();
             return Results.NoContent();
-            //var authorizationHeader = httpContext.Request.Headers["Authorization"][0];
-            //if (authorizationHeader != null && authorizationHeader.StartsWith("Bearer"))
-            //{
-            //    string credentials = authorizationHeader.Substring("Bearer ".Length).Trim();
-            //    return Results.Ok(credentials);
-            //}
-            //else
-            //{
-            //    throw new Exception("The authorization header is either empty or isn't Bearer.");
-            //}
         }
+
     }
 }

@@ -11,7 +11,7 @@ namespace Server.Services.TokenService
     {
         public string GenerateAccessToken(IEnumerable<Claim> claims)
         {
-            var secret = SecretKey.GetSecret();
+            var secret = JWTSecretKey.Get();
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Key));
             var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -28,19 +28,18 @@ namespace Server.Services.TokenService
 
         public string GenerateRefreshToken()
         {
-            //string token = Convert.ToBase64String(Guid.NewGuid().ToByteArray());
-            //return token;
-            var randomNumber = new byte[32];
-            using (var rng = RandomNumberGenerator.Create())
-            {
-                rng.GetBytes(randomNumber);
-                return Convert.ToBase64String(randomNumber);
-            }
+            return Rng.GetRandomString();
+            //var randomNumber = new byte[32];
+            //using (var rng = RandomNumberGenerator.Create())
+            //{
+            //    rng.GetBytes(randomNumber);
+            //    return Convert.ToBase64String(randomNumber);
+            //}
         }
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token)
         {
-            var secret = SecretKey.GetSecret();
+            var secret = JWTSecretKey.Get();
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false, 

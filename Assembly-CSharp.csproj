@@ -66,13 +66,22 @@
     <Compile Include="Assets\Scripts\ButtonClick.cs" />
     <Compile Include="Assets\PrefabManager.cs" />
     <Compile Include="Assets\Scripts\Gallery\CurrentModel.cs" />
+    <Compile Include="Assets\Scripts\Validators\Validators.cs" />
     <Compile Include="Assets\Scripts\Network\ProductEndpoint.cs" />
     <Compile Include="Assets\Scripts\ButtonCreateUser.cs" />
     <Compile Include="Assets\Scripts\Network\UserEndpoint.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\LoginMainController.cs" />
     <Compile Include="Assets\ItemImageScript.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAController.cs" />
     <Compile Include="Assets\Scripts\Network\DTO\UserCreateDTO.cs" />
     <Compile Include="Assets\Scripts\Gallery\SlotScript.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\LoginViewController.cs" />
     <Compile Include="Assets\Scripts\Utility\StaticStrings.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAFirstViewController.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CASecondViewController.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccoundCredentials.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAViewFunctions.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAThirdViewController.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\csc.rsp" />

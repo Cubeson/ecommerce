@@ -18,7 +18,7 @@ namespace Server.Utility
             }
             
         }
-        public static bool IsValidPassword(string password)
+        public static bool IsValidPassword(string? password)
         {
             if(password == null) return false;
             if(password.Length < 8) return false;

@@ -6,13 +6,13 @@ using Server;
 using Server.Api;
 using Server.Data;
 using Server.Services.TokenService;
-using Swashbuckle.Swagger;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
-SecretKey.RegisterSecret(builder.Configuration["SecurityToken:key"], builder.Configuration["SecurityToken:issuer"], builder.Configuration["SecurityToken:audience"]);
-var secret = SecretKey.GetSecret();
+JWTSecretKey.Register(builder.Configuration["SecurityToken:key"], builder.Configuration["SecurityToken:issuer"], builder.Configuration["SecurityToken:audience"]);
+SmtpCredentials.Register(builder.Configuration["SmtpClient:email"], builder.Configuration["SmtpClient:password"]);
+var secret = JWTSecretKey.Get();
 var services = builder.Services;
 RegisterServices(services);
 RegisterDBContext(services);
@@ -24,6 +24,7 @@ app.UseSwaggerUI();
 app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 app.MapGet("/Hello", () => { return "Hello World!"; });
 RegisterApi();
+
 app.Run();
 
 void RegisterServices(IServiceCollection services)
@@ -35,7 +36,7 @@ void RegisterServices(IServiceCollection services)
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(o =>
     {
-        var secret = SecretKey.GetSecret();
+        //var secret = SecretKey.GetSecret();
         o.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = secret.Issuer,
@@ -79,7 +80,6 @@ void RegisterServices(IServiceCollection services)
     });
     services.AddTransient<ITokenService,TokenService>();
     
-    
 }
 void RegisterDBContext(IServiceCollection services)
 {
@@ -91,6 +91,7 @@ void RegisterApi()
     new ProductApi().Register(app);
     new UserApi().Register(app);
     new TokenApi().Register(app);
+    new SomethingApi().Register(app);
 }
 
 public partial class Program { }

@@ -1,4 +1,5 @@
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+using Newtonsoft.Json;
 using System;
 using System.Net.Http.Json;
 using System.Net.Mail;
@@ -140,5 +141,20 @@ namespace ServerTests;
             
             Assert.Equal(statusExpected, statusActual);
         }
+    }
+
+    [Fact]
+    public async void TokenTest()
+    {
+        string testName = "TokenTest";
+        var app = TestWebApplicationFactory.Create(testName);
+        var client = app.CreateClient();
+        var user = new UserCreateDTO("TestName", "TestLName", "testmail@gmail.com", "Pass1234");
+        await client.PostAsJsonAsync("api/User/Create", user);
+        var login = new UserLoginDTO(user.Email, user.Password);
+        var response = await client.PostAsJsonAsync("api/User/Login",login);
+        var json = await response.Content.ReadAsStringAsync();
+        var auth = JsonConvert.DeserializeObject<AuthenticatedResponse>(json);
+        
     }
  }
