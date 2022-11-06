@@ -1,11 +1,9 @@
-using Assimp;
 using Network;
 using System;
 using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-using UnityMeshImporter;
 
 
 public class Example : MonoBehaviour

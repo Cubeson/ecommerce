@@ -8,7 +8,6 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityMeshImporter;
 using Utility;
 
 public class GalleryMainScript : MonoBehaviour

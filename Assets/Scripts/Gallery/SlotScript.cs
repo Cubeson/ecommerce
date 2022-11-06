@@ -6,7 +6,6 @@ using System.IO.Compression;
 using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityMeshImporter;
 using Utility;
 
 public class SlotScript : MonoBehaviour
@@ -34,8 +33,8 @@ public class SlotScript : MonoBehaviour
         {
             Destroy(child.gameObject);
         }
-        var GO = MeshImporter.Load("downloads/"+product.Name+"/"+StaticStrings.FileModelString +"."+product.FileFormat);
-        GO.transform.parent = CurrentModel.GameObject.transform;
+        //var GO = MeshImporter.Load("downloads/"+product.Name+"/"+StaticStrings.FileModelString +"."+product.FileFormat);
+        //GO.transform.parent = CurrentModel.GameObject.transform;
     }
     private void DownloadFiles()
     {

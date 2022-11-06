@@ -23,7 +23,7 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 app.MapGet("/Hello", () => { return "Hello World!"; });
-RegisterApi();
+RegisterApi(app);
 
 app.Run();
 
@@ -86,12 +86,24 @@ void RegisterDBContext(IServiceCollection services)
     var connectionString = builder.Configuration.GetConnectionString("localhost");
     services.AddDbContext<ShopContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
 } 
-void RegisterApi()
+void RegisterApi(WebApplication app)
 {
-    new ProductApi().Register(app);
-    new UserApi().Register(app);
-    new TokenApi().Register(app);
-    new SomethingApi().Register(app);
+    var typeIApi = typeof(IApi);
+    var methodInfo = typeIApi.GetMethod("Register");
+    var parameters = new object[] { app };
+    var types = AppDomain.CurrentDomain.GetAssemblies()
+        .SelectMany(t => t.GetTypes())
+        .Where(p => typeIApi.IsAssignableFrom(p) && p.IsClass);
+    foreach ( var type in types)
+    {
+        var instance = Activator.CreateInstance(type);
+        methodInfo.Invoke(instance, parameters);
+    }
+
+    //new ProductApi().Register(app);
+    //new UserApi().Register(app);
+    //new TokenApi().Register(app);
+    //new SomethingApi().Register(app);
 }
 
 public partial class Program { }
