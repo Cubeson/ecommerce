@@ -9,7 +9,6 @@ using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 using Utility;
-
 public class GalleryMainScript : MonoBehaviour
 {
     [SerializeField]

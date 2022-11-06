@@ -1,6 +1,5 @@
 using System.Net.Mail;
 using System;
-
 public static class Validators
 {
     public static bool ValidateEmail(string email)

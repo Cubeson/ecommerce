@@ -1,5 +1,4 @@
 using UnityEngine;
-
 public class CAViewFunctions : MonoBehaviour
 {
     public delegate bool AllowNext();

@@ -24,9 +24,7 @@ app.UseSwaggerUI();
 app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 app.MapGet("/Hello", () => { return "Hello World!"; });
 RegisterApi(app);
-
 app.Run();
-
 void RegisterServices(IServiceCollection services)
 {
     services.AddAuthentication(o =>
@@ -100,10 +98,6 @@ void RegisterApi(WebApplication app)
         methodInfo.Invoke(instance, parameters);
     }
 
-    //new ProductApi().Register(app);
-    //new UserApi().Register(app);
-    //new TokenApi().Register(app);
-    //new SomethingApi().Register(app);
 }
 
 public partial class Program { }

@@ -3,13 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
-
 public class CAController : MonoBehaviour
 {
     [SerializeField] List<GameObject> ViewList;
     [SerializeField] Button ButtonBack;
     [SerializeField] Button ButtonNext;
-
     Text TextButtonNext;
     int index = 0;
     void ChangeButtonText()
@@ -53,7 +51,6 @@ public class CAController : MonoBehaviour
             {
                 //ButtonNext.gameObject.SetActive(false);
             }
-
         }
     }
     void Start()

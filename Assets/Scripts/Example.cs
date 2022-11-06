@@ -4,8 +4,6 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
-
-
 public class Example : MonoBehaviour
 {
     private static readonly string dir = "tempfiles/";
