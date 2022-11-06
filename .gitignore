@@ -371,4 +371,5 @@ Server/Resources
 # Unity downloads from server
 downloads
 
-Library/
+# Unity cache
+[Ll]ibrary
