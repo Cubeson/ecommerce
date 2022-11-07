@@ -348,7 +348,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Next
+  m_Text: Create an account
 --- !u!222 &92635515
 CanvasRenderer:
   m_ObjectHideFlags: 0

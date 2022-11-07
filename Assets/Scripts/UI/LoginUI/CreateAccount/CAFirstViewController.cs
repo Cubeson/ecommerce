@@ -6,15 +6,15 @@ public class CAFirstViewController : MonoBehaviour
     [SerializeField] Button ButtonNext;
     [SerializeField] InputField InputEmail;
     [SerializeField] Text TextMessage;
-    CAViewFunctions viewFunctions;
+    CASaveData saveData;
     Color color;
     public void Start()
     {
         var parent = transform.parent.gameObject;
         var controller = parent.GetComponent<CAController>();
-        viewFunctions = GetComponent<CAViewFunctions>();
-        viewFunctions.allowNext = () => Validators.ValidateEmail(InputEmail.text);
-        viewFunctions.saveData = () => { CreateAccoundCredentials.Email = TextMessage.text; };
+        saveData = GetComponent<CASaveData>();
+        //viewFunctions.allowNext = () => Validators.ValidateEmail(InputEmail.text);
+        saveData.saveData = () => { CreateAccoundCredentials.Email = TextMessage.text; };
         ButtonNext.onClick.AddListener(() =>
         {
             if(!Validators.ValidateEmail(InputEmail.text))

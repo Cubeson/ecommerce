@@ -10,7 +10,7 @@ public class CAThirdViewController : MonoBehaviour
     [SerializeField] InputField InputPassword1;
     [SerializeField] InputField InputPassword2;
     [SerializeField] Text TextMessage;
-    CAViewFunctions viewFunctions;
+    CASaveData saveData;
     Color color;
     void Start()
     {
@@ -30,11 +30,11 @@ public class CAThirdViewController : MonoBehaviour
             }
             
         });
-        viewFunctions = GetComponent<CAViewFunctions>();
-        viewFunctions.allowNext = () => { 
-            return Validators.IsValidPassword(InputPassword1.text) && InputPassword1.text.Equals(InputPassword2.text);
-        };
-        viewFunctions.saveData = () => {
+        saveData = GetComponent<CASaveData>();
+        //viewFunctions.allowNext = () => { 
+        //    return Validators.IsValidPassword(InputPassword1.text) && InputPassword1.text.Equals(InputPassword2.text);
+        //};
+        saveData.saveData = () => {
             CreateAccoundCredentials.Password = InputPassword1.text;
         };
     }

@@ -7,23 +7,9 @@ public class CAController : MonoBehaviour
 {
     [SerializeField] List<GameObject> ViewList;
     [SerializeField] Button ButtonBack;
-    //[SerializeField] Button ButtonNext;
-    //Text TextButtonNext;
     int index = 0;
-    //void ChangeButtonText()
-    //{
-    //    if(index == 2) // Password
-    //    {
-    //        TextButtonNext.text = "Create";
-    //    }
-    //    else
-    //    {
-    //        TextButtonNext.text = "Next";
-    //    }
-    //}
     public void Back()
     {
-        //if(ViewList.Count> 1) ButtonNext.gameObject.SetActive(true);
         if (index > 0) {
             ViewList[index].SetActive(false);
             index--;
@@ -32,34 +18,24 @@ public class CAController : MonoBehaviour
         else
         {
             SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
-            //ViewList[index].SetActive(false);
-            //gameObject.SetActive(false);
-            //LoginView.SetActive(true);
         }
     }
     public void Next()
     { 
         if(index < ViewList.Count - 1) {
-            CAViewFunctions viewFunctions = ViewList[index].GetComponent<CAViewFunctions>();
-            if (!viewFunctions.allowNext()) return;
-            viewFunctions.saveData();
+            CASaveData saveData = ViewList[index].GetComponent<CASaveData>();
+            //if (!viewFunctions.allowNext()) return;
+            saveData.saveData();
             ViewList[index].SetActive(false);
             index++;
             ViewList[index].SetActive(true);
-            //ChangeButtonText();
-            if(index == ViewList.Count - 1)
-            {
-                //ButtonNext.gameObject.SetActive(false);
-            }
         }
     }
     void Start()
     {
-        //TextButtonNext = ButtonNext.GetComponentInChildren<Text>();
         if (ViewList.Count == 0) {
             throw new MissingReferenceException("CAController ViewList needs items added in editor");
         }
-        //ButtonNext.onClick.AddListener(Next);
         ButtonBack.onClick.AddListener(Back);
     }
 
