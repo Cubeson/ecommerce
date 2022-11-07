@@ -23,7 +23,13 @@ public class ButtonCreateUser : MonoBehaviour
         var email = Email.text;
         var password = Password.text;
 
-        var operation = UserEndpoint.CreateUser(new UserCreateDTO(firstName, lastName, email, password));
+        var operation = UserEndpoint.CreateUser(new UserCreateDTO()
+        {
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
+            Password = password
+        });
         while (!operation.isDone) { }
         Debug.Log(operation.webRequest.downloadHandler.text);
     }

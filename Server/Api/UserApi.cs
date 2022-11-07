@@ -71,26 +71,24 @@ namespace Server.Api
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
             {
-                return Results.BadRequest("Invalid name");
+                return Results.BadRequest(new CreateAccountResponse() {Error = 1, Message = "Invalid name" });
             }
             if (!Validator.IsValidPassword(userDTO.Password)){
-                return Results.BadRequest("Invalid password");
+                return Results.BadRequest(new CreateAccountResponse() { Error = 2, Message = "Invalid password" });
             }
 
             if(!Validator.isValidEmail(userDTO.Email)) {
-                return Results.BadRequest("Invalid email");
+                return Results.BadRequest(new CreateAccountResponse() { Error = 3, Message = "Invalid email" });
             }
 
             if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
-                return Results.BadRequest("This email is already in use");
-                //return Results.Problem("User with provided email address already exists: " + userDTO.Email);
+                return Results.BadRequest(new CreateAccountResponse() { Error = 4, Message = "Email already in use" });
             }
 
         var rng = new Random();
         var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
         var hash = PasswordUtility.GenerateHash(userDTO.Password, salt);
-        //var user = new User(0,userDTO.FirstName,userDTO.LastName,userDTO.Email,hash,salt);
         var user = new User()
         {
             FirstName = userDTO.FirstName,
@@ -118,7 +116,7 @@ namespace Server.Api
             }
         }
 
-        return Results.Ok("Created new user");
+        return Results.Ok(new CreateAccountResponse() { Message = "Account created" });
             
         }
         private string ProvidedDataIncorrect = "Provided data is incorrect";

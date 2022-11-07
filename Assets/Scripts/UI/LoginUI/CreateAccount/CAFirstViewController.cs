@@ -14,7 +14,7 @@ public class CAFirstViewController : MonoBehaviour
         var controller = parent.GetComponent<CAController>();
         saveData = GetComponent<CASaveData>();
         //viewFunctions.allowNext = () => Validators.ValidateEmail(InputEmail.text);
-        saveData.saveData = () => { CreateAccoundCredentials.Email = TextMessage.text; };
+        saveData.saveData = () => { CreateAccoundCredentials.Email = InputEmail.text; };
         ButtonNext.onClick.AddListener(() =>
         {
             if(!Validators.ValidateEmail(InputEmail.text))
