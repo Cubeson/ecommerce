@@ -5,11 +5,11 @@ using Network.DTO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Text;
-using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Shared;
 public class CAController : MonoBehaviour
 {
     [SerializeField] List<GameObject> ViewList;
