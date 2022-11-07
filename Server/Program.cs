@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -13,6 +14,8 @@ builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2
 JWTSecretKey.Register(builder.Configuration["SecurityToken:key"], builder.Configuration["SecurityToken:issuer"], builder.Configuration["SecurityToken:audience"]);
 SmtpCredentials.Register(builder.Configuration["SmtpClient:email"], builder.Configuration["SmtpClient:password"]);
 var secret = JWTSecretKey.Get();
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
 var services = builder.Services;
 RegisterServices(services);
 RegisterDBContext(services);
@@ -22,7 +25,6 @@ app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
-app.MapGet("/Hello", () => { return "Hello World!"; });
 RegisterApi(app);
 app.Run();
 void RegisterServices(IServiceCollection services)

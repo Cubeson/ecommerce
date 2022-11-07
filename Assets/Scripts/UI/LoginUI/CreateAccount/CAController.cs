@@ -7,23 +7,23 @@ public class CAController : MonoBehaviour
 {
     [SerializeField] List<GameObject> ViewList;
     [SerializeField] Button ButtonBack;
-    [SerializeField] Button ButtonNext;
-    Text TextButtonNext;
+    //[SerializeField] Button ButtonNext;
+    //Text TextButtonNext;
     int index = 0;
-    void ChangeButtonText()
+    //void ChangeButtonText()
+    //{
+    //    if(index == 2) // Password
+    //    {
+    //        TextButtonNext.text = "Create";
+    //    }
+    //    else
+    //    {
+    //        TextButtonNext.text = "Next";
+    //    }
+    //}
+    public void Back()
     {
-        if(index == 2) // Password
-        {
-            TextButtonNext.text = "Create";
-        }
-        else
-        {
-            TextButtonNext.text = "Next";
-        }
-    }
-    void Back()
-    {
-        if(ViewList.Count> 1) ButtonNext.gameObject.SetActive(true);
+        //if(ViewList.Count> 1) ButtonNext.gameObject.SetActive(true);
         if (index > 0) {
             ViewList[index].SetActive(false);
             index--;
@@ -37,7 +37,7 @@ public class CAController : MonoBehaviour
             //LoginView.SetActive(true);
         }
     }
-    void Next()
+    public void Next()
     { 
         if(index < ViewList.Count - 1) {
             CAViewFunctions viewFunctions = ViewList[index].GetComponent<CAViewFunctions>();
@@ -46,7 +46,7 @@ public class CAController : MonoBehaviour
             ViewList[index].SetActive(false);
             index++;
             ViewList[index].SetActive(true);
-            ChangeButtonText();
+            //ChangeButtonText();
             if(index == ViewList.Count - 1)
             {
                 //ButtonNext.gameObject.SetActive(false);
@@ -55,11 +55,11 @@ public class CAController : MonoBehaviour
     }
     void Start()
     {
-        TextButtonNext = ButtonNext.GetComponentInChildren<Text>();
+        //TextButtonNext = ButtonNext.GetComponentInChildren<Text>();
         if (ViewList.Count == 0) {
             throw new MissingReferenceException("CAController ViewList needs items added in editor");
         }
-        ButtonNext.onClick.AddListener(Next);
+        //ButtonNext.onClick.AddListener(Next);
         ButtonBack.onClick.AddListener(Back);
     }
 

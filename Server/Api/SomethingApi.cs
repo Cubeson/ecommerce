@@ -1,4 +1,5 @@
-﻿using System.Net.Mail;
+﻿using Microsoft.AspNetCore.Mvc;
+using System.Net.Mail;
 
 namespace Server.Api
 {
@@ -7,6 +8,13 @@ namespace Server.Api
         public void Register(WebApplication app)
         {
             app.MapPost("/api/Email/test", EmailTest);
+            app.MapGet("/Hello", HelloTest);
+        }
+        public IResult HelloTest([FromServices] ILoggerFactory loggerFactory)
+        {
+            var logger = loggerFactory.CreateLogger("Hello");
+            logger.LogInformation("lol");
+            return Results.Ok("Hello World!");
         }
         public IResult EmailTest(string email)
         {

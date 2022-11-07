@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 public class CAFirstViewController : MonoBehaviour
 {
+    
     [SerializeField] Button ButtonNext;
     [SerializeField] InputField InputEmail;
     [SerializeField] Text TextMessage;
@@ -9,20 +10,21 @@ public class CAFirstViewController : MonoBehaviour
     Color color;
     public void Start()
     {
+        var parent = transform.parent.gameObject;
+        var controller = parent.GetComponent<CAController>();
         viewFunctions = GetComponent<CAViewFunctions>();
         viewFunctions.allowNext = () => Validators.ValidateEmail(InputEmail.text);
         viewFunctions.saveData = () => { CreateAccoundCredentials.Email = TextMessage.text; };
         ButtonNext.onClick.AddListener(() =>
         {
-            //Guid guid= Guid.NewGuid();
-            //Debug.Log(guid.ToString() + gameObject.GetInstanceID());
-            if (!gameObject.activeSelf) return;
             if(!Validators.ValidateEmail(InputEmail.text))
             {
-                //Debug.Log(guid.ToString() + gameObject.GetInstanceID());
-                
                 TextMessage.text = "Invalid email address";
                 TextMessage.color = Color.red;
+            }
+            else
+            {
+                controller.Next();
             }
         });
 

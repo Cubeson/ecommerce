@@ -26,6 +26,8 @@ public class CASecondViewController : MonoBehaviour
     void Start()
     {
         color = TextMessage.color;
+        var parent = transform.parent.gameObject;
+        var controller = parent.GetComponent<CAController>();
         viewFunctions = GetComponent<CAViewFunctions>();
         viewFunctions.allowNext = () =>
         {
@@ -38,18 +40,16 @@ public class CASecondViewController : MonoBehaviour
         };
         ButtonNext.onClick.AddListener(() =>
         {
-            if (!gameObject.activeSelf) return;
             if(!IsFirstNameOk() || !IsLastNameOk())
             {
                 TextMessage.text = "First name or last name are invalid";
                 TextMessage.color = Color.red;
             }
+            controller.Next();
         });
     }
-    //int i = 0;
     private void OnEnable()
     {
-        //Debug.Log("Enable" + i++);
         TextMessage.text = "Type in your first and last name";
         TextMessage.color = color;
     }
