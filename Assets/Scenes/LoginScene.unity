@@ -1683,6 +1683,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CreateAccountButton: {fileID: 784316361}
   ForgotPasswordButton: {fileID: 1825141757}
+  InputEmail: {fileID: 1019785007}
+  InputPassword: {fileID: 102675351}
+  ButtonLogin: {fileID: 65789544}
 --- !u!1 &1968697550
 GameObject:
   m_ObjectHideFlags: 0
