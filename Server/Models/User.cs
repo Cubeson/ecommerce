@@ -1,5 +1,6 @@
 ﻿using Server.Utility;
 using System.ComponentModel.DataAnnotations;
+using Shared.Validators;
 
 namespace Server.Models
 {
@@ -21,7 +22,7 @@ namespace Server.Models
         
         public bool SetPassword(string? password)
         {
-            if (!Utility.Validator.IsValidPassword(password)) return false;
+            if (!Validators.IsValidPassword(password)) return false;
             var rng = new Random();
             var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
             var hashed = PasswordUtility.GenerateHash(password,salt);

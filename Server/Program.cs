@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -7,7 +6,6 @@ using Server;
 using Server.Api;
 using Server.Data;
 using Server.Services.TokenService;
-using Shared;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,7 +25,6 @@ app.UseSwagger();
 app.UseSwaggerUI();
 app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
-SharedClass x = new SharedClass();
 app.Run();
 void RegisterServices(IServiceCollection services)
 {

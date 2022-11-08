@@ -4,6 +4,7 @@ using System;
 using System.Net.Http.Json;
 using System.Net.Mail;
 using Xunit;
+using Shared.DTO;
 
 namespace ServerTests;
  public class IntegrationTests1
@@ -19,7 +20,7 @@ namespace ServerTests;
         var app = TestWebApplicationFactory.Create(testName);
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
-        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass1234");
+        var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = "JanKowalski@gmail.com", Password = "pass1234" };
         var result = await client.PostAsJsonAsync("api/User/Create/", user1);
         var statusCode = result.StatusCode;
         var statusExpected = HttpStatusCode.OK;
@@ -38,9 +39,9 @@ namespace ServerTests;
         
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
-        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass1234");
+        var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = "JanKowalski@gmail.com", Password = "pass1234" };
         var response1 = await client.PostAsJsonAsync("api/User/Create", user1);
-        var response2 = await client.PostAsJsonAsync("api/User/Login", new UserLoginDTO(user1.Email, user1.Password));
+        var response2 = await client.PostAsJsonAsync("api/User/Login", new UserLoginDTO() { Email=user1.Email,Password=user1.Password});
         var statusActual = response2.StatusCode;
         var statusExpected = HttpStatusCode.OK;
         Assert.Equal(statusExpected, statusActual);
@@ -57,9 +58,9 @@ namespace ServerTests;
         var app = TestWebApplicationFactory.Create(testName);
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
-        var user1 = new UserCreateDTO("Jan", "Kowalski", "JanKowalski@gmail.com", "pass1234");
+        var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = "JanKowalski@gmail.com", Password = "pass1234" };
         var response1 = await client.PostAsJsonAsync("api/User/Create", user1);
-        var response2 = await client.PostAsJsonAsync("api/User/Login", new UserLoginDTO(user1.Email, "BadPassword"));
+        var response2 = await client.PostAsJsonAsync("api/User/Login", new UserLoginDTO() { Email=user1.Email,Password= "BadPassword" });
         var statusActual = response2.StatusCode;
         var statusExpected = HttpStatusCode.BadRequest;
         Assert.Equal(statusExpected, statusActual);
@@ -78,8 +79,8 @@ namespace ServerTests;
         var client = app.CreateClient();
 
         var email = "JanKowalski@gmail.com";
-        var user1 = new UserCreateDTO("Jan", "Kowalski", email, "pass1234");
-        var user2 = new UserCreateDTO("Anna", "Kowalska", email, "coolpass1");
+        var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = email, Password = "pass1234" };
+        var user2 = new UserCreateDTO() { FirstName = "Anna", LastName = "Kowalska", Email = email, Password = "coolpass1" };
         var response1 = await client.PostAsJsonAsync("api/User/Create",user1);
         var response2 = await client.PostAsJsonAsync("api/User/Create", user2);
         var statusActual = response2.StatusCode;
@@ -135,7 +136,7 @@ namespace ServerTests;
         var statusExpected = HttpStatusCode.BadRequest;
         foreach (string invalidEmail in invalidEmails)
         {
-            UserCreateDTO user = new UserCreateDTO("FirstName","LastName",invalidEmail,"Pass1234");
+            UserCreateDTO user = new UserCreateDTO() { FirstName = "FirstName", LastName = "LastName", Email = invalidEmail, Password = "Pass1234" };
             var response = await client.PostAsJsonAsync("api/User/Create", user);
             var statusActual = response.StatusCode;
             
@@ -149,9 +150,9 @@ namespace ServerTests;
         string testName = "TokenTest";
         var app = TestWebApplicationFactory.Create(testName);
         var client = app.CreateClient();
-        var user = new UserCreateDTO("TestName", "TestLName", "testmail@gmail.com", "Pass1234");
+        var user = new UserCreateDTO() { FirstName = "TestName", LastName = "TestLName", Email = "testmail@gmail.com", Password = "Pass1234" };
         await client.PostAsJsonAsync("api/User/Create", user);
-        var login = new UserLoginDTO(user.Email, user.Password);
+        var login = new UserLoginDTO() { Email = user.Email, Password = user.Password };
         var response = await client.PostAsJsonAsync("api/User/Login",login);
         var json = await response.Content.ReadAsStringAsync();
         var auth = JsonConvert.DeserializeObject<AuthenticatedResponse>(json);

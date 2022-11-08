@@ -1,3 +1,4 @@
+using Shared.Validators;
 using UnityEngine;
 using UnityEngine.UI;
 public class CAFirstViewController : MonoBehaviour
@@ -17,7 +18,7 @@ public class CAFirstViewController : MonoBehaviour
         saveData.saveData = () => { CreateAccoundCredentials.Email = InputEmail.text; };
         ButtonNext.onClick.AddListener(() =>
         {
-            if(!Validators.ValidateEmail(InputEmail.text))
+            if(!Validators.isValidEmail(InputEmail.text))
             {
                 TextMessage.text = "Invalid email address";
                 TextMessage.color = Color.red;

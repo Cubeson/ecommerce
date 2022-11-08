@@ -18,5 +18,9 @@ public class LoginViewController : MonoBehaviour
         {
 
         });
+        ForgotPasswordButton.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("ResetPasswordScene", LoadSceneMode.Single);
+        });
     }
 }

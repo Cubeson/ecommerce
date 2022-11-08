@@ -1,10 +1,8 @@
-using Assets.Scripts.Network.DTO;
 using Cysharp.Threading.Tasks;
 using Network;
-using Network.DTO;
+using Shared.DTO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
@@ -49,34 +47,25 @@ public class CAController : MonoBehaviour
 
     private async UniTask CreateAccount()
     {
-        UserCreateDTO user = new UserCreateDTO()
+        UserCreateDTOUnity user = new UserCreateDTOUnity()
         {
             Email = CreateAccoundCredentials.Email,
             FirstName = CreateAccoundCredentials.FirstName,
             LastName = CreateAccoundCredentials.LastName,
             Password = CreateAccoundCredentials.Password,
         };
-        var json = JsonConvert.SerializeObject(user);
-        var req = new UnityWebRequest()
-        {
-            method = "POST",
-            url = ServerUrl.Url + "api/User/Create",
-            downloadHandler = new DownloadHandlerBuffer(),
-            uploadHandler = new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)),
-            timeout = 8,
-        };
-        req.SetRequestHeader("Content-Type", "application/json");
-        var task = UniTask.Create(() =>
-        {
-            return req.SendWebRequest().ToUniTask();
-        });
+        var req = UserEndpoint.CreateUser(user);
+        //var task = UniTask.Create(() =>
+        //{
+        //    return req.SendWebRequest().ToUniTask();
+        //});
+        var task = req.SendWebRequest().ToUniTask();
         WaitScreen = Instantiate(WaitScreenPrefab,new Vector3(0,0,0),Quaternion.identity);
         WaitScreen.SetActive(true);
-        //WaitScreen.transform.parent = canvas.transform;
         WaitScreen.transform.SetParent(canvas.transform,false);
         CAWaitScreen waitScreenScript = WaitScreen.GetComponent<CAWaitScreen>();
         UnityWebRequest resp = null;
-        CreateAccountResponse CAResponse = null;
+        CreateAccountResponseUnity CAResponse = null;
         try
         {
             resp = await task;
@@ -84,7 +73,7 @@ public class CAController : MonoBehaviour
         {
             waitScreenScript.Icon.SetActive(false);
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-            CAResponse = JsonConvert.DeserializeObject<CreateAccountResponse>(e.Text);
+            CAResponse = JsonConvert.DeserializeObject<CreateAccountResponseUnity>(e.Text);
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
             waitScreenScript.ButtonContinue.onClick.AddListener(() =>
             {
@@ -112,11 +101,5 @@ public class CAController : MonoBehaviour
         }
         canvas = GameObject.Find("Canvas");
         ButtonBack.onClick.AddListener(Back);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

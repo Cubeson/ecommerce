@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Server.Data;
-using Server.DTO;
+using Shared.DTO;
 using Server.Services.TokenService;
 
 namespace Server.Api

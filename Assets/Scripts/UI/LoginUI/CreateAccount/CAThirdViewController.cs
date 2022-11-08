@@ -1,6 +1,5 @@
 using Cysharp.Threading.Tasks;
-using Network;
-using System.Threading.Tasks;
+using Shared.Validators;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;

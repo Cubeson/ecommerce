@@ -1,7 +1,7 @@
 using Network;
 using UnityEngine;
 using UnityEngine.UI;
-using Network.DTO;
+using Shared.DTO;
 
 [RequireComponent(typeof(Button))]
 public class ButtonCreateUser : MonoBehaviour
@@ -23,7 +23,7 @@ public class ButtonCreateUser : MonoBehaviour
         var email = Email.text;
         var password = Password.text;
 
-        var operation = UserEndpoint.CreateUser(new UserCreateDTO()
+        var operation = UserEndpoint.CreateUser(new UserCreateDTOUnity()
         {
             FirstName = firstName,
             LastName = lastName,
@@ -31,6 +31,6 @@ public class ButtonCreateUser : MonoBehaviour
             Password = password
         });
         while (!operation.isDone) { }
-        Debug.Log(operation.webRequest.downloadHandler.text);
+        //Debug.Log(operation.webRequest.downloadHandler.text);
     }
 }
