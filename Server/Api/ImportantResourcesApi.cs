@@ -9,7 +9,7 @@ namespace Server.Api
         {
             app.MapGet("/api/Resources/Important",GetImportantResource);
         }
-        [Authorize]
+        [Authorize(Policy = "TokenNotRevoked")]
         public IResult GetImportantResource(HttpContext httpContext)
         {
             var user = httpContext.User;

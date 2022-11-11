@@ -1,6 +1,6 @@
 global using Xunit;
 global using Server.Data;
-global using Server.DTO;
+global using Shared.DTO;
 global using Microsoft.EntityFrameworkCore;
 global using System.Net;
 global using System.Net.Http.Json;

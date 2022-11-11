@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Services.TokenService;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+
 namespace Server.Api
 {
     public sealed class UserApi : IApi
@@ -65,18 +67,18 @@ namespace Server.Api
                 }
             }
         }
-        public IResult CreateUser(UserCreateDTO userDTO, [FromServices] ShopContext context)
+        public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext context)
         {
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
             {
                 return Results.BadRequest(new CreateAccountResponse() {Error = 1, Message = "Invalid name" });
             }
-            if (!Validators.IsValidPassword(userDTO.Password)){
+            if (!Shared.Validators.Validators.IsValidPassword(userDTO.Password)){
                 return Results.BadRequest(new CreateAccountResponse() { Error = 2, Message = "Invalid password" });
             }
 
-            if(!Validators.isValidEmail(userDTO.Email)) {
+            if(!Shared.Validators.Validators.isValidEmail(userDTO.Email)) {
                 return Results.BadRequest(new CreateAccountResponse() { Error = 3, Message = "Invalid email" });
             }
 
@@ -123,7 +125,7 @@ namespace Server.Api
         }
         private string ProvidedDataIncorrect = "Provided data is incorrect";
 
-        public IResult LoginUser(UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
+        public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
             var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
             if (user == null) return Results.BadRequest(ProvidedDataIncorrect);
@@ -133,8 +135,15 @@ namespace Server.Api
             var accessToken = tokenService.GenerateAccessToken(user);
             var refreshToken = tokenService.GenerateRefreshToken();
 
-            user.RefreshToken = StringHasher.HashString(refreshToken);
-            user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
+            context.UserSessions.Add(new UserSession() {
+                User = user,
+                AuthToken = StringHasher.HashString(accessToken),
+                RefreshToken = StringHasher.HashString(refreshToken),
+                RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays)
+            });
+
+            //user.RefreshToken = StringHasher.HashString(refreshToken);
+            //user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
             context.SaveChanges();
 
             return Results.Ok(new AuthenticatedResponse
@@ -143,9 +152,14 @@ namespace Server.Api
                 RefreshToken = refreshToken
             });
         }
-        public IResult LogoutAllSessions(UserLoginDTO user, [FromServices] ShopContext context, [FromServices] ITokenService tokenService)
+        public async Task<IResult> LogoutAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext context)
         {
-
+            if(userDTO.Email.IsNullOrEmpty() || userDTO.Password.IsNullOrEmpty()) return Results.BadRequest();
+            var hashedPass = StringHasher.HashString(userDTO.Password);
+            var user = context.Users.Include(u=>u.UserSessions).SingleOrDefault(u => u.Email == userDTO.Email); if(user == null) return Results.BadRequest();
+            if (!user.Password.Equals(hashedPass)) return Results.BadRequest();
+            var sessions = user.UserSessions;
+            await context.UserSessions.ForEachAsync(s => s.IsRevoked= true);
             return Results.Ok();
         }
 

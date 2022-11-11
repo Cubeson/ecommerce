@@ -5,6 +5,9 @@ using Shared.DTO;
 using Server.Services.TokenService;
 using Server.Utility;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace Server.Api
 {
@@ -15,42 +18,57 @@ namespace Server.Api
             app.MapPost("api/Token/Refresh",Refresh);
             app.MapPost("api/Token/Revoke",Revoke);
         }
-        public IResult Refresh(TokenApiModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
+        public IResult Refresh([FromBody] TokenApiModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
             if(tokenApiModel.AccessToken.IsNullOrEmpty() || tokenApiModel.RefreshToken.IsNullOrEmpty()) 
                 return Results.BadRequest();
-            string accessToken = tokenApiModel.AccessToken;
-            string refreshToken = tokenApiModel.RefreshToken;
+            string? accessToken = tokenApiModel.AccessToken;
+            string? refreshToken = tokenApiModel.RefreshToken;
+            if(accessToken.IsNullOrEmpty() || refreshToken.IsNullOrEmpty()) return Results.BadRequest();
             //refreshToken = PasswordUtility.GenerateHash(refreshToken, "");
-            var principal = tokenService.GetPrincipalFromToken(accessToken);
-            var email = principal.Identity.Name;
-            
-            var user = context.Users.SingleOrDefault(u => u.Email == email);
-            if(user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) { 
-                return Results.BadRequest();
-            }
-            var newAccessToken = tokenService.GenerateAccessToken(user);
+            //var principal = tokenService.GetPrincipalFromToken(accessToken);
+            //var email = principal.Identity.Name;
+
+            //var user = context.Users.SingleOrDefault(u => u.Email == email);
+            var userSession = context.UserSessions.Include(us => us.User).SingleOrDefault(us => us.AuthToken == StringHasher.HashString(accessToken));
+            if (userSession == null || userSession.RefreshToken != StringHasher.HashString(refreshToken) || userSession.IsRevoked || userSession.RefreshTokenExpiryTime <= DateTime.Now) return Results.BadRequest();
+            //if(user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) { 
+            //    return Results.BadRequest();
+            //}
+            var newAuthToken = tokenService.GenerateAccessToken(userSession.User);
             var newRefreshToken = tokenService.GenerateRefreshToken();
-            user.RefreshToken = newRefreshToken;
-            user.RefreshToken = StringHasher.HashString(newRefreshToken);
+            //userSession.RefreshToken = newRefreshToken;
+            userSession.AuthToken = StringHasher.HashString(newAuthToken);
+            userSession.RefreshToken = StringHasher.HashString(newRefreshToken);
             context.SaveChanges();
             return Results.Ok(new AuthenticatedResponse()
             {
-                Token = newAccessToken,
+                Token = newAuthToken,
                 RefreshToken = newRefreshToken,
             });
         }
         [Authorize]
-        public IResult Revoke(HttpContext httpContext ,[FromServices] ShopContext context)
+        public IResult Revoke(HttpRequest request ,[FromServices] ShopContext context)
         {
-            var email = httpContext.User.Identity?.Name ?? null; 
-            if(email == null) return Results.BadRequest();
-            var user = context.Users.SingleOrDefault(u => u.Email == email);
-            if (user == null) return Results.BadRequest();
-
-            user.RefreshToken = null;
+            var token = request.Headers.Authorization[0]?.Substring("Bearer ".Length) ?? null;
+            if(token == null) return Results.BadRequest();
+            var userSession  = context.UserSessions.SingleOrDefault(s => s.AuthToken == StringHasher.HashString(token));
+            if (userSession == null) return Results.BadRequest();
+            userSession.IsRevoked = true;
             context.SaveChanges();
             return Results.NoContent();
+
+            //var userSession =  context.UserSessions.SingleOrDefault(s => s.AuthToken== token);
+            //if(userSession == null) return Results.NoContent();
+            //userSession.IsRevoked = true;
+            //var email = httpContext.User.Identity?.Name ?? null; 
+            //if(email == null) return Results.BadRequest();
+            //var user = context.Users.SingleOrDefault(u => u.Email == email);
+            //if (user == null) return Results.BadRequest();
+            //
+            //user.RefreshToken = null;
+            //context.SaveChanges();
+            //return Results.NoContent();
         }
 
     }

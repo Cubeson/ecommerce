@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Server;
@@ -46,9 +48,18 @@ void RegisterServices(IServiceCollection services)
             ValidateLifetime = false,
             ValidateIssuerSigningKey = true
         };
-    });
 
-    services.AddAuthorization();
+    });
+    services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+    //services.AddScoped(sp => sp.GetRequiredService<IHttpContextAccessor>().HttpContext);
+    services.AddTransient<IAuthorizationHandler,TokenNotRevokedHandler>();
+    services.AddAuthorization(o =>
+    {
+        o.AddPolicy("TokenNotRevoked", p =>
+        {
+            p.AddRequirements(new TokenNotRevokedRequirement());
+        });
+    });
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(c =>
     {
