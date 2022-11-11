@@ -55,10 +55,6 @@ public class CAController : MonoBehaviour
             Password = CreateAccoundCredentials.Password,
         };
         var req = UserEndpoint.CreateUser(user);
-        //var task = UniTask.Create(() =>
-        //{
-        //    return req.SendWebRequest().ToUniTask();
-        //});
         var task = req.SendWebRequest().ToUniTask();
         WaitScreen = Instantiate(WaitScreenPrefab,new Vector3(0,0,0),Quaternion.identity);
         WaitScreen.SetActive(true);
@@ -66,6 +62,10 @@ public class CAController : MonoBehaviour
         CAWaitScreen waitScreenScript = WaitScreen.GetComponent<CAWaitScreen>();
         UnityWebRequest resp = null;
         CreateAccountResponseUnity CAResponse = null;
+        waitScreenScript.ButtonContinue.onClick.AddListener(() =>
+        {
+            Destroy(WaitScreen);
+        });
         try
         {
             resp = await task;
@@ -75,10 +75,6 @@ public class CAController : MonoBehaviour
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
             CAResponse = JsonConvert.DeserializeObject<CreateAccountResponseUnity>(e.Text);
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
-            waitScreenScript.ButtonContinue.onClick.AddListener(() =>
-            {
-                Destroy(WaitScreen);
-            });
             return;
         }
 
@@ -87,6 +83,7 @@ public class CAController : MonoBehaviour
             waitScreenScript.Icon.SetActive(false);
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
             waitScreenScript.TextMessage.text = "Created an accont";
+            waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
             waitScreenScript.ButtonContinue.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene("LoginScene",LoadSceneMode.Single);

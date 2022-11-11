@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Data;
 using Shared.DTO;
 using Server.Services.TokenService;
+using Server.Utility;
+using Microsoft.IdentityModel.Tokens;
 
 namespace Server.Api
 {
@@ -15,19 +17,22 @@ namespace Server.Api
         }
         public IResult Refresh(TokenApiModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
-            if (tokenApiModel == null) return Results.BadRequest();
+            if(tokenApiModel.AccessToken.IsNullOrEmpty() || tokenApiModel.RefreshToken.IsNullOrEmpty()) 
+                return Results.BadRequest();
             string accessToken = tokenApiModel.AccessToken;
             string refreshToken = tokenApiModel.RefreshToken;
-            var principal = tokenService.GetPrincipalFromExpiredToken(accessToken);
+            //refreshToken = PasswordUtility.GenerateHash(refreshToken, "");
+            var principal = tokenService.GetPrincipalFromToken(accessToken);
             var email = principal.Identity.Name;
             
             var user = context.Users.SingleOrDefault(u => u.Email == email);
             if(user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) { 
                 return Results.BadRequest();
             }
-            var newAccessToken = tokenService.GenerateAccessToken(principal.Claims);
+            var newAccessToken = tokenService.GenerateAccessToken(user);
             var newRefreshToken = tokenService.GenerateRefreshToken();
             user.RefreshToken = newRefreshToken;
+            user.RefreshToken = StringHasher.HashString(newRefreshToken);
             context.SaveChanges();
             return Results.Ok(new AuthenticatedResponse()
             {

@@ -35,7 +35,6 @@ void RegisterServices(IServiceCollection services)
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(o =>
     {
-        //var secret = SecretKey.GetSecret();
         o.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = secret.Issuer,

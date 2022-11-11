@@ -8,15 +8,6 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Services.TokenService;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-public class UserCreateDTOX
-{
-
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public string Email { get; set; }
-    public string Password { get; set; }
-
-}
 namespace Server.Api
 {
     public sealed class UserApi : IApi
@@ -74,7 +65,7 @@ namespace Server.Api
                 }
             }
         }
-        public IResult CreateUser(UserCreateDTOX userDTO, [FromServices] ShopContext context)
+        public IResult CreateUser(UserCreateDTO userDTO, [FromServices] ShopContext context)
         {
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
@@ -96,7 +87,7 @@ namespace Server.Api
 
         var rng = new Random();
         var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
-        var hash = PasswordUtility.GenerateHash(userDTO.Password, salt);
+        var hash = StringHasher.HashString(userDTO.Password, salt);
         var user = new User()
         {
             FirstName = userDTO.FirstName,
@@ -107,22 +98,25 @@ namespace Server.Api
         };
         context.Users.Add(user);
         context.SaveChanges();
-
-        using (MailMessage mail = new MailMessage())
+        Task.Run(() =>
         {
-            var credentials = SmtpCredentials.Get();
-            mail.From = new MailAddress(credentials.Email);
-            mail.To.Add(user.Email);
-            mail.Subject = "Created new account";
-            mail.Body = "A new account has been created with this account";
-            mail.IsBodyHtml = false;
-            using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+            using (MailMessage mail = new MailMessage())
             {
-                smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
-                smtp.EnableSsl = true;
-                smtp.Send(mail);
+                var credentials = SmtpCredentials.Get();
+                mail.From = new MailAddress(credentials.Email);
+                mail.To.Add(user.Email);
+                mail.Subject = "Created new account";
+                mail.Body = "A new account has been created with this account";
+                mail.IsBodyHtml = false;
+                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
             }
-        }
+        });
+
 
         return Results.Ok(new CreateAccountResponse() { Message = "Account created" });
             
@@ -133,18 +127,13 @@ namespace Server.Api
         {
             var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
             if (user == null) return Results.BadRequest(ProvidedDataIncorrect);
-            var hash = PasswordUtility.GenerateHash(userDTO.Password, user.PasswordSalt);
+            var hash = StringHasher.HashString(userDTO.Password, user.PasswordSalt);
             if (!user.Password.Equals(hash)) return Results.BadRequest(ProvidedDataIncorrect);
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Name, user.Email),
-                new Claim(ClaimTypes.Role, "User")
-            };
-            var accessToken = tokenService.GenerateAccessToken(claims);
+            var accessToken = tokenService.GenerateAccessToken(user);
             var refreshToken = tokenService.GenerateRefreshToken();
 
-            user.RefreshToken = refreshToken;
+            user.RefreshToken = StringHasher.HashString(refreshToken);
             user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
             context.SaveChanges();
 
@@ -153,6 +142,11 @@ namespace Server.Api
                 Token = accessToken,
                 RefreshToken = refreshToken
             });
+        }
+        public IResult LogoutAllSessions(UserLoginDTO user, [FromServices] ShopContext context, [FromServices] ITokenService tokenService)
+        {
+
+            return Results.Ok();
         }
 
     }

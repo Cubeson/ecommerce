@@ -1,8 +1,8 @@
 ﻿namespace Shared.DTO;
 public class CreateAccountResponseUnity
 {
-    public int Error;
-    public string Message;
+    public int Error = 0;
+    public string Message = string.Empty;
 }
 
 public class CreateAccountResponse

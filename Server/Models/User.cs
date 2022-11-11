@@ -1,6 +1,7 @@
 ﻿using Server.Utility;
 using System.ComponentModel.DataAnnotations;
 using Shared.Validators;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Server.Models
 {
@@ -18,14 +19,17 @@ namespace Server.Models
 
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
-        public virtual ICollection<PasswordReset> PasswordResets { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<PasswordReset>? PasswordResets { get; set; }
+        [InverseProperty("User")]
+        public virtual ICollection<UserSession>? UserSessions { get; set; }
         
         public bool SetPassword(string? password)
         {
             if (!Validators.IsValidPassword(password)) return false;
             var rng = new Random();
             var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
-            var hashed = PasswordUtility.GenerateHash(password,salt);
+            var hashed = StringHasher.HashString(password,salt);
             Password = hashed;
             PasswordSalt = salt;
             return true;

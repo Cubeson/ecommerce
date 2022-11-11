@@ -1,11 +1,13 @@
-﻿using System.Security.Claims;
+﻿using Server.Models;
+using System.Security.Claims;
 
 namespace Server.Services.TokenService
 {
     public interface ITokenService
     {
-        string GenerateAccessToken(IEnumerable<Claim> claims);
+        string GenerateAccessToken(User user);
+        //string GenerateAccessToken(IEnumerable<Claim> claims);
         string GenerateRefreshToken();
-        ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
+        ClaimsPrincipal GetPrincipalFromToken(string token);
     }
 }

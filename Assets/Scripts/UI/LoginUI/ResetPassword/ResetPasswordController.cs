@@ -78,10 +78,6 @@ public class ResetPasswordController : MonoBehaviour
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
                 RPResponse = JsonConvert.DeserializeObject<ResetPasswordResponseUnity>(e.Text);
                 waitScreenScript.TextMessage.text = "Error resetting password: " + RPResponse.Message;
-                waitScreenScript.ButtonContinue.onClick.AddListener(() =>
-                {
-                    Destroy(WaitScreen);
-                });
                 return;
             }
             if(resp.responseCode== 200)
@@ -89,6 +85,7 @@ public class ResetPasswordController : MonoBehaviour
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
                 waitScreenScript.TextMessage.text = "Password changed";
+                waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
                 waitScreenScript.ButtonContinue.onClick.AddListener(() =>
                 {
                     SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);

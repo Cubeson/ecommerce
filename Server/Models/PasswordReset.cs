@@ -7,7 +7,7 @@ namespace Server.Models
     {
         [Key]
         public int Id { get; set; }
-        [InverseProperty("PasswordResets")]
+        //[InverseProperty("PasswordReset")]
         public virtual User User { get; set; }
         public int UserId { get; set; }
         public string? ResetID { get; set; }

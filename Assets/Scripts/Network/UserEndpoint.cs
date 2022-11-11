@@ -3,12 +3,11 @@ using static UnityEngine.Networking.UnityWebRequest;
 using Newtonsoft.Json;
 using Shared.DTO;
 using System.Text;
-
 namespace Network
 {
     public static class UserEndpoint
     {
-
+        
         /// <param name="str"></param>
         /// <returns>An UploadHanlderRaw with UTF8 encoding</returns>
         private static UploadHandler UHR(string str)
@@ -34,6 +33,7 @@ namespace Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
+
         public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordUnity requestReset)
         {
             var json = JsonConvert.SerializeObject(requestReset);
