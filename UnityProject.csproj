@@ -8,8 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{B5C83E09-62DA-BAD6-5DDE-B454B04F7C30}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -57,26 +56,29 @@
     <Analyzer Include="D:\vs2022\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Scripts\Network\ServerUrl.cs" />
+    <Compile Include="Assets\Scripts\Network\NetworkUtility.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CASecondViewController.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\RequestSent.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAWaitScreen.cs" />
+    <Compile Include="Assets\Scripts\Network\TokenApi.cs" />
     <Compile Include="Assets\Scripts\Gallery\GalleryMainScript.cs" />
+    <Compile Include="Assets\Scripts\Network\CurrentSession.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAThirdViewController.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CreateAccoundCredentials.cs" />
     <Compile Include="Assets\Scripts\Gallery\CurrentModel.cs" />
-    <Compile Include="Assets\Scripts\Validators\Validators.cs" />
-    <Compile Include="Assets\Scripts\Network\ProductEndpoint.cs" />
+    <Compile Include="Assets\Scripts\Network\ProductApi.cs" />
     <Compile Include="Assets\Scripts\ButtonCreateUser.cs" />
-    <Compile Include="Assets\Scripts\Network\UserEndpoint.cs" />
+    <Compile Include="Assets\Scripts\Extensions\StringExtensions.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\SendToEmailController.cs" />
+    <Compile Include="Assets\Scripts\Network\UserApi.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAController.cs" />
+    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\ResetPasswordController.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CASaveData.cs" />
     <Compile Include="Assets\Scripts\Gallery\SlotScript.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\LoginViewController.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAFirstViewController.cs" />
-    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\SendToEmailController.cs" />
-    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\RequestSent.cs" />
-    <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\ResetPasswordController.cs" />
-    <Compile Include="Assets\Scripts\Extensions\StringExtensions.cs" />
+    <Compile Include="Assets\Scripts\Constants\Constants.cs" />
+    <Compile Include="Assets\Scripts\ClientIO\SessionIO.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\csc.rsp" />

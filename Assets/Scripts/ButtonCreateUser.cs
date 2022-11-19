@@ -23,7 +23,7 @@ public class ButtonCreateUser : MonoBehaviour
         var email = Email.text;
         var password = Password.text;
 
-        var operation = UserEndpoint.CreateUser(new UserCreateDTOUnity()
+        var operation = UserApi.CreateUser(new UserCreateDTOUnity()
         {
             FirstName = firstName,
             LastName = lastName,

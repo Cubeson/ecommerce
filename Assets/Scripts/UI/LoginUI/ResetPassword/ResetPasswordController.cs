@@ -56,7 +56,7 @@ public class ResetPasswordController : MonoBehaviour
                 return;
             }
 
-            var req = UserEndpoint.ResetPassword(new ResetPasswordCredentialsUnity() { ResetId = InputResetCode.text, Password = InputPassword1.text });
+            var req = UserApi.ResetPassword(new ResetPasswordCredentialsUnity() { ResetId = InputResetCode.text, Password = InputPassword1.text });
             var task = req.SendWebRequest().ToUniTask();
             var WaitScreen = Instantiate(WaitScreenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             WaitScreen.SetActive(true);

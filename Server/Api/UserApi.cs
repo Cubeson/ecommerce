@@ -20,6 +20,7 @@ namespace Server.Api
             app.MapPost("api/User/Login", LoginUser);
             app.MapPost("api/User/RequestResetPasswordCode",RequestResetPasswordCode);
             app.MapPost("api/User/ResetPassword", ResetPassword);
+            app.MapPost("api/User/RevokeAllSessions", RevokeAllSessions);
         }
         public IResult ResetPassword([FromBody]ResetPasswordCredentials credentials, [FromServices] ShopContext context)
         {
@@ -146,13 +147,13 @@ namespace Server.Api
             //user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
             context.SaveChanges();
 
-            return Results.Ok(new AuthenticatedResponse
+            return Results.Ok(new TokenModel
             {
-                Token = accessToken,
+                AuthToken = accessToken,
                 RefreshToken = refreshToken
             });
         }
-        public async Task<IResult> LogoutAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext context)
+        public async Task<IResult> RevokeAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext context)
         {
             if(userDTO.Email.IsNullOrEmpty() || userDTO.Password.IsNullOrEmpty()) return Results.BadRequest();
             var hashedPass = StringHasher.HashString(userDTO.Password);

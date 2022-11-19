@@ -1,34 +1,35 @@
 ﻿using UnityEngine.Networking;
-using static UnityEngine.Networking.UnityWebRequest;
 using Newtonsoft.Json;
 using Shared.DTO;
-using System.Text;
+using static Network.NetworkUtility;
 namespace Network
 {
-    public static class UserEndpoint
+    public static class UserApi
     {
-        
-        /// <param name="str"></param>
-        /// <returns>An UploadHanlderRaw with UTF8 encoding</returns>
-        private static UploadHandler UHR(string str)
+        public static UnityWebRequest LoginUser(UserLoginDTOUnity userDTO)
         {
-            return new UploadHandlerRaw(Encoding.UTF8.GetBytes(str));
+            var json = JsonConvert.SerializeObject(userDTO);
+            var req = new UnityWebRequest()
+            {
+                method = "POST",
+                url = Url + "api/User/Login",
+                downloadHandler = new DownloadHandlerBuffer(),
+                uploadHandler = UHR(json),
+                timeout = Constants.Timeout,
+            };
+            req.SetRequestHeader("Content-Type", "application/json");
+            return req;
         }
-        /// <summary>
-        /// Creates an UnityWebRequest that requests creating a new user
-        /// </summary>
-        /// <param name="userDTO"></param>
-        /// <returns>UnityWebRequest ready to call SendWebRequest on</returns>
         public static UnityWebRequest CreateUser(UserCreateDTOUnity userDTO)
         {
             var json = JsonConvert.SerializeObject(userDTO);
             var req = new UnityWebRequest()
             {
                 method = "POST",
-                url = ServerUrl.Url + "api/User/Create",
+                url = Url + "api/User/Create",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = 8,
+                timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
@@ -40,7 +41,7 @@ namespace Network
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
-                url = ServerUrl.Url + "api/User/RequestResetPasswordCode",
+                url = Url + "api/User/RequestResetPasswordCode",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
             };
@@ -53,10 +54,24 @@ namespace Network
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
-                url = ServerUrl.Url + "api/User/ResetPassword",
+                url = Url + "api/User/ResetPassword",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = 8,
+                timeout = Constants.Timeout,
+            };
+            req.SetRequestHeader("Content-Type", "application/json");
+            return req;
+        }
+        public static UnityWebRequest RevokeAllSessions(UserLoginDTOUnity userCredentials)
+        {
+            var json = JsonConvert.SerializeObject(userCredentials);
+            UnityWebRequest req = new UnityWebRequest()
+            {
+                method = "POST",
+                url = Url + "api/User/RevokeAllSessions",
+                downloadHandler = new DownloadHandlerBuffer(),
+                uploadHandler = UHR(json),
+                timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             return req;

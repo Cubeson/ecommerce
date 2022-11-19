@@ -2,12 +2,15 @@
 using Shared.DTO;
 using Server.Models;
 using static Server.Utility.Constants;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Server.Api;
 public sealed class ProductApi : IApi
 {
     public void Register(WebApplication app)
     {
+        app.MapGet("api/Product/get", GetProducts);
+
         //app.MapGet("api/Product/id/{id}", GetProductById);
         //app.MapGet("api/Download/model/{id}", DownloadProductModel);
         //app.MapGet("api/Download/thumbnail/{id}", DownloadProductThumbnail);
@@ -17,6 +20,12 @@ public sealed class ProductApi : IApi
         //app.MapPost("api/Product/add", AddProduct).Accepts<AddProductRequest>("multipart/form-data");
 
     }
+    public IResult GetProducts([FromServices] ShopContext context)
+    {
+        return Results.Ok(context.Products.ToArray());
+    }
+
+    
 
     //public async ValueTask<ProductDTO?> GetProductById(int id, ShopContext context)
     //{

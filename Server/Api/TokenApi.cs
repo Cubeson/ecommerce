@@ -18,32 +18,26 @@ namespace Server.Api
             app.MapPost("api/Token/Refresh",Refresh);
             app.MapPost("api/Token/Revoke",Revoke);
         }
-        public IResult Refresh([FromBody] TokenApiModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
+        public IResult Refresh([FromBody] TokenModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
-            if(tokenApiModel.AccessToken.IsNullOrEmpty() || tokenApiModel.RefreshToken.IsNullOrEmpty()) 
+            if(tokenApiModel.AuthToken.IsNullOrEmpty() || tokenApiModel.RefreshToken.IsNullOrEmpty()) 
                 return Results.BadRequest();
-            string? accessToken = tokenApiModel.AccessToken;
+            string? accessToken = tokenApiModel.AuthToken;
             string? refreshToken = tokenApiModel.RefreshToken;
             if(accessToken.IsNullOrEmpty() || refreshToken.IsNullOrEmpty()) return Results.BadRequest();
-            //refreshToken = PasswordUtility.GenerateHash(refreshToken, "");
-            //var principal = tokenService.GetPrincipalFromToken(accessToken);
-            //var email = principal.Identity.Name;
 
-            //var user = context.Users.SingleOrDefault(u => u.Email == email);
             var userSession = context.UserSessions.Include(us => us.User).SingleOrDefault(us => us.AuthToken == StringHasher.HashString(accessToken));
             if (userSession == null || userSession.RefreshToken != StringHasher.HashString(refreshToken) || userSession.IsRevoked || userSession.RefreshTokenExpiryTime <= DateTime.Now) return Results.BadRequest();
-            //if(user == null || user.RefreshToken != refreshToken || user.RefreshTokenExpiryTime <= DateTime.Now) { 
-            //    return Results.BadRequest();
-            //}
+
             var newAuthToken = tokenService.GenerateAccessToken(userSession.User);
             var newRefreshToken = tokenService.GenerateRefreshToken();
-            //userSession.RefreshToken = newRefreshToken;
+
             userSession.AuthToken = StringHasher.HashString(newAuthToken);
             userSession.RefreshToken = StringHasher.HashString(newRefreshToken);
             context.SaveChanges();
-            return Results.Ok(new AuthenticatedResponse()
+            return Results.Ok(new TokenModel()
             {
-                Token = newAuthToken,
+                AuthToken = newAuthToken,
                 RefreshToken = newRefreshToken,
             });
         }

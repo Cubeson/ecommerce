@@ -7,6 +7,9 @@ namespace Server.Utility
 {
     internal static class StringHasher
     {
+        /// <summary>
+        /// For passwords and such, slow but safe
+        /// </summary>
         public static string HashString(string stringToHash,string salt)
         {
             var strBytes = Encoding.ASCII.GetBytes(stringToHash);
@@ -25,5 +28,15 @@ namespace Server.Utility
         {
             return HashString(stringToHash, "");
         }
+
+        /// <summary>
+        /// For data which safety is not important, fast but not safe
+        /// </summary>
+        //public static string HashStringNonCryptographic(string stringToHash)
+        //{
+        //    var md5 = MD5.Create(){
+        //        
+        //    }
+        //}
     }
 }

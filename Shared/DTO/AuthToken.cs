@@ -1,22 +1,22 @@
 ﻿namespace Shared.DTO;
-public class AuthenticatedResponseUnity
+//public class AuthenticatedResponseUnity
+//{
+//    public string Token;
+//    public string RefreshToken;
+//}
+public class TokenModelUnity
 {
-    public string Token;
-    public string RefreshToken;
-}
-public class TokenApiModelUnity
-{
-    public string AccessToken;
+    public string AuthToken;
     public string RefreshToken;
 }
 
-public class AuthenticatedResponse
+//public class AuthenticatedResponse
+//{
+//    public string? Token { get; set; } = string.Empty;
+//    public string? RefreshToken { get; set; } = string.Empty;
+//}
+public class TokenModel
 {
-    public string? Token { get; set; } = string.Empty;
-    public string? RefreshToken { get; set; } = string.Empty;
-}
-public class TokenApiModel
-{
-    public string? AccessToken { get; set; } = string.Empty;
+    public string? AuthToken { get; set; } = string.Empty;
     public string? RefreshToken { get; set; } = string.Empty;
 }

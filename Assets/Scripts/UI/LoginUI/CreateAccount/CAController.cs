@@ -14,7 +14,7 @@ public class CAController : MonoBehaviour
     [SerializeField] Button ButtonBack;
     [SerializeField] GameObject WaitScreenPrefab;
     GameObject canvas;
-    GameObject WaitScreen;
+    //GameObject WaitScreen;
     int index = 0;
     public void Back()
     {
@@ -54,17 +54,17 @@ public class CAController : MonoBehaviour
             LastName = CreateAccoundCredentials.LastName,
             Password = CreateAccoundCredentials.Password,
         };
-        var req = UserEndpoint.CreateUser(user);
+        var req = UserApi.CreateUser(user);
         var task = req.SendWebRequest().ToUniTask();
-        WaitScreen = Instantiate(WaitScreenPrefab,new Vector3(0,0,0),Quaternion.identity);
-        WaitScreen.SetActive(true);
-        WaitScreen.transform.SetParent(canvas.transform,false);
-        CAWaitScreen waitScreenScript = WaitScreen.GetComponent<CAWaitScreen>();
+        var waitScreen = Instantiate(WaitScreenPrefab,new Vector3(0,0,0),Quaternion.identity);
+        waitScreen.SetActive(true);
+        waitScreen.transform.SetParent(canvas.transform,false);
+        CAWaitScreen waitScreenScript = waitScreen.GetComponent<CAWaitScreen>();
         UnityWebRequest resp = null;
         CreateAccountResponseUnity CAResponse = null;
         waitScreenScript.ButtonContinue.onClick.AddListener(() =>
         {
-            Destroy(WaitScreen);
+            Destroy(waitScreen);
         });
         try
         {
