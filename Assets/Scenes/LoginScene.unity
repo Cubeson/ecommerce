@@ -1686,6 +1686,7 @@ MonoBehaviour:
   InputEmail: {fileID: 1019785007}
   InputPassword: {fileID: 102675351}
   ButtonLogin: {fileID: 65789544}
+  WaitScreenPrefab: {fileID: 4798846515683467316, guid: 1e778ce17aa39e74c8e6cbbd50b6cc09, type: 3}
 --- !u!1 &1968697550
 GameObject:
   m_ObjectHideFlags: 0

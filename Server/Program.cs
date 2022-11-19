@@ -112,4 +112,3 @@ void RegisterApi(WebApplication app)
 }
 
 public partial class Program { }
-//client.DefaultRequestHeaders.Add("Authorization", "Bearer " + token);

@@ -14,4 +14,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/ResetPasswordScene.unity
     guid: 22d2d7b6568d10848bb65bb7b74340f4
+  - enabled: 1
+    path: Assets/Scenes/MainScene.unity
+    guid: 1b1d7d3863fa5594d9cba1c7936f029b
+  - enabled: 1
+    path: Assets/Scenes/PreLoginScene.unity
+    guid: 6d6a67a3f2a10c340ac4b8098e0501a2
   m_configObjects: {}

@@ -61,7 +61,7 @@ public class ResetPasswordController : MonoBehaviour
             var WaitScreen = Instantiate(WaitScreenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             WaitScreen.SetActive(true);
             WaitScreen.transform.SetParent(canvas.transform, false);
-            CAWaitScreen waitScreenScript = WaitScreen.GetComponent<CAWaitScreen>();
+            WaitScreenScript waitScreenScript = WaitScreen.GetComponent<WaitScreenScript>();
             waitScreenScript.ButtonContinue.onClick.AddListener(() =>
             {
                 Destroy(WaitScreen);

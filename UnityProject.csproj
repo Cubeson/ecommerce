@@ -59,7 +59,7 @@
     <Compile Include="Assets\Scripts\Network\NetworkUtility.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CASecondViewController.cs" />
     <Compile Include="Assets\Scripts\UI\LoginUI\ResetPassword\RequestSent.cs" />
-    <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAWaitScreen.cs" />
+    <Compile Include="Assets\Scripts\UI\WaitScreenScript.cs" />
     <Compile Include="Assets\Scripts\Network\TokenApi.cs" />
     <Compile Include="Assets\Scripts\Gallery\GalleryMainScript.cs" />
     <Compile Include="Assets\Scripts\Network\CurrentSession.cs" />
@@ -79,6 +79,9 @@
     <Compile Include="Assets\Scripts\UI\LoginUI\CreateAccount\CAFirstViewController.cs" />
     <Compile Include="Assets\Scripts\Constants\Constants.cs" />
     <Compile Include="Assets\Scripts\ClientIO\SessionIO.cs" />
+    <Compile Include="Assets\Scripts\PreLoginScript.cs" />
+    <Compile Include="Assets\Scripts\UI\Main\RevokeAllSessionsScript.cs" />
+    <Compile Include="Assets\Scripts\UI\Main\LogoutScript.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\csc.rsp" />

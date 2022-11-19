@@ -12,5 +12,6 @@ namespace Server.Models
         public string? RefreshToken { get; set; }
         public DateTime? RefreshTokenExpiryTime { get; set; }
         public bool IsRevoked { get; set; } = false;
+        public DateTime DateCreated { get; set; } = DateTime.Now;
     }
 }

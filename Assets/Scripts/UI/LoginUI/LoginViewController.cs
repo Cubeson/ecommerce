@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using Assets.Scripts.Network;
+using Assets.Scripts.ClientIO;
 
 public class LoginViewController : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class LoginViewController : MonoBehaviour
             var waitScreen = Instantiate(WaitScreenPrefab, new Vector3(), Quaternion.identity);
             waitScreen.SetActive(true);
             waitScreen.transform.SetParent(canvas.transform, false);
-            CAWaitScreen waitScreenScript = waitScreen.GetComponent<CAWaitScreen>();
+            WaitScreenScript waitScreenScript = waitScreen.GetComponent<WaitScreenScript>();
             UnityWebRequest resp = null;
             waitScreenScript.ButtonContinue.onClick.AddListener(() =>
             {
@@ -55,6 +56,7 @@ public class LoginViewController : MonoBehaviour
                 var json = resp.downloadHandler.text;
                 TokenModelUnity tm = JsonConvert.DeserializeObject<TokenModelUnity>(json);
                 CurrentSession.GetInstance().SetToken(tm);
+                SessionIO.SaveSession(tm);
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
                 waitScreenScript.TextMessage.text = "Logged in";

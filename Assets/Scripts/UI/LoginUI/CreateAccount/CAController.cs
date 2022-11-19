@@ -59,7 +59,7 @@ public class CAController : MonoBehaviour
         var waitScreen = Instantiate(WaitScreenPrefab,new Vector3(0,0,0),Quaternion.identity);
         waitScreen.SetActive(true);
         waitScreen.transform.SetParent(canvas.transform,false);
-        CAWaitScreen waitScreenScript = waitScreen.GetComponent<CAWaitScreen>();
+        WaitScreenScript waitScreenScript = waitScreen.GetComponent<WaitScreenScript>();
         UnityWebRequest resp = null;
         CreateAccountResponseUnity CAResponse = null;
         waitScreenScript.ButtonContinue.onClick.AddListener(() =>

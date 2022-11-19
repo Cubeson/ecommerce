@@ -14,7 +14,7 @@ namespace Assets.Scripts.Network
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
-                url = Url + "api/User/RequestResetPasswordCode",
+                url = Url + "api/Token/Refresh",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
                 timeout = Constants.Timeout,
@@ -22,5 +22,21 @@ namespace Assets.Scripts.Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
+        public static UnityWebRequest RevokeToken(TokenModelUnity tokenModel)
+        {
+            //var json = JsonConvert.SerializeObject(tokenModel);
+            UnityWebRequest req = new UnityWebRequest()
+            {
+                method = "POST",
+                url = Url + "api/Token/Revoke",
+                downloadHandler = new DownloadHandlerBuffer(),
+                //uploadHandler = UHR(json),
+                timeout = Constants.Timeout,
+            };
+            req.SetRequestHeader("Authorization", "Bearer " + tokenModel.AuthToken );
+            //req.SetRequestHeader("Content-Type", "application/json");
+            return req;
+        }
     }
+
 }
