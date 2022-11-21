@@ -9,7 +9,6 @@ public class CASecondViewController : MonoBehaviour
     [SerializeField] InputField InputLastName;
     [SerializeField] Button ButtonNext;
     [SerializeField] Text TextMessage;
-    CASaveData saveData;
     Color color;
     bool IsFirstNameOk()
     {
@@ -28,16 +27,6 @@ public class CASecondViewController : MonoBehaviour
         color = TextMessage.color;
         var parent = transform.parent.gameObject;
         var controller = parent.GetComponent<CAController>();
-        saveData = GetComponent<CASaveData>();
-        //viewFunctions.allowNext = () =>
-        //{
-        //    return IsFirstNameOk() && IsLastNameOk();
-        //};
-        saveData.saveData = () => 
-        {
-            CreateAccoundCredentials.FirstName = InputFirstName.text;
-            CreateAccoundCredentials.LastName = InputLastName.text;
-        };
         ButtonNext.onClick.AddListener(() =>
         {
             if(!IsFirstNameOk() || !IsLastNameOk())

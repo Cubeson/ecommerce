@@ -1,5 +1,8 @@
-﻿
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Server.Services.TokenService;
+using Server.Utility;
+using System.Security.Claims;
 
 namespace Server.Api
 {
@@ -13,8 +16,8 @@ namespace Server.Api
         public IResult GetImportantResource(HttpContext httpContext)
         {
             var user = httpContext.User;
-            var name = user.Identity.Name;
-            return Results.Ok("This is a very important resource. Hello "+ name + "!");
+            var x = user.FindFirstValue("Id");
+            return Results.Ok("This is a very important resource. This token belongs to user with id: " + x);
         } 
     }
 }

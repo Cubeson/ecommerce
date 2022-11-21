@@ -1,4 +1,6 @@
-﻿namespace ServerTests
+﻿using Server.Services.SmtpService;
+
+namespace ServerTests
 {
     public static class TestWebApplicationFactory
     {
@@ -10,7 +12,11 @@
                 {
                     services.RemoveAll<DbContextOptions<ShopContext>>();
                     services.AddDbContext<ShopContext>(options => options.UseInMemoryDatabase(name));
+
+                    services.RemoveAll<ISmtpService>();
+                    services.AddTransient<ISmtpService, SmtpTestService>();
                 });
+                
             });
             return app;
         }

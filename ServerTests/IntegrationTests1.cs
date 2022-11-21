@@ -1,14 +1,15 @@
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Newtonsoft.Json;
-using System;
-using System.Net.Http.Json;
-using System.Net.Mail;
-using Xunit;
-using Shared.DTO;
+using Xunit.Abstractions;
+using Xunit.Sdk;
 
 namespace ServerTests;
  public class IntegrationTests1
  {
+    WebApplicationFactory<Program> app;
+    public IntegrationTests1()
+    {
+        app = TestWebApplicationFactory.Create("");
+    }
 
     /// <summary>
     /// <para>Po stworzeniu u¿ytkownika, powinien o siê znaleœæ w bazie danych</para>
@@ -17,7 +18,7 @@ namespace ServerTests;
      public async void AddNewUserAsync()
      {
         string testName = "AddNewUserAsync";
-        var app = TestWebApplicationFactory.Create(testName);
+        app = TestWebApplicationFactory.Create(testName);
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
         var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = "JanKowalski@gmail.com", Password = "pass1234" };
@@ -35,7 +36,7 @@ namespace ServerTests;
      public async void CreateAndLoginUserAsync()
      {
         string testName = "CreateAndLoginUserAsync";
-        var app = TestWebApplicationFactory.Create(testName);
+        app = TestWebApplicationFactory.Create(testName);
         
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
@@ -55,7 +56,7 @@ namespace ServerTests;
      public async void CreateAndLoginUserBadPassword()
      {
         string testName = "CreateAndLoginUserBadPassword";
-        var app = TestWebApplicationFactory.Create(testName);
+        app = TestWebApplicationFactory.Create(testName);
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
         var user1 = new UserCreateDTO() { FirstName = "Jan", LastName = "Kowalski", Email = "JanKowalski@gmail.com", Password = "pass1234" };
@@ -74,7 +75,7 @@ namespace ServerTests;
      public async void CreateUserWithExistingEmail()
      {
         string testName = "CreateUserWithExistingEmail";
-        var app = TestWebApplicationFactory.Create(testName);
+        app = TestWebApplicationFactory.Create(testName);
         //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
         var client = app.CreateClient();
 
@@ -89,38 +90,6 @@ namespace ServerTests;
 
      }
     /// <summary>
-    /// <para>Stworzenie nowego produktu wysy³aj¹c wszystkie informacje poprawnie powinno zakoñczyæ siê sukcesem</para>
-    /// <para>Creating a new product by sending all information correctly should end with success </para>
-    /// </summary>
-    [Fact]
-    public async void AddNewProduct()
-    {
-        string testName = "AddNewProduct";
-        var app = TestWebApplicationFactory.Create(testName);
-        //var context = new ShopContext(new DbContextOptionsBuilder<ShopContext>().UseInMemoryDatabase(testName).Options);
-        var client = app.CreateClient();
-        MultipartFormDataContent form = new MultipartFormDataContent
-        {
-            { new StringContent("Name"), "name" },
-            { new StringContent("Desc"), "description" },
-            { new StringContent("10"), "price" }
-        };
-
-        var fThumbnail = File.ReadAllBytes("../../../Resources/shiba/thumbnail.png");
-        form.Add(new ByteArrayContent(fThumbnail, 0, fThumbnail.Length), "fileThumbnail","thumbnail.png");
-
-        var fModel = File.ReadAllBytes("../../../Resources/shiba/model.fbx");
-        form.Add(new ByteArrayContent(fModel, 0, fModel.Length), "fileModel", "model.fbx");
-
-        var fArchive = File.ReadAllBytes("../../../Resources/shiba/archive.zip");
-        form.Add(new ByteArrayContent(fArchive, 0, fArchive.Length), "fileTexturesArchive", "archive.zip");
-        var response = await client.PostAsync("api/Product/add", form);
-        var msg = await response.Content.ReadAsStringAsync();
-        var statusActual = response.StatusCode;
-        var statusExpected = HttpStatusCode.OK;
-        Assert.Equal(statusExpected, statusActual);
-    }
-    /// <summary>
     /// <para>Stworzenie u¿ytkownika z nieprawid³owym adresem email powinno byæ niemo¿liwe</para>
     /// <para>Creating an user with an invalid email address should not be possible</para>
     /// </summary>
@@ -128,7 +97,7 @@ namespace ServerTests;
     public async void RegisterUserInvalidEmail()
     {
         string testName = "RegisterUserInvalidEmail";
-        var app = TestWebApplicationFactory.Create(testName);
+        app = TestWebApplicationFactory.Create(testName);
         var client = app.CreateClient();
         // In this case a false positive is preferable to false negative
         string[] invalidEmails = { "invalid", "fnfno@","ifnw@@@","nice@.dadafwfwg","@", "#@%^%#$@#$@#.com", "email@example.com (Joe Smith)", "“(),:;<>[\\]@example.com" };
@@ -145,17 +114,36 @@ namespace ServerTests;
     }
 
     [Fact]
-    public async void TokenTest()
+    public async void TokenIsCreated()
     {
-        string testName = "TokenTest";
-        var app = TestWebApplicationFactory.Create(testName);
+        string testName = "TokenIsCreated";
+        app = TestWebApplicationFactory.Create(testName);
         var client = app.CreateClient();
         var user = new UserCreateDTO() { FirstName = "TestName", LastName = "TestLName", Email = "testmail@gmail.com", Password = "Pass1234" };
         await client.PostAsJsonAsync("api/User/Create", user);
         var login = new UserLoginDTO() { Email = user.Email, Password = user.Password };
         var response = await client.PostAsJsonAsync("api/User/Login",login);
         var json = await response.Content.ReadAsStringAsync();
-        var auth = JsonConvert.DeserializeObject<AuthenticatedResponse>(json);
-        
+        var auth = JsonConvert.DeserializeObject<TokenModel>(json);
+        Assert.NotNull(auth);
+    }
+    [Fact]
+    public async void CanRefreshToken()
+    {
+        string testName = "CanRefreshToken";
+        app = TestWebApplicationFactory.Create(testName);
+        var client = app.CreateClient();
+        var user = new UserCreateDTO() { FirstName = "TestName", LastName = "TestLName", Email = "testmail@gmail.com", Password = "Pass1234" };
+        await client.PostAsJsonAsync("api/User/Create", user);
+        var login = new UserLoginDTO() { Email = user.Email, Password = user.Password };
+        var response = await client.PostAsJsonAsync("api/User/Login", login);
+        var json = await response.Content.ReadAsStringAsync();
+        var auth1 = JsonConvert.DeserializeObject<TokenModel>(json);
+        Assert.NotNull(auth1);
+        var response2 = await client.PostAsJsonAsync("api/Token/Refresh", auth1);
+        var json2 = await response2.Content.ReadAsStringAsync();
+        var auth2 = JsonConvert.DeserializeObject<TokenModel>(json2);
+        Assert.NotNull(auth2);
+        Assert.NotEqual(auth1.RefreshToken, auth2.RefreshToken);
     }
  }

@@ -12,16 +12,16 @@ namespace Server.Services.TokenService
     {
         public string GenerateAccessToken(User user)
         {
-            var secret = JWTSecretKey.Get();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Key));
+            var jwtSettings = JWTSingleton.Get();
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
             var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[] {
-                new Claim(ClaimTypes.Name,user.Email),
-                new Claim(ClaimTypes.Role,"User") // user.Role
+                new Claim("Role","User"),
+                new Claim("Id",user.Id.ToString()),
             };
             var tokeOptions = new JwtSecurityToken(
-                 issuer: secret.Issuer,
-                 audience: secret.Audience,
+                 issuer: jwtSettings.Issuer,
+                 audience: jwtSettings.Audience,
                  claims: claims,
                  expires: DateTime.Now.AddMinutes(Constants.TokenExpirationTimeMinutes),
                  signingCredentials: signinCredentials
@@ -29,37 +29,22 @@ namespace Server.Services.TokenService
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
             return tokenString;
         }
-        //public string GenerateAccessToken(IEnumerable<Claim> claims)
-        //{
-        //    var secret = JWTSecretKey.Get();
-        //    var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Key));
-        //    var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        //    var tokeOptions = new JwtSecurityToken(
-        //         issuer: secret.Issuer,
-        //         audience: secret.Audience,
-        //         claims: claims,
-        //         expires: DateTime.Now.AddMinutes(Constants.TokenExpirationTimeMinutes),
-        //         signingCredentials: signinCredentials
-        //     );
-        //    var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
-        //    return tokenString;
-        //}
 
         public string GenerateRefreshToken()
         {
-            return Rng.GetRandomString();
-
+            //return Rng.GetRandomString();
+            return Guid.NewGuid().ToString();
         }
 
         public ClaimsPrincipal GetPrincipalFromToken(string token)
         {
-            var secret = JWTSecretKey.Get();
+            var jwtSettings = JWTSingleton.Get();
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false, 
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
                 ValidateLifetime = false
             };
             var tokenHandler = new JwtSecurityTokenHandler();

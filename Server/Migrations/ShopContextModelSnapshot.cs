@@ -57,16 +57,12 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("FileFormat")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(6,2)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("Id");
 
@@ -115,6 +111,9 @@ namespace Server.Migrations
 
                     b.Property<string>("AuthToken")
                         .HasColumnType("longtext");
+
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("IsRevoked")
                         .HasColumnType("tinyint(1)");

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Utility;
 using System.Data;
@@ -20,7 +19,23 @@ public class TokenNotRevokedHandler : AuthorizationHandler<TokenNotRevokedRequir
     protected override Task HandleRequirementAsync(AuthorizationHandlerContext context, TokenNotRevokedRequirement requirement)
     {
         var httpRequest = _httpContextAccessor.HttpContext.Request;
-        var token = httpRequest.Headers.Authorization[0]?.Substring("Bearer ".Length) ?? throw new NoNullAllowedException("Null token");
+        string? token = null;
+        try
+        {
+            token = TokenUtility.GetAuthTokenFromRequest(httpRequest);
+        }catch(Exception ex){
+            if(ex is NoNullAllowedException || ex is IndexOutOfRangeException)
+            {
+                context.Fail();
+                return Task.CompletedTask;
+            }
+        }
+        if(token == null)
+        {
+            context.Fail();
+            return Task.CompletedTask;
+        }
+        
         var userSession = _shopContext.UserSessions.SingleOrDefault(us => us.AuthToken == StringHasher.HashString(token));
         if(userSession == null || userSession.IsRevoked)
         {

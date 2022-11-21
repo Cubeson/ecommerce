@@ -9,6 +9,7 @@ using Server.Services.TokenService;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Server.Services.SmtpService;
 
 namespace Server.Api
 {
@@ -32,7 +33,7 @@ namespace Server.Api
             context.SaveChanges();
             return Results.Ok(new ResetPasswordResponse() { Message = "Password changed" });
         }
-        public IResult RequestResetPasswordCode([FromBody] RequestResetPassword requestReset, [FromServices] ShopContext context)
+        public IResult RequestResetPasswordCode([FromBody] RequestResetPassword requestReset, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService)
         {
             var user = context.Users.SingleOrDefault(x => x.Email == requestReset.Email);
             if (user == null) return Results.Empty;
@@ -46,29 +47,11 @@ namespace Server.Api
             };
             context.PasswordResets.Add(passRst);
             context.SaveChanges();
+            smtpService.PasswordResetRequested(requestReset,passRst);
 
-            using (MailMessage mail = new MailMessage())
-            {
-                var credentials = SmtpCredentials.Get();
-                mail.From = new MailAddress(credentials.Email);
-                mail.To.Add(requestReset.Email);
-                mail.Subject = "Password reset requested";
-                mail.Body =
-                    "<p>A password reset was requested for an account with your email</p>" +
-                    "<p>If you haven't requested a reset, ignore this message</p>" +
-                    "<p>If you wish to reset your email, use the code below</p>" +
-                    "<p>" + passRst.ResetID + "</p>";
-                mail.IsBodyHtml = true;
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
-                {
-                    smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
-                    smtp.EnableSsl = true;
-                    smtp.Send(mail);
-                    return Results.Empty;
-                }
-            }
+            return Results.Empty;
         }
-        public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext context)
+        public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService)
         {
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
@@ -101,37 +84,15 @@ namespace Server.Api
         };
         context.Users.Add(user);
         context.SaveChanges();
-        Task.Run(() =>
-        {
-            using (MailMessage mail = new MailMessage())
-            {
-                var credentials = SmtpCredentials.Get();
-                mail.From = new MailAddress(credentials.Email);
-                mail.To.Add(user.Email);
-                mail.Subject = "Created new account";
-                mail.Body = "A new account has been created with this account";
-                mail.IsBodyHtml = false;
-                using (SmtpClient smtp = new SmtpClient("smtp.gmail.com", 587))
-                {
-                    smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
-                    smtp.EnableSsl = true;
-                    smtp.Send(mail);
-                }
-            }
-        });
-
-
-        return Results.Ok(new CreateAccountResponse() { Message = "Account created" });
-            
+        smtpService.UserCreated(user);
+        return Results.Ok(new CreateAccountResponse() { Message = "Account created" });   
         }
-        private string ProvidedDataIncorrect = "Provided data is incorrect";
-
         public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
             var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
-            if (user == null) return Results.BadRequest(ProvidedDataIncorrect);
+            if (user == null) return Results.BadRequest("Provided data is incorrect");
             var hash = StringHasher.HashString(userDTO.Password, user.PasswordSalt);
-            if (!user.Password.Equals(hash)) return Results.BadRequest(ProvidedDataIncorrect);
+            if (!user.Password.Equals(hash)) return Results.BadRequest("Provided data is incorrect");
 
             var accessToken = tokenService.GenerateAccessToken(user);
             var refreshToken = tokenService.GenerateRefreshToken();
@@ -140,11 +101,10 @@ namespace Server.Api
                 User = user,
                 AuthToken = StringHasher.HashString(accessToken),
                 RefreshToken = StringHasher.HashString(refreshToken),
-                RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays)
+                RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.RefreshTokenExpirationTimeHours),
+                //RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays),
             });
 
-            //user.RefreshToken = StringHasher.HashString(refreshToken);
-            //user.RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays);
             context.SaveChanges();
 
             return Results.Ok(new TokenModel

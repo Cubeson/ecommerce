@@ -10,24 +10,13 @@ namespace ServerTests
 {
     public class UnitTests1
     {
-        //[Fact]
-        //public void GenerateRandomTokens()
-        //{
-        //    string[] tokens = new string[10];
-        //    for(int i = 0;i<10;i++)
-        //    {
-        //        tokens[i] = TokenGenerator.GenerateToken();
-        //    }
-        //    // No groups larger than 1 element
-        //    Assert.DoesNotContain(tokens.GroupBy(x => x), g => g.Count() > 1);
-        //    
-        //}
+
         [Fact]
-        public void SecretKeyTest()
+        public void JWTSettingsTest()
         {
             var fac = TestWebApplicationFactory.Create("");
-            var client = fac.CreateClient();
-            var secret = JWTSecretKey.Get();
+            fac.CreateClient();
+            var secret = JWTSingleton.Get();
             Assert.NotNull(secret.Key);
         }
     }

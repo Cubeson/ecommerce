@@ -13,6 +13,7 @@ public class PreLoginScript : MonoBehaviour
 {
     [SerializeField]
     GameObject WaitScreenPrefab;
+
     async void Start()
     {
         var waitScreen = Instantiate(WaitScreenPrefab,new Vector3(),Quaternion.identity);

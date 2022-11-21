@@ -8,11 +8,16 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Shared;
+
 public class CAController : MonoBehaviour
 {
     [SerializeField] List<GameObject> ViewList;
     [SerializeField] Button ButtonBack;
     [SerializeField] GameObject WaitScreenPrefab;
+    [SerializeField] InputField InputFirstName;
+    [SerializeField] InputField InputLastName;
+    [SerializeField] InputField InputEmail;
+    [SerializeField] InputField InputPassword;
     GameObject canvas;
     //GameObject WaitScreen;
     int index = 0;
@@ -28,10 +33,8 @@ public class CAController : MonoBehaviour
             SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
         }
     }
-    public void Next()
+    public async void Next()
     {
-        CASaveData saveData = ViewList[index].GetComponent<CASaveData>();
-        saveData.saveData();
         if (index < ViewList.Count - 1) {
 
             ViewList[index].SetActive(false);
@@ -41,7 +44,8 @@ public class CAController : MonoBehaviour
         }
         else
         {
-            UniTask.Create(() => CreateAccount());
+            //UniTask.Create(() => CreateAccount());
+            await CreateAccount();
         }
     }
 
@@ -49,10 +53,10 @@ public class CAController : MonoBehaviour
     {
         UserCreateDTOUnity user = new UserCreateDTOUnity()
         {
-            Email = CreateAccoundCredentials.Email,
-            FirstName = CreateAccoundCredentials.FirstName,
-            LastName = CreateAccoundCredentials.LastName,
-            Password = CreateAccoundCredentials.Password,
+            Email = InputEmail.text,
+            FirstName = InputFirstName.text,
+            LastName = InputLastName.text,
+            Password = InputPassword.text,
         };
         var req = UserApi.CreateUser(user);
         var task = req.SendWebRequest().ToUniTask();
@@ -94,7 +98,7 @@ public class CAController : MonoBehaviour
     void Start()
     {
         if (ViewList.Count == 0) {
-            throw new MissingReferenceException("CAController ViewList needs items added in editor");
+            throw new MissingReferenceException("CAController ViewList needs elements added in editor");
         }
         canvas = GameObject.Find("Canvas");
         ButtonBack.onClick.AddListener(Back);

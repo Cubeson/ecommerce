@@ -34,6 +34,7 @@ namespace Server.Api
 
             userSession.AuthToken = StringHasher.HashString(newAuthToken);
             userSession.RefreshToken = StringHasher.HashString(newRefreshToken);
+            userSession.RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.RefreshTokenExpirationTimeHours);
             context.SaveChanges();
             return Results.Ok(new TokenModel()
             {

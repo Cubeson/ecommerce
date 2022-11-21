@@ -7,14 +7,17 @@ using Microsoft.OpenApi.Models;
 using Server;
 using Server.Api;
 using Server.Data;
+using Server.Services.SmtpService;
 using Server.Services.TokenService;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
-JWTSecretKey.Register(builder.Configuration["SecurityToken:key"], builder.Configuration["SecurityToken:issuer"], builder.Configuration["SecurityToken:audience"]);
-SmtpCredentials.Register(builder.Configuration["SmtpClient:email"], builder.Configuration["SmtpClient:password"]);
-var secret = JWTSecretKey.Get();
+var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JWTSettings>();
+JWTSingleton.Set(jwtSettings);
+var smptSettings = builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
+SmtpSingleton.Set(smptSettings);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 var services = builder.Services;
@@ -37,12 +40,13 @@ void RegisterServices(IServiceCollection services)
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(o =>
     {
+        var jwtSettings = JWTSingleton.Get();
         o.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = secret.Issuer,
-            ValidAudience = secret.Audience,
+            ValidIssuer = jwtSettings.Issuer,
+            ValidAudience = jwtSettings.Audience,
             IssuerSigningKey = new SymmetricSecurityKey
-                (Encoding.UTF8.GetBytes(secret.Key)),
+                (Encoding.UTF8.GetBytes(jwtSettings.Key)),
             ValidateIssuer = true,
             ValidateAudience = true,
             ValidateLifetime = false,
@@ -51,7 +55,6 @@ void RegisterServices(IServiceCollection services)
 
     });
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-    //services.AddScoped(sp => sp.GetRequiredService<IHttpContextAccessor>().HttpContext);
     services.AddTransient<IAuthorizationHandler,TokenNotRevokedHandler>();
     services.AddAuthorization(o =>
     {
@@ -88,7 +91,8 @@ void RegisterServices(IServiceCollection services)
 
     });
     services.AddTransient<ITokenService,TokenService>();
-    
+    services.AddTransient<ISmtpService, SmtpTestService>();
+
 }
 void RegisterDBContext(IServiceCollection services)
 {
@@ -97,11 +101,15 @@ void RegisterDBContext(IServiceCollection services)
 } 
 void RegisterApi(WebApplication app)
 {
+    //new UserApi().Register(app);
+    //new TokenApi().Register(app);
+    //new ProductApi().Register(app);
+    //new ImportantResourcesApi().Register(app);
+
     var typeIApi = typeof(IApi);
     var methodInfo = typeIApi.GetMethod("Register");
     var parameters = new object[] { app };
-    var types = AppDomain.CurrentDomain.GetAssemblies()
-        .SelectMany(t => t.GetTypes())
+    var types = Assembly.GetExecutingAssembly().GetExportedTypes()
         .Where(p => typeIApi.IsAssignableFrom(p) && p.IsClass);
     foreach ( var type in types)
     {
