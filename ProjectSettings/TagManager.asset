@@ -4,7 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - GallerySlot
+  - CinemachineTarget
+  - ProductSlot
   layers:
   - Default
   - TransparentFX

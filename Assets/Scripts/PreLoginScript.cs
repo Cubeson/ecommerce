@@ -43,7 +43,7 @@ public class PreLoginScript : MonoBehaviour
         if(resp.responseCode == 200) {
 
             var json = resp.downloadHandler.text;
-            token = JsonConvert.DeserializeObject<TokenModelUnity>(json);
+            token = JsonConvert.DeserializeObject<TokenModelDTOUnity>(json);
             CurrentSession.GetInstance().SetToken(token);
             SessionIO.SaveSession(token);
             SceneManager.LoadScene("MainScene", LoadSceneMode.Single);

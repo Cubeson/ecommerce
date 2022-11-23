@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/PreLoginScene.unity
+    guid: 6d6a67a3f2a10c340ac4b8098e0501a2
+  - enabled: 1
     path: Assets/Scenes/LoginScene.unity
     guid: 63d0e76618312a145b95b4a541ff499c
   - enabled: 1
@@ -17,7 +20,5 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MainScene.unity
     guid: 1b1d7d3863fa5594d9cba1c7936f029b
-  - enabled: 1
-    path: Assets/Scenes/PreLoginScene.unity
-    guid: 6d6a67a3f2a10c340ac4b8098e0501a2
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 9e7be553448fa2546aea5752021cbcf7, type: 2}

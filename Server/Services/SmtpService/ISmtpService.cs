@@ -7,5 +7,5 @@ namespace Server.Services.SmtpService;
 public interface ISmtpService
 {
     public Task UserCreated(User user);
-    public Task PasswordResetRequested(RequestResetPassword requestReset, PasswordReset passRst);
+    public Task PasswordResetRequested(RequestResetPasswordDTO requestReset, PasswordReset passRst);
 }

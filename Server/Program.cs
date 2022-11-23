@@ -1,37 +1,65 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Api;
 using Server.Data;
+using Server.Models;
 using Server.Services.SmtpService;
 using Server.Services.TokenService;
+using Shared.DTO;
+using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
-var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JWTSettings>();
-JWTSingleton.Set(jwtSettings);
-var smptSettings = builder.Configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
-SmtpSingleton.Set(smptSettings);
+//builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 var services = builder.Services;
+var jwtSettings = RegisterJWTSettings(services,builder.Configuration);
+var smtpSettings = RegisterSmtpSettings(services,builder.Configuration);
+AddAuthentication(services,jwtSettings);
+AddAuthorization(services);
 RegisterServices(services);
 RegisterDBContext(services);
+RegisterAutoMapper(services);
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
-app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
+//app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
+app.UseFileServer(new FileServerOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
+    RequestPath = "",
+    EnableDirectoryBrowsing = true
+});
+app.MapRazorPages();
 app.Run();
-void RegisterServices(IServiceCollection services)
+SmtpSettings RegisterSmtpSettings(IServiceCollection services, IConfiguration configuration)
+{
+
+    var smptSettings = configuration.GetSection("SmtpSettings").Get<SmtpSettings>();
+    if (smptSettings == null) throw new Exception();
+    services.AddSingleton<SmtpSettings>(smptSettings);
+    return smptSettings;
+}
+JWTSettings RegisterJWTSettings(IServiceCollection services, IConfiguration configuration)
+{
+    var jwtSettings = configuration.GetSection("JwtSettings").Get<JWTSettings>();
+    if (jwtSettings == null) throw new Exception();
+    services.AddSingleton<JWTSettings>(jwtSettings);
+    return jwtSettings;
+}
+void AddAuthentication(IServiceCollection services, JWTSettings jwtSettings)
 {
     services.AddAuthentication(o =>
     {
@@ -40,7 +68,6 @@ void RegisterServices(IServiceCollection services)
         o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
     }).AddJwtBearer(o =>
     {
-        var jwtSettings = JWTSingleton.Get();
         o.TokenValidationParameters = new TokenValidationParameters
         {
             ValidIssuer = jwtSettings.Issuer,
@@ -54,8 +81,11 @@ void RegisterServices(IServiceCollection services)
         };
 
     });
+}
+void AddAuthorization(IServiceCollection services)
+{
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-    services.AddTransient<IAuthorizationHandler,TokenNotRevokedHandler>();
+    services.AddTransient<IAuthorizationHandler, TokenNotRevokedHandler>();
     services.AddAuthorization(o =>
     {
         o.AddPolicy("TokenNotRevoked", p =>
@@ -63,6 +93,9 @@ void RegisterServices(IServiceCollection services)
             p.AddRequirements(new TokenNotRevokedRequirement());
         });
     });
+}
+void RegisterServices(IServiceCollection services)
+{
     services.AddEndpointsApiExplorer();
     services.AddSwaggerGen(c =>
     {
@@ -87,12 +120,10 @@ void RegisterServices(IServiceCollection services)
         {
             { jwtSecurityScheme,Array.Empty<string>()}
         });
-
-
     });
     services.AddTransient<ITokenService,TokenService>();
-    services.AddTransient<ISmtpService, SmtpTestService>();
-
+    services.AddTransient<ISmtpService, SmtpService>();
+    services.AddRazorPages();
 }
 void RegisterDBContext(IServiceCollection services)
 {
@@ -101,11 +132,6 @@ void RegisterDBContext(IServiceCollection services)
 } 
 void RegisterApi(WebApplication app)
 {
-    //new UserApi().Register(app);
-    //new TokenApi().Register(app);
-    //new ProductApi().Register(app);
-    //new ImportantResourcesApi().Register(app);
-
     var typeIApi = typeof(IApi);
     var methodInfo = typeIApi.GetMethod("Register");
     var parameters = new object[] { app };
@@ -118,5 +144,21 @@ void RegisterApi(WebApplication app)
     }
 
 }
+
+IMapper RegisterAutoMapper(IServiceCollection services)
+{
+    var conf = new MapperConfiguration(cfg =>
+    {
+        cfg.CreateMap<Product, ProductDTO>();
+    });
+#if DEBUG
+    conf.AssertConfigurationIsValid();
+#endif
+    var mapper = conf.CreateMapper();
+    services.AddSingleton<IMapper>(mapper);
+    return mapper;
+}
+
+
 
 public partial class Program { }

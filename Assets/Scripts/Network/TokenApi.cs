@@ -8,7 +8,7 @@ namespace Assets.Scripts.Network
 {
     public static class TokenApi
     {
-        public static UnityWebRequest RefreshToken (TokenModelUnity tokenModel)
+        public static UnityWebRequest RefreshToken (TokenModelDTOUnity tokenModel)
         {
             var json = JsonConvert.SerializeObject(tokenModel);
             UnityWebRequest req = new UnityWebRequest()
@@ -22,7 +22,7 @@ namespace Assets.Scripts.Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
-        public static UnityWebRequest RevokeToken(TokenModelUnity tokenModel)
+        public static UnityWebRequest RevokeToken(TokenModelDTOUnity tokenModel)
         {
             //var json = JsonConvert.SerializeObject(tokenModel);
             UnityWebRequest req = new UnityWebRequest()

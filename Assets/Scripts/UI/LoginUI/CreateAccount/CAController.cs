@@ -65,7 +65,7 @@ public class CAController : MonoBehaviour
         waitScreen.transform.SetParent(canvas.transform,false);
         WaitScreenScript waitScreenScript = waitScreen.GetComponent<WaitScreenScript>();
         UnityWebRequest resp = null;
-        CreateAccountResponseUnity CAResponse = null;
+        CreateAccountResponseDTOUnity CAResponse = null;
         waitScreenScript.ButtonContinue.onClick.AddListener(() =>
         {
             Destroy(waitScreen);
@@ -77,7 +77,7 @@ public class CAController : MonoBehaviour
         {
             waitScreenScript.Icon.SetActive(false);
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-            CAResponse = JsonConvert.DeserializeObject<CreateAccountResponseUnity>(e.Text);
+            CAResponse = JsonConvert.DeserializeObject<CreateAccountResponseDTOUnity>(e.Text);
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
             return;
         }

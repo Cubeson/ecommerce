@@ -4,7 +4,7 @@ using Shared.DTO;
 namespace Server.Services.SmtpService;
 public class SmtpTestService : ISmtpService
 {
-    public Task PasswordResetRequested(RequestResetPassword requestReset, PasswordReset passRst)
+    public Task PasswordResetRequested(RequestResetPasswordDTO requestReset, PasswordReset passRst)
     {
         return Task.CompletedTask;
     }

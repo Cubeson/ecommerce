@@ -18,7 +18,7 @@ namespace Server.Api
             app.MapPost("api/Token/Refresh",Refresh);
             app.MapPost("api/Token/Revoke",Revoke);
         }
-        public IResult Refresh([FromBody] TokenModel tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
+        public IResult Refresh([FromBody] TokenModelDTO tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
             if(tokenApiModel.AuthToken.IsNullOrEmpty() || tokenApiModel.RefreshToken.IsNullOrEmpty()) 
                 return Results.BadRequest();
@@ -36,7 +36,7 @@ namespace Server.Api
             userSession.RefreshToken = StringHasher.HashString(newRefreshToken);
             userSession.RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.RefreshTokenExpirationTimeHours);
             context.SaveChanges();
-            return Results.Ok(new TokenModel()
+            return Results.Ok(new TokenModelDTO()
             {
                 AuthToken = newAuthToken,
                 RefreshToken = newRefreshToken,

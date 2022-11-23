@@ -54,7 +54,7 @@ public class LoginViewController : MonoBehaviour
             if(resp.responseCode == 200)
             {
                 var json = resp.downloadHandler.text;
-                TokenModelUnity tm = JsonConvert.DeserializeObject<TokenModelUnity>(json);
+                TokenModelDTOUnity tm = JsonConvert.DeserializeObject<TokenModelDTOUnity>(json);
                 CurrentSession.GetInstance().SetToken(tm);
                 SessionIO.SaveSession(tm);
                 waitScreenScript.Icon.SetActive(false);

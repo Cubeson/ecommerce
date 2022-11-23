@@ -3,6 +3,7 @@ using Shared.DTO;
 using Server.Models;
 using static Server.Utility.Constants;
 using Microsoft.AspNetCore.Mvc;
+using AutoMapper;
 
 namespace Server.Api;
 public sealed class ProductApi : IApi
@@ -20,9 +21,16 @@ public sealed class ProductApi : IApi
         //app.MapPost("api/Product/add", AddProduct).Accepts<AddProductRequest>("multipart/form-data");
 
     }
-    public IResult GetProducts([FromServices] ShopContext context)
+    public IResult GetProducts([FromServices] ShopContext context, [FromServices] IMapper mapper, int offset, int count)
     {
-        return Results.Ok(context.Products.ToArray());
+
+        //var products = context.Products.OrderByDescending(p => p.DateCreated).Take(10);
+        //
+        //var pro = new Product() {Id = 0, Title = "lol", Description = "nice", Price = 129.99M };
+        //Product[] arr = { pro };
+        //var productsDTO = mapper.Map<ProductDTO[]>(arr);
+        var productsDTO = mapper.Map<ProductDTO[]>(context.Products.Skip(offset).Take(count).ToArray());
+        return Results.Ok(productsDTO);
     }
 
     

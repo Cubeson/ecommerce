@@ -56,7 +56,7 @@ public class ResetPasswordController : MonoBehaviour
                 return;
             }
 
-            var req = UserApi.ResetPassword(new ResetPasswordCredentialsUnity() { ResetId = InputResetCode.text, Password = InputPassword1.text });
+            var req = UserApi.ResetPassword(new ResetPasswordCredentialsDTOUnity() { ResetId = InputResetCode.text, Password = InputPassword1.text });
             var task = req.SendWebRequest().ToUniTask();
             var WaitScreen = Instantiate(WaitScreenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             WaitScreen.SetActive(true);
@@ -67,7 +67,7 @@ public class ResetPasswordController : MonoBehaviour
                 Destroy(WaitScreen);
             });
             UnityWebRequest resp = null;
-            ResetPasswordResponseUnity RPResponse;
+            ResetPasswordResponseDTOUnity RPResponse;
             try
             {
                 resp = await task;
@@ -76,7 +76,7 @@ public class ResetPasswordController : MonoBehaviour
                 Debug.Log(e.ToString());
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                RPResponse = JsonConvert.DeserializeObject<ResetPasswordResponseUnity>(e.Text);
+                RPResponse = JsonConvert.DeserializeObject<ResetPasswordResponseDTOUnity>(e.Text);
                 waitScreenScript.TextMessage.text = "Error resetting password: " + RPResponse.Message;
                 return;
             }

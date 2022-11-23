@@ -1,11 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Shared.DTO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace Assets.Scripts.ClientIO
@@ -14,7 +9,7 @@ namespace Assets.Scripts.ClientIO
     public static class SessionIO
     {
         private static string path = Application.persistentDataPath +"/"+ Constants.SessionFile;
-        public static void SaveSession(TokenModelUnity tokenModel)
+        public static void SaveSession(TokenModelDTOUnity tokenModel)
         {
             File.WriteAllText(path, JsonConvert.SerializeObject(tokenModel));
 
@@ -25,9 +20,9 @@ namespace Assets.Scripts.ClientIO
 
 #endif
         }
-        public static TokenModelUnity LoadSession()
+        public static TokenModelDTOUnity LoadSession()
         {
-            return JsonConvert.DeserializeObject<TokenModelUnity>(File.ReadAllText(path));
+            return JsonConvert.DeserializeObject<TokenModelDTOUnity>(File.ReadAllText(path));
 #if !UNITY_WEBGL || UNITY_EDITOR
             
             //return null;

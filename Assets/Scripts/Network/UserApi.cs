@@ -35,7 +35,7 @@ namespace Network
             return req;
         }
 
-        public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordUnity requestReset)
+        public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordDTOUnity requestReset)
         {
             var json = JsonConvert.SerializeObject(requestReset);
             UnityWebRequest req = new UnityWebRequest()
@@ -48,7 +48,7 @@ namespace Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
-        public static UnityWebRequest ResetPassword(ResetPasswordCredentialsUnity resetCredentials)
+        public static UnityWebRequest ResetPassword(ResetPasswordCredentialsDTOUnity resetCredentials)
         {
             var json = JsonConvert.SerializeObject(resetCredentials);
             UnityWebRequest req = new UnityWebRequest()

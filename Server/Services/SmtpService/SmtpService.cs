@@ -6,6 +6,11 @@ namespace Server.Services.SmtpService
 {
     public class SmtpService : ISmtpService
     {
+        SmtpSettings _smtpSetings;
+        public SmtpService(SmtpSettings smtpSetings) 
+        { 
+            _smtpSetings= smtpSetings;
+        }
         private readonly string host = "smtp.gmail.com";
         private readonly int port = 587;
         public Task UserCreated(User user)
@@ -13,25 +18,24 @@ namespace Server.Services.SmtpService
             return Task.Run(() =>
             {
                 using var mail = new MailMessage();
-                var credentials = SmtpSingleton.Get();
-                mail.From = new MailAddress(credentials.Email);
+
+                mail.From = new MailAddress(_smtpSetings.Email);
                 mail.To.Add(user.Email);
                 mail.Subject = "Created new account";
                 mail.Body = "A new account has been created with this account";
                 mail.IsBodyHtml = false;
                 using SmtpClient smtp = new SmtpClient(host, port);
-                smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
+                smtp.Credentials = new System.Net.NetworkCredential(_smtpSetings.Email, _smtpSetings.Password);
                 smtp.EnableSsl = true;
                 smtp.Send(mail);
             });
         }
-        public Task PasswordResetRequested(RequestResetPassword requestReset, PasswordReset passRst)
+        public Task PasswordResetRequested(RequestResetPasswordDTO requestReset, PasswordReset passRst)
         {
             return Task.Run(() =>
             {
                 using MailMessage mail = new MailMessage();
-                var credentials = SmtpSingleton.Get();
-                mail.From = new MailAddress(credentials.Email);
+                mail.From = new MailAddress(_smtpSetings.Email);
                 mail.To.Add(requestReset.Email);
                 mail.Subject = "Password reset requested";
                 mail.Body =
@@ -41,7 +45,7 @@ namespace Server.Services.SmtpService
                     "<p>" + passRst.ResetID + "</p>";
                 mail.IsBodyHtml = true;
                 using SmtpClient smtp = new SmtpClient(host, port);
-                smtp.Credentials = new System.Net.NetworkCredential(credentials.Email, credentials.Password);
+                smtp.Credentials = new System.Net.NetworkCredential(_smtpSetings.Email, _smtpSetings.Password);
                 smtp.EnableSsl = true;
                 smtp.Send(mail);
             });

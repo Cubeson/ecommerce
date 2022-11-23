@@ -124,7 +124,7 @@ namespace ServerTests;
         var login = new UserLoginDTO() { Email = user.Email, Password = user.Password };
         var response = await client.PostAsJsonAsync("api/User/Login",login);
         var json = await response.Content.ReadAsStringAsync();
-        var auth = JsonConvert.DeserializeObject<TokenModel>(json);
+        var auth = JsonConvert.DeserializeObject<TokenModelDTO>(json);
         Assert.NotNull(auth);
     }
     [Fact]
@@ -138,11 +138,11 @@ namespace ServerTests;
         var login = new UserLoginDTO() { Email = user.Email, Password = user.Password };
         var response = await client.PostAsJsonAsync("api/User/Login", login);
         var json = await response.Content.ReadAsStringAsync();
-        var auth1 = JsonConvert.DeserializeObject<TokenModel>(json);
+        var auth1 = JsonConvert.DeserializeObject<TokenModelDTO>(json);
         Assert.NotNull(auth1);
         var response2 = await client.PostAsJsonAsync("api/Token/Refresh", auth1);
         var json2 = await response2.Content.ReadAsStringAsync();
-        var auth2 = JsonConvert.DeserializeObject<TokenModel>(json2);
+        var auth2 = JsonConvert.DeserializeObject<TokenModelDTO>(json2);
         Assert.NotNull(auth2);
         Assert.NotEqual(auth1.RefreshToken, auth2.RefreshToken);
     }

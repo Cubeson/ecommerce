@@ -10,18 +10,22 @@ namespace Server.Services.TokenService
 {
     public class TokenService : ITokenService
     {
+        JWTSettings _jwtSettings;
+        public TokenService(JWTSettings jWTSettings) 
+        { 
+            _jwtSettings= jWTSettings;
+        }
         public string GenerateAccessToken(User user)
         {
-            var jwtSettings = JWTSingleton.Get();
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
             var signinCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
             var claims = new[] {
                 new Claim("Role","User"),
                 new Claim("Id",user.Id.ToString()),
             };
             var tokeOptions = new JwtSecurityToken(
-                 issuer: jwtSettings.Issuer,
-                 audience: jwtSettings.Audience,
+                 issuer: _jwtSettings.Issuer,
+                 audience: _jwtSettings.Audience,
                  claims: claims,
                  expires: DateTime.Now.AddMinutes(Constants.TokenExpirationTimeMinutes),
                  signingCredentials: signinCredentials
@@ -38,13 +42,12 @@ namespace Server.Services.TokenService
 
         public ClaimsPrincipal GetPrincipalFromToken(string token)
         {
-            var jwtSettings = JWTSingleton.Get();
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateAudience = false, 
                 ValidateIssuer = false,
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
                 ValidateLifetime = false
             };
             var tokenHandler = new JwtSecurityTokenHandler();

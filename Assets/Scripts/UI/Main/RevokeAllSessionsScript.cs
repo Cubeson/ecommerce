@@ -8,7 +8,7 @@ public class RevokeAllSessionsScript : MonoBehaviour
     {
         gameObject.GetComponent<Button>().onClick.AddListener(() =>
         {
-
+            Debug.Log("Lol");
         });
     }
 }
