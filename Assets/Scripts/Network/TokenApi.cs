@@ -1,6 +1,6 @@
 ﻿using Network;
-using Newtonsoft.Json;
 using Shared.DTO;
+using UnityEngine;
 using UnityEngine.Networking;
 using static Network.NetworkUtility;
 
@@ -10,7 +10,7 @@ namespace Assets.Scripts.Network
     {
         public static UnityWebRequest RefreshToken (TokenModelDTOUnity tokenModel)
         {
-            var json = JsonConvert.SerializeObject(tokenModel);
+            var json = JsonUtility.ToJson(tokenModel);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
@@ -20,6 +20,7 @@ namespace Assets.Scripts.Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
         public static UnityWebRequest RevokeToken(TokenModelDTOUnity tokenModel)
@@ -34,6 +35,7 @@ namespace Assets.Scripts.Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Authorization", "Bearer " + tokenModel.AuthToken );
+            req.certificateHandler = new AcceptAllCertificates();
             //req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }

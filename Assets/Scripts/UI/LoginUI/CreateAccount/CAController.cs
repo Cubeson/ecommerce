@@ -1,7 +1,6 @@
 using Cysharp.Threading.Tasks;
 using Network;
 using Shared.DTO;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -77,7 +76,7 @@ public class CAController : MonoBehaviour
         {
             waitScreenScript.Icon.SetActive(false);
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-            CAResponse = JsonConvert.DeserializeObject<CreateAccountResponseDTOUnity>(e.Text);
+            CAResponse = JsonUtility.FromJson<CreateAccountResponseDTOUnity>(e.Text);
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
             return;
         }

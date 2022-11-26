@@ -3,7 +3,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Shared.DTO;
-using Newtonsoft.Json;
 using Shared.Validators;
 
 public sealed class MyObject{
@@ -33,7 +32,6 @@ a Reset Code will be sent to this email";
     }
     void Start()
     {
-        var json = JsonConvert.SerializeObject(new UserLoginDTOUnity() { Email="b",Password="a"});
         BackButton.onClick.AddListener(() => {
             SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
         });

@@ -6,7 +6,6 @@ using Shared.DTO;
 using Network;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
-using Newtonsoft.Json;
 using Assets.Scripts.Network;
 using Assets.Scripts.ClientIO;
 
@@ -54,7 +53,7 @@ public class LoginViewController : MonoBehaviour
             if(resp.responseCode == 200)
             {
                 var json = resp.downloadHandler.text;
-                TokenModelDTOUnity tm = JsonConvert.DeserializeObject<TokenModelDTOUnity>(json);
+                TokenModelDTOUnity tm = JsonUtility.FromJson<TokenModelDTOUnity>(json);
                 CurrentSession.GetInstance().SetToken(tm);
                 SessionIO.SaveSession(tm);
                 waitScreenScript.Icon.SetActive(false);

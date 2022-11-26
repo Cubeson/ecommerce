@@ -1,34 +1,29 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Api;
 using Server.Data;
-using Server.Models;
 using Server.Services.SmtpService;
 using Server.Services.TokenService;
-using Shared.DTO;
-using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.WebHost.UseKestrel(o => o.Limits.MaxRequestBodySize = 2000000000L); // 2 million bytes
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 var services = builder.Services;
-var jwtSettings = RegisterJWTSettings(services,builder.Configuration);
-var smtpSettings = RegisterSmtpSettings(services,builder.Configuration);
+var configuration = builder.Configuration;
+var jwtSettings = RegisterJWTSettings(services, configuration);
+var smtpSettings = RegisterSmtpSettings(services, configuration);
 AddAuthentication(services,jwtSettings);
 AddAuthorization(services);
 RegisterServices(services);
-RegisterDBContext(services);
-RegisterAutoMapper(services);
+RegisterDBContext(services, configuration);
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -36,12 +31,12 @@ app.UseSwagger();
 app.UseSwaggerUI();
 //app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
-app.UseFileServer(new FileServerOptions
-{
-    FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "StaticFiles")),
-    RequestPath = "",
-    EnableDirectoryBrowsing = true
-});
+
+StaticFileOptions option = new StaticFileOptions();
+FileExtensionContentTypeProvider contentTypeProvider = (FileExtensionContentTypeProvider)option.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
+contentTypeProvider.Mappings.Add(".data", "application/octet-stream");
+option.ContentTypeProvider = contentTypeProvider;
+app.UseStaticFiles(option);
 app.MapRazorPages();
 app.Run();
 SmtpSettings RegisterSmtpSettings(IServiceCollection services, IConfiguration configuration)
@@ -125,9 +120,9 @@ void RegisterServices(IServiceCollection services)
     services.AddTransient<ISmtpService, SmtpService>();
     services.AddRazorPages();
 }
-void RegisterDBContext(IServiceCollection services)
+void RegisterDBContext(IServiceCollection services, IConfiguration configuration)
 {
-    var connectionString = builder.Configuration.GetConnectionString("localhost");
+    var connectionString = configuration.GetConnectionString("localhost");
     services.AddDbContext<ShopContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
 } 
 void RegisterApi(WebApplication app)
@@ -143,20 +138,6 @@ void RegisterApi(WebApplication app)
         methodInfo.Invoke(instance, parameters);
     }
 
-}
-
-IMapper RegisterAutoMapper(IServiceCollection services)
-{
-    var conf = new MapperConfiguration(cfg =>
-    {
-        cfg.CreateMap<Product, ProductDTO>();
-    });
-#if DEBUG
-    conf.AssertConfigurationIsValid();
-#endif
-    var mapper = conf.CreateMapper();
-    services.AddSingleton<IMapper>(mapper);
-    return mapper;
 }
 
 

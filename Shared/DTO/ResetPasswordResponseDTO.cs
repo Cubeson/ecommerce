@@ -1,13 +1,11 @@
-﻿namespace Shared.DTO
+﻿namespace Shared.DTO;
+public class ResetPasswordResponseDTOUnity
 {
-    public class ResetPasswordResponseDTOUnity
-    {
-        public int Error = 0;
-        public string Message = string.Empty;
-    }
-    public class ResetPasswordResponseDTO
-    {
-        public int Error { get; set; } = 0;
-        public string Message {get; set;} = string.Empty;
-    }
+    public int Error = 0;
+    public string Message = string.Empty;
+}
+public class ResetPasswordResponseDTO
+{
+    public int Error { get; set; } = 0;
+    public string Message {get; set;} = string.Empty;
 }

@@ -1,14 +1,15 @@
 ﻿using UnityEngine.Networking;
-using Newtonsoft.Json;
 using Shared.DTO;
 using static Network.NetworkUtility;
+using UnityEngine;
+
 namespace Network
 {
     public static class UserApi
     {
         public static UnityWebRequest LoginUser(UserLoginDTOUnity userDTO)
         {
-            var json = JsonConvert.SerializeObject(userDTO);
+            var json = JsonUtility.ToJson(userDTO);
             var req = new UnityWebRequest()
             {
                 method = "POST",
@@ -18,11 +19,12 @@ namespace Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
         public static UnityWebRequest CreateUser(UserCreateDTOUnity userDTO)
         {
-            var json = JsonConvert.SerializeObject(userDTO);
+            var json = JsonUtility.ToJson(userDTO);
             var req = new UnityWebRequest()
             {
                 method = "POST",
@@ -32,12 +34,13 @@ namespace Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
 
         public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordDTOUnity requestReset)
         {
-            var json = JsonConvert.SerializeObject(requestReset);
+            var json = JsonUtility.ToJson(requestReset);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
@@ -46,11 +49,12 @@ namespace Network
                 uploadHandler = UHR(json),
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
         public static UnityWebRequest ResetPassword(ResetPasswordCredentialsDTOUnity resetCredentials)
         {
-            var json = JsonConvert.SerializeObject(resetCredentials);
+            var json = JsonUtility.ToJson(resetCredentials);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
@@ -60,11 +64,12 @@ namespace Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
         public static UnityWebRequest RevokeAllSessions(UserLoginDTOUnity userCredentials)
         {
-            var json = JsonConvert.SerializeObject(userCredentials);
+            var json = JsonUtility.ToJson(userCredentials);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
@@ -74,6 +79,7 @@ namespace Network
                 timeout = Constants.Timeout,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
     }

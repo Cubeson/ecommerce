@@ -6,10 +6,14 @@ using UnityEngine.InputSystem;
 public class MenuScript : MonoBehaviour
 {
     [SerializeField] GameObject GameObjectUI;
+    Camera cam;
+    CameraRaycastScript cameraRaycastScript;
     PlayerInput playerInput;
 
     private void Awake()
     {
+        cam = Camera.main;
+        cameraRaycastScript= cam.gameObject.GetComponent<CameraRaycastScript>();
         playerInput = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerInput>();
     }
     void Start()
@@ -20,8 +24,9 @@ public class MenuScript : MonoBehaviour
     private bool isMenuOpen = false;
     private void OpenMenu()
     {
+        cameraRaycastScript.enabled = false;
         isMenuOpen= true;
-        Camera.main.eventMask = 1 << 5; // UI only
+        //Camera.main.eventMask = 1 << 5; // UI only
         playerInput.enabled = false;
         GameObjectUI.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
@@ -29,8 +34,9 @@ public class MenuScript : MonoBehaviour
     }
     private void CloseMenu()
     {
+        cameraRaycastScript.enabled = true;
         isMenuOpen = false;
-        Camera.main.eventMask = ~0; // ALl
+        //Camera.main.eventMask = ~0; // ALl
         playerInput.enabled = true;
         GameObjectUI.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
@@ -41,21 +47,6 @@ public class MenuScript : MonoBehaviour
         {
             if(isMenuOpen) CloseMenu();
             else OpenMenu();
-        }
-    }
-    void Update1()
-    {
-        if (Input.GetKeyUp(KeyCode.Escape))
-        {
-            if (Camera.main.eventMask == 0)
-            {
-                //Camera.main.eventMask = LayerMask.NameToLayer("UI");
-                Camera.main.eventMask = 5;
-            }
-            else Camera.main.eventMask = 0;
-
-            playerInput.enabled = !playerInput.enabled;
-            GameObjectUI.SetActive(!GameObjectUI.activeSelf);
         }
     }
 }

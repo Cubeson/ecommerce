@@ -1,7 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class ProductSlotScript : MonoBehaviour
+public class ProductSlotScript : MonoBehaviour, Clickable
 {
     [SerializeField] GameObject MainImage;
     MeshRenderer MeshRendererMainImage;
@@ -16,9 +16,9 @@ public class ProductSlotScript : MonoBehaviour
         MeshRendererMainImage = MainImage.GetComponent<MeshRenderer>();
     }
     private UniTask coolTask;
-    private void OnMouseDown()
+    public void Click()
     {
-        if ( !(coolTask.Status == UniTaskStatus.Succeeded)) return;
+        if (!(coolTask.Status == UniTaskStatus.Succeeded)) return;
         coolTask = UniTask.Create(async () =>
         {
             MeshRendererMainImage.material.color = Color.red;
@@ -27,6 +27,7 @@ public class ProductSlotScript : MonoBehaviour
             return UniTask.CompletedTask;
         });
     }
+    
 
     void Update()
     {

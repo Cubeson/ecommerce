@@ -13,6 +13,7 @@ public partial class ShopContext : DbContext
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<PasswordReset> PasswordResets { get; set; } = null!;
     public DbSet<UserSession> UserSessions { get; set; } = null!;
+    //public DbSet<Role> Roles { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

@@ -5,7 +5,6 @@ using UnityEngine.UI;
 using Shared.DTO;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
-using Newtonsoft.Json;
 using UnityEngine.SceneManagement;
 
 public class ResetPasswordController : MonoBehaviour
@@ -76,7 +75,7 @@ public class ResetPasswordController : MonoBehaviour
                 Debug.Log(e.ToString());
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                RPResponse = JsonConvert.DeserializeObject<ResetPasswordResponseDTOUnity>(e.Text);
+                RPResponse = JsonUtility.FromJson<ResetPasswordResponseDTOUnity>(e.Text);
                 waitScreenScript.TextMessage.text = "Error resetting password: " + RPResponse.Message;
                 return;
             }
