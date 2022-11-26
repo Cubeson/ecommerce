@@ -16,7 +16,7 @@ namespace Server.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "6.0.10")
+                .HasAnnotation("ProductVersion", "7.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 64);
 
             modelBuilder.Entity("Server.Models.PasswordReset", b =>
@@ -57,6 +57,9 @@ namespace Server.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("Path")
+                        .HasColumnType("longtext");
+
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(6,2)");
 
@@ -92,6 +95,10 @@ namespace Server.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("PasswordSalt")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("longtext");
 

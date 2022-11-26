@@ -1,14 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
+    <TargetFramework>netstandard2.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <RunPostBuildEvent>Always</RunPostBuildEvent>
+    <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)bin\$(ConfigurationName)\net7.0\&quot; &quot;$(SolutionDir)Assets\ExternalDLLs\&quot; /Y /R /C" />
+    <Exec Command="xcopy &quot;$(ProjectDir)bin\$(ConfigurationName)\netstandard2.1\&quot; &quot;$(SolutionDir)Assets\ExternalDLLs\&quot; /Y /R /C" />
   </Target>
 
 </Project>

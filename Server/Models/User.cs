@@ -13,7 +13,7 @@ public class User
     public string Email { get; set; } = string.Empty;
     public string Password {get; set; } = string.Empty;
     public string PasswordSalt {get; set; } = string.Empty;
-    public string Role { get; set; } = "Default";
+    public string Role { get; set; } = Constants.RoleDefault;
 
     [InverseProperty("User")]
     public virtual ICollection<PasswordReset>? PasswordResets { get; set; }

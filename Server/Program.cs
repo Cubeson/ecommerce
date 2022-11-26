@@ -1,12 +1,15 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Api;
+using Server.AuthRequirements;
 using Server.Data;
 using Server.Services.SmtpService;
 using Server.Services.TokenService;
@@ -32,7 +35,7 @@ app.UseSwaggerUI();
 //app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
 
-StaticFileOptions option = new StaticFileOptions();
+var option = new StaticFileOptions();
 FileExtensionContentTypeProvider contentTypeProvider = (FileExtensionContentTypeProvider)option.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
 contentTypeProvider.Mappings.Add(".data", "application/octet-stream");
 option.ContentTypeProvider = contentTypeProvider;
@@ -54,38 +57,59 @@ JWTSettings RegisterJWTSettings(IServiceCollection services, IConfiguration conf
     services.AddSingleton<JWTSettings>(jwtSettings);
     return jwtSettings;
 }
+//lmao
 void AddAuthentication(IServiceCollection services, JWTSettings jwtSettings)
 {
     services.AddAuthentication(o =>
     {
-        o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        o.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-    }).AddJwtBearer(o =>
-    {
-        o.TokenValidationParameters = new TokenValidationParameters
+        o.DefaultAuthenticateScheme = "JWT_OR_COOKIE";
+        o.DefaultChallengeScheme = "JWT_OR_COOKIE";
+        o.DefaultScheme = "JWT_OR_COOKIE";
+    })
+        .AddCookie(o =>
         {
-            ValidIssuer = jwtSettings.Issuer,
-            ValidAudience = jwtSettings.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey
-                (Encoding.UTF8.GetBytes(jwtSettings.Key)),
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = false,
-            ValidateIssuerSigningKey = true
-        };
+            o.LoginPath = "/Admin/Login";
+            o.ExpireTimeSpan = TimeSpan.FromDays(1);
+        })
+        .AddJwtBearer(o =>
+        {
+            o.TokenValidationParameters = new TokenValidationParameters
+            {
+                ValidIssuer = jwtSettings.Issuer,
+                ValidAudience = jwtSettings.Audience,
+                IssuerSigningKey = new SymmetricSecurityKey
+                    (Encoding.UTF8.GetBytes(jwtSettings.Key)),
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = false,
+                ValidateIssuerSigningKey = true
+            };
 
-    });
+        }).AddPolicyScheme("JWT_OR_COOKIE", "JWT_OR_COOKIE", o =>
+        {
+            o.ForwardDefaultSelector = context =>
+            {
+                string auth = context.Request.Headers.Authorization;
+                if (!string.IsNullOrEmpty(auth) && auth.StartsWith("Bearer "))
+                    return JwtBearerDefaults.AuthenticationScheme;
+                return CookieAuthenticationDefaults.AuthenticationScheme;
+            };
+        });
 }
 void AddAuthorization(IServiceCollection services)
 {
     services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
     services.AddTransient<IAuthorizationHandler, TokenNotRevokedHandler>();
+    services.AddTransient<IAuthorizationHandler, AdminHandler>();
     services.AddAuthorization(o =>
     {
-        o.AddPolicy("TokenNotRevoked", p =>
+        o.AddPolicy("Auth", p =>
         {
             p.AddRequirements(new TokenNotRevokedRequirement());
+        });
+        o.AddPolicy("Admin", p =>
+        {
+            p.AddRequirements(new AdminRequirement());
         });
     });
 }

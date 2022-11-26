@@ -1,26 +1,29 @@
-﻿using System.Net.Mail;
+﻿using System;
+using System.Net.Mail;
 
-namespace Shared.Validators;
-public static class Validators
+namespace Shared.Validators
 {
-    public static bool isValidEmail(string email)
+    public static class Validators
     {
-        if (email == null || email.Equals("")) return false;
-        try
+        public static bool isValidEmail(string email)
         {
-            MailAddress m = new MailAddress(email);
-            // MailAddress jest prosty w obsłudze, ale konstruktor nie jest wystarczająco restrykcyjny
-            return m.Address.Equals(email);
+            if (email == null || email.Equals("")) return false;
+            try
+            {
+                MailAddress m = new MailAddress(email);
+                // MailAddress jest prosty w obsłudze, ale konstruktor nie jest wystarczająco restrykcyjny
+                return m.Address.Equals(email);
+            }
+            catch (FormatException)
+            {
+                return false;
+            }
         }
-        catch (FormatException)
+        public static bool IsValidPassword(string password)
         {
-            return false;
+            if (password == null) return false;
+            if (password.Length < 8) return false;
+            return true;
         }
-    }
-    public static bool IsValidPassword(string password)
-    {
-        if (password == null) return false;
-        if (password.Length < 8) return false;
-        return true;
     }
 }

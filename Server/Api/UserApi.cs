@@ -91,6 +91,7 @@ namespace Server.Api
         {
             var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
             if (user == null) return Results.BadRequest("Provided data is incorrect");
+            //if (!user.Role.Equals(Constants.RoleDefault)) return Results.BadRequest("Provided data is incorrect");
             var hash = StringHasher.HashString(userDTO.Password, user.PasswordSalt);
             if (!user.Password.Equals(hash)) return Results.BadRequest("Provided data is incorrect");
 
