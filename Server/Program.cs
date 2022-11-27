@@ -32,6 +32,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
+Temp(app);
 //app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
 
@@ -163,7 +164,5 @@ void RegisterApi(WebApplication app)
     }
 
 }
-
-
 
 public partial class Program { }

@@ -4,8 +4,8 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>1b87d93e-aa1e-4b85-aab9-0ad15d4758fc</UserSecretsId>
-  </PropertyGroup>
+	  <!--<PublishAot>true</PublishAot>-->
+</PropertyGroup>
 
   <ItemGroup>
     <Compile Remove="StaticFiles\**" />
@@ -13,6 +13,11 @@
     <EmbeddedResource Remove="StaticFiles\**" />
     <None Remove="StaticFiles\**" />
   </ItemGroup>
+	<ItemGroup>
+		<Content Include="products\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Konscious.Security.Cryptography.Argon2" Version="1.3.0" />
@@ -30,7 +35,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.25.0" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="7.0.0" ExcludeAssets="All"/>
     <PackageReference Include="Myrmec" Version="1.2.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0-alpha.1" />

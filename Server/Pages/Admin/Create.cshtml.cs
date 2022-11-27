@@ -57,10 +57,14 @@ namespace Server.Pages.Admin
             {
                 await ThumbnailImage.CopyToAsync(stream1);
             }
-            using (FileStream stream2 = new FileStream(Path.Combine(path, "archive.zip"), FileMode.Create))
+            if(ArchiveImages != null)
             {
-                await ArchiveImages.CopyToAsync(stream2);
+                using (FileStream stream2 = new FileStream(Path.Combine(path, "archive.zip"), FileMode.Create))
+                {
+                    await ArchiveImages.CopyToAsync(stream2);
+                }
             }
+
 
             await taskDB;
 
