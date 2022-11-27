@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.StaticFiles;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
 using Microsoft.OpenApi.Models;
 using Server;
 using Server.Api;
@@ -15,6 +14,7 @@ using Server.Services.SmtpService;
 using Server.Services.TokenService;
 using System.Reflection;
 using System.Text;
+
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
@@ -32,7 +32,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
-Temp(app);
 //app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
 
@@ -164,5 +163,4 @@ void RegisterApi(WebApplication app)
     }
 
 }
-
 public partial class Program { }

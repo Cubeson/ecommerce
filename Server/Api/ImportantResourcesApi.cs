@@ -1,7 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Server.Services.TokenService;
-using Server.Utility;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 
 namespace Server.Api
@@ -12,7 +10,7 @@ namespace Server.Api
         {
             app.MapGet("/api/Resources/Important",GetImportantResource);
         }
-        [Authorize(Policy = "Auth")]
+        [Authorize(Policy = "Auth",AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         public IResult GetImportantResource(HttpContext httpContext)
         {
             var user = httpContext.User;

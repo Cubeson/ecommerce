@@ -2,6 +2,8 @@
 using Shared.DTO;
 using static Server.Utility.Constants;
 using Microsoft.AspNetCore.Mvc;
+using Server.Models;
+using Myrmec.Mime;
 
 namespace Server.Api;
 public sealed class ProductApi : IApi
@@ -22,6 +24,18 @@ public sealed class ProductApi : IApi
                 Description = p.Description,
                 Price = p.Price,
             }).ToArray();
+    }
+
+    public IResult GetProductThumbnail([FromServices] ShopContext context, IWebHostEnvironment environment, int id)
+    {
+        var product = context.Products.SingleOrDefault(p=> p.Id == id);
+        if(product == null) return Results.BadRequest();
+        if(product.Path == null) return Results.NotFound();
+        var path = Path.Combine(environment.ContentRootPath, "products", product.Path);
+        var fpath = Directory.EnumerateFiles(path, "thumbnail.*").SingleOrDefault();
+        if(fpath == null) return Results.NotFound();
+        return Results.File(fpath);
+
     }
 
  

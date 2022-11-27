@@ -83,6 +83,10 @@ namespace Server.Api
             PasswordSalt = salt
         };
         context.Users.Add(user);
+        context.Carts.Add(new Cart()
+        {
+            User= user,
+        });
         context.SaveChanges();
         smtpService.UserCreated(user);
         return Results.Ok(new CreateAccountResponseDTO() { Message = "Account created" });   
