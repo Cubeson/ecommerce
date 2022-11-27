@@ -29,23 +29,14 @@ namespace Server.Api
             var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
             var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
 
-            var cart = shopContext.Carts.Where(c => c.User.Id == user.Id).SingleOrDefault();
-            if (cart == null) return Results.BadRequest("User doesn't have a cart");
+            var cartItem = shopContext.CartItems.Where(c => c.User.Id == user.Id && c.ProductId == product.Id).SingleOrDefault();
 
-            // Check if user already has this item in their cart
-
-            var cartItem = shopContext.Carts.Where(c => c.User.Id == user.Id).Select(c => c.CartItems.Where(ci => ci.ProductId == cartItemDTO.ProductID))
-                .First().SingleOrDefault();
-
-            // If user doesn't have this item in their cart, add it
             if(cartItem == null)
             {
-                cartItem = new CartItem() { ProductId = product.Id, Product = product, Quantity = cartItemDTO.Quantity };
+                cartItem = new CartItem() { ProductId = product.Id, Product = product, Quantity = cartItemDTO.Quantity,User = user,UserId = userId };
                 shopContext.CartItems.Add(cartItem);
-                cart.CartItems.Add(cartItem);
                 shopContext.SaveChanges();
             }
-            //otherwise increment item's quantity
             else
             {
                 cartItem.Quantity += cartItemDTO.Quantity;
@@ -60,30 +51,25 @@ namespace Server.Api
         {
             var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
             var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
-            var cart = shopContext.Carts.SingleOrDefault(c => c.User.Id == userId);
-            if (cart == null) return Results.BadRequest("User doesn't have a cart");
+
+            if (newCartDTO.CartItems.GroupBy(c => c.ProductID).Count() != newCartDTO.CartItems.Length) return Results.BadRequest("Duplicate items in cart");
+
             var ids = newCartDTO.CartItems.Select(ci => ci.ProductID);
             var products = shopContext.Products.Where(p => ids.Any(i => p.Id == i)).ToArray();
-            var cartItemsHashSet = products.Join(newCartDTO.CartItems, p => p.Id, c => c.ProductID, (pro, ci) => new CartItem()
+
+            var currentCartItems = shopContext.CartItems.Where(c => c.UserId == userId).ToArray();
+            var newCartItems = products.Join(newCartDTO.CartItems, p => p.Id, c => c.ProductID, (pro, ci) => new CartItem()
             {
                 Product = pro,
                 ProductId = pro.Id,
-                Quantity = ci.Quantity,
-            }).ToHashSet();
+                User = user,
+                UserId = userId,
+                Quantity = ci.Quantity
+            }).ToArray();
 
-
-            //var cartItems = currentCartDTO.CartItems.Select(ci => new CartItem() {
-            //    ProductId = ci.ProductID,
-            //    //Product = new Product() {Id = ci.ProductID },
-            //    Quantity = ci.Quantity,
-            //}).ToHashSet();
-            //cart.CartItems.Clear();
-            var items = cart.CartItems.ToArray();
-            shopContext.CartItems.RemoveRange(items);
+            shopContext.CartItems.RemoveRange(currentCartItems);
+            shopContext.CartItems.AddRange(newCartItems);
             shopContext.SaveChanges();
-            cart.CartItems = cartItemsHashSet;
-            shopContext.SaveChanges();
-
             return Results.Ok();
         }
         [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -91,12 +77,13 @@ namespace Server.Api
         {
             var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
             var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
-            var cartItems = shopContext.Carts.Include(c => c.User).Include(c => c.CartItems)
-                .Where(c => c.User.Id == userId)
-                .Select(c => c.CartItems)
-                .SingleOrDefault();
-            return cartItems.Select(c => new CartItemDTO() {ProductID=c.ProductId,Quantity=c.Quantity }).ToArray();
-        
+            var cartItems = shopContext.CartItems.Include(c => c.User)
+                .Where(c => c.User.Id == userId);
+            return cartItems.Select(c => new CartItemDTO() {
+                ProductID=c.ProductId,
+                Quantity=c.Quantity,
+            }).ToArray();
         }
+
     }
 }
