@@ -10,7 +10,8 @@ public sealed class ProductApi : IApi
 {
     public void Register(WebApplication app)
     {
-        app.MapGet("api/Product/get", GetProducts);
+        app.MapGet("api/Product/GetProducts", GetProducts);
+        app.MapGet("api/Product/GetThumbnail", GetThumbnail);
 
     }
     public ProductDTO[] GetProducts([FromServices] ShopContext context, int offset, int count)
@@ -26,7 +27,7 @@ public sealed class ProductApi : IApi
             }).ToArray();
     }
 
-    public IResult GetProductThumbnail([FromServices] ShopContext context, IWebHostEnvironment environment, int id)
+    public IResult GetThumbnail([FromServices] ShopContext context, IWebHostEnvironment environment, int id)
     {
         var product = context.Products.SingleOrDefault(p=> p.Id == id);
         if(product == null) return Results.BadRequest();
@@ -37,6 +38,5 @@ public sealed class ProductApi : IApi
         return Results.File(fpath);
 
     }
-
  
 }

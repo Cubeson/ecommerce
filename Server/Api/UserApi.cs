@@ -26,12 +26,12 @@ namespace Server.Api
         public IResult ResetPassword([FromBody]ResetPasswordCredentialsDTO credentials, [FromServices] ShopContext context)
         {
             var passRst = context.PasswordResets.Include(pr => pr.User).SingleOrDefault(x => x.ResetID == credentials.ResetId);
-            if (passRst == null || passRst.ExpirationDate < DateTime.Now) return Results.BadRequest(new ResetPasswordResponseDTO() { Error = 1,Message= "Invalid or expired Reset Code" });
+            if (passRst == null || passRst.ExpirationDate < DateTime.Now) return Results.BadRequest(new GenericResponseDTO() { Error = 1,Message= "Invalid or expired Reset Code" });
             var user = passRst.User;
-            if (!user.SetPassword(credentials.Password)) return Results.BadRequest(new ResetPasswordResponseDTO() { Error = 2, Message = "Invalid password" });
+            if (!user.SetPassword(credentials.Password)) return Results.BadRequest(new GenericResponseDTO() { Error = 2, Message = "Invalid password" });
             context.ClearUserPasswordResets(user);
             context.SaveChanges();
-            return Results.Ok(new ResetPasswordResponseDTO() { Message = "Password changed" });
+            return Results.Ok(new GenericResponseDTO() { Message = "Password changed" });
         }
         public IResult RequestResetPasswordCode([FromBody] RequestResetPasswordDTO requestReset, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService)
         {
@@ -56,19 +56,19 @@ namespace Server.Api
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
             {
-                return Results.BadRequest(new CreateAccountResponseDTO() {Error = 1, Message = "Invalid name" });
+                return Results.BadRequest(new GenericResponseDTO() {Error = 1, Message = "Invalid name" });
             }
             if (!Shared.Validators.Validators.IsValidPassword(userDTO.Password)){
-                return Results.BadRequest(new CreateAccountResponseDTO() { Error = 2, Message = "Invalid password" });
+                return Results.BadRequest(new GenericResponseDTO() { Error = 2, Message = "Invalid password" });
             }
 
             if(!Shared.Validators.Validators.isValidEmail(userDTO.Email)) {
-                return Results.BadRequest(new CreateAccountResponseDTO() { Error = 3, Message = "Invalid email" });
+                return Results.BadRequest(new GenericResponseDTO() { Error = 3, Message = "Invalid email" });
             }
 
             if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
-                return Results.BadRequest(new CreateAccountResponseDTO() { Error = 4, Message = "Email already in use" });
+                return Results.BadRequest(new GenericResponseDTO() { Error = 4, Message = "Email already in use" });
             }
 
         var rng = new Random();
@@ -85,7 +85,7 @@ namespace Server.Api
         context.Users.Add(user);
         context.SaveChanges();
         smtpService.UserCreated(user);
-        return Results.Ok(new CreateAccountResponseDTO() { Message = "Account created" });   
+        return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
         }
         public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
