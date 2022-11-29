@@ -26,7 +26,7 @@ public class AdminHandler : AuthorizationHandler<AdminRequirement>
             context.Fail();
             return Task.CompletedTask;
         }
-        if (user.FindFirstValue("Role").Equals(Constants.RoleAdmin))
+        if (user.FindFirstValue("Role").Equals(Constants.ROLE_ADMIN))
         {
             context.Succeed(requirement);
             return Task.CompletedTask;

@@ -1,6 +1,7 @@
 using Assets.Scripts.ClientIO;
 using Assets.Scripts.Network;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
 using Shared.DTO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -39,7 +40,7 @@ public class PreLoginScript : MonoBehaviour
         if(resp.responseCode == 200) {
 
             var json = resp.downloadHandler.text;
-            token = JsonUtility.FromJson<TokenModelDTOUnity>(json);
+            token = JsonConvert.DeserializeObject<TokenModelDTO>(json);
             CurrentSession.GetInstance().SetToken(token);
             SessionIO.SaveSession(token);
             SceneManager.LoadScene("MainScene", LoadSceneMode.Single);

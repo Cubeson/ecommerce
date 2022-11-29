@@ -27,7 +27,7 @@ namespace Server.Services.TokenService
                  issuer: _jwtSettings.Issuer,
                  audience: _jwtSettings.Audience,
                  claims: claims,
-                 expires: DateTime.Now.AddMinutes(Constants.TokenExpirationTimeMinutes),
+                 expires: DateTime.Now.AddMinutes(Constants.TOKEN_EXPIRATION_TIME_MINUTES),
                  signingCredentials: signinCredentials
              );
             var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);

@@ -1,10 +1,10 @@
 ﻿namespace Shared.DTO
 {
-    public class GenericResponseDTOUnity
-    {
-        public int Error = 0;
-        public string Message = string.Empty;
-    }
+    //public class GenericResponseDTOUnity
+    //{
+    //    public int Error = 0;
+    //    public string Message = string.Empty;
+    //}
 
     public class GenericResponseDTO
     {

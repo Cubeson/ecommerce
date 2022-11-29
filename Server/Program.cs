@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Server;
 using Server.Api;
 using Server.AuthRequirements;
 using Server.Data;
+using Server.Services;
 using Server.Services.SmtpService;
 using Server.Services.TokenService;
 using System.Reflection;
@@ -39,6 +39,7 @@ var option = new StaticFileOptions();
 FileExtensionContentTypeProvider contentTypeProvider = (FileExtensionContentTypeProvider)option.ContentTypeProvider ?? new FileExtensionContentTypeProvider();
 contentTypeProvider.Mappings.Add(".data", "application/octet-stream");
 option.ContentTypeProvider = contentTypeProvider;
+app.UseResponseCaching();
 app.UseStaticFiles(option);
 app.MapRazorPages();
 app.Run();
@@ -57,7 +58,6 @@ JWTSettings RegisterJWTSettings(IServiceCollection services, IConfiguration conf
     services.AddSingleton<JWTSettings>(jwtSettings);
     return jwtSettings;
 }
-//lmao
 void AddAuthentication(IServiceCollection services, JWTSettings jwtSettings)
 {
     services.AddAuthentication(o =>
@@ -143,6 +143,7 @@ void RegisterServices(IServiceCollection services)
     services.AddTransient<ITokenService,TokenService>();
     services.AddTransient<ISmtpService, SmtpService>();
     services.AddRazorPages();
+    services.AddResponseCaching();
 }
 void RegisterDBContext(IServiceCollection services, IConfiguration configuration)
 {
@@ -152,14 +153,14 @@ void RegisterDBContext(IServiceCollection services, IConfiguration configuration
 void RegisterApi(WebApplication app)
 {
     var typeIApi = typeof(IApi);
-    var methodInfo = typeIApi.GetMethod("Register");
+    var method = typeIApi.GetMethod("Register");
     var parameters = new object[] { app };
     var types = Assembly.GetExecutingAssembly().GetExportedTypes()
         .Where(p => typeIApi.IsAssignableFrom(p) && p.IsClass);
     foreach ( var type in types)
     {
         var instance = Activator.CreateInstance(type);
-        methodInfo.Invoke(instance, parameters);
+        method.Invoke(instance, parameters);
     }
 
 }

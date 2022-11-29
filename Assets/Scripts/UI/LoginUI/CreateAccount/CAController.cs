@@ -7,6 +7,7 @@ using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Shared;
+using Newtonsoft.Json;
 
 public class CAController : MonoBehaviour
 {
@@ -50,7 +51,7 @@ public class CAController : MonoBehaviour
 
     private async UniTask CreateAccount()
     {
-        UserCreateDTOUnity user = new UserCreateDTOUnity()
+        UserCreateDTO user = new UserCreateDTO()
         {
             Email = InputEmail.text,
             FirstName = InputFirstName.text,
@@ -64,7 +65,7 @@ public class CAController : MonoBehaviour
         waitScreen.transform.SetParent(canvas.transform,false);
         WaitScreenScript waitScreenScript = waitScreen.GetComponent<WaitScreenScript>();
         UnityWebRequest resp = null;
-        CreateAccountResponseDTOUnity CAResponse = null;
+        GenericResponseDTO CAResponse = null;
         waitScreenScript.ButtonContinue.onClick.AddListener(() =>
         {
             Destroy(waitScreen);
@@ -76,7 +77,7 @@ public class CAController : MonoBehaviour
         {
             waitScreenScript.Icon.SetActive(false);
             waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-            CAResponse = JsonUtility.FromJson<CreateAccountResponseDTOUnity>(e.Text);
+            CAResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(e.Text);
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
             return;
         }

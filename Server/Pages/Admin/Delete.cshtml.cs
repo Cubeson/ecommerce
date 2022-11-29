@@ -15,10 +15,11 @@ namespace Server.Pages.Admin
     public class DeleteModel : PageModel
     {
         private readonly Server.Data.ShopContext _context;
-
+        
         public DeleteModel(Server.Data.ShopContext context)
         {
             _context = context;
+            
         }
 
         [BindProperty]

@@ -10,8 +10,6 @@ using System.Security.Claims;
 namespace Server.Api;
 public class CartApi : IApi
 {
-
-
     public void Register(WebApplication app)
     {
         app.MapPost("/api/Cart/AddItem", AddItem);

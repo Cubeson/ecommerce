@@ -6,6 +6,7 @@ using Shared.DTO;
 using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
+using Newtonsoft.Json;
 
 public class ResetPasswordController : MonoBehaviour
 {
@@ -55,7 +56,7 @@ public class ResetPasswordController : MonoBehaviour
                 return;
             }
 
-            var req = UserApi.ResetPassword(new ResetPasswordCredentialsDTOUnity() { ResetId = InputResetCode.text, Password = InputPassword1.text });
+            var req = UserApi.ResetPassword(new ResetPasswordCredentialsDTO() { ResetId = InputResetCode.text, Password = InputPassword1.text });
             var task = req.SendWebRequest().ToUniTask();
             var WaitScreen = Instantiate(WaitScreenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
             WaitScreen.SetActive(true);
@@ -66,7 +67,7 @@ public class ResetPasswordController : MonoBehaviour
                 Destroy(WaitScreen);
             });
             UnityWebRequest resp = null;
-            ResetPasswordResponseDTOUnity RPResponse;
+            GenericResponseDTO RPResponse;
             try
             {
                 resp = await task;
@@ -75,7 +76,7 @@ public class ResetPasswordController : MonoBehaviour
                 Debug.Log(e.ToString());
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                RPResponse = JsonUtility.FromJson<ResetPasswordResponseDTOUnity>(e.Text);
+                RPResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(e.Text);
                 waitScreenScript.TextMessage.text = "Error resetting password: " + RPResponse.Message;
                 return;
             }

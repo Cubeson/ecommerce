@@ -1,46 +1,46 @@
 ﻿using UnityEngine.Networking;
 using Shared.DTO;
 using static Network.NetworkUtility;
-using UnityEngine;
+using Newtonsoft.Json;
 
 namespace Network
 {
     public static class UserApi
     {
-        public static UnityWebRequest LoginUser(UserLoginDTOUnity userDTO)
+        public static UnityWebRequest LoginUser(UserLoginDTO userDTO)
         {
-            var json = JsonUtility.ToJson(userDTO);
+            var json = JsonConvert.SerializeObject(userDTO);
             var req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/User/Login",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
-        public static UnityWebRequest CreateUser(UserCreateDTOUnity userDTO)
+        public static UnityWebRequest CreateUser(UserCreateDTO userDTO)
         {
-            var json = JsonUtility.ToJson(userDTO);
+            var json = JsonConvert.SerializeObject(userDTO);
             var req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/User/Create",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
 
-        public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordDTOUnity requestReset)
+        public static UnityWebRequest RequestResetPasswordCode(RequestResetPasswordDTO requestReset)
         {
-            var json = JsonUtility.ToJson(requestReset);
+            var json = JsonConvert.SerializeObject(requestReset);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
@@ -52,31 +52,31 @@ namespace Network
             req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
-        public static UnityWebRequest ResetPassword(ResetPasswordCredentialsDTOUnity resetCredentials)
+        public static UnityWebRequest ResetPassword(ResetPasswordCredentialsDTO resetCredentials)
         {
-            var json = JsonUtility.ToJson(resetCredentials);
+            var json = JsonConvert.SerializeObject(resetCredentials);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/User/ResetPassword",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
-        public static UnityWebRequest RevokeAllSessions(UserLoginDTOUnity userCredentials)
+        public static UnityWebRequest RevokeAllSessions(UserLoginDTO userCredentials)
         {
-            var json = JsonUtility.ToJson(userCredentials);
+            var json = JsonConvert.SerializeObject(userCredentials);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/User/RevokeAllSessions",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
             req.certificateHandler = new AcceptAllCertificates();

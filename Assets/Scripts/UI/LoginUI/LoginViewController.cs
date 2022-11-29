@@ -8,6 +8,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.Networking;
 using Assets.Scripts.Network;
 using Assets.Scripts.ClientIO;
+using Newtonsoft.Json;
 
 public class LoginViewController : MonoBehaviour
 {
@@ -28,7 +29,7 @@ public class LoginViewController : MonoBehaviour
         ButtonLogin.onClick.AddListener(async () =>
         {
             if (!Validators.isValidEmail(InputEmail.text) || !Validators.IsValidPassword(InputPassword.text)) return;
-            var req = UserApi.LoginUser(new UserLoginDTOUnity() {Email = InputEmail.text, Password = InputPassword.text });
+            var req = UserApi.LoginUser(new UserLoginDTO() {Email = InputEmail.text, Password = InputPassword.text });
             var task = req.SendWebRequest().ToUniTask();
             var waitScreen = Instantiate(WaitScreenPrefab, new Vector3(), Quaternion.identity);
             waitScreen.SetActive(true);
@@ -53,7 +54,7 @@ public class LoginViewController : MonoBehaviour
             if(resp.responseCode == 200)
             {
                 var json = resp.downloadHandler.text;
-                TokenModelDTOUnity tm = JsonUtility.FromJson<TokenModelDTOUnity>(json);
+                TokenModelDTO tm = JsonConvert.DeserializeObject<TokenModelDTO>(json);
                 CurrentSession.GetInstance().SetToken(tm);
                 SessionIO.SaveSession(tm);
                 waitScreenScript.Icon.SetActive(false);

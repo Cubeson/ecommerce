@@ -7,7 +7,7 @@ namespace Assets.Scripts.Network
         private CurrentSession() { }
         private static CurrentSession _instance;
 
-        private TokenModelDTOUnity _tokenModel = null;
+        private TokenModelDTO _tokenModel = null;
         public static CurrentSession GetInstance()
         {
             if(_instance == null)
@@ -16,11 +16,11 @@ namespace Assets.Scripts.Network
             }
             return _instance;
         }
-        public TokenModelDTOUnity GetToken()
+        public TokenModelDTO GetToken()
         {
             return _tokenModel;
         }
-        public void SetToken(TokenModelDTOUnity tokenModel)
+        public void SetToken(TokenModelDTO tokenModel)
         {
             _tokenModel = tokenModel;
         }

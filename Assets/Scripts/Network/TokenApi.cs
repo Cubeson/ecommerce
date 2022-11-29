@@ -1,4 +1,5 @@
 ﻿using Network;
+using Newtonsoft.Json;
 using Shared.DTO;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -8,35 +9,32 @@ namespace Assets.Scripts.Network
 {
     public static class TokenApi
     {
-        public static UnityWebRequest RefreshToken (TokenModelDTOUnity tokenModel)
+        public static UnityWebRequest RefreshToken (TokenModelDTO tokenModel)
         {
-            var json = JsonUtility.ToJson(tokenModel);
+            var json = JsonConvert.SerializeObject(tokenModel);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/Token/Refresh",
                 downloadHandler = new DownloadHandlerBuffer(),
                 uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
-            req.certificateHandler = new AcceptAllCertificates();
             return req;
         }
-        public static UnityWebRequest RevokeToken(TokenModelDTOUnity tokenModel)
+        public static UnityWebRequest RevokeToken(TokenModelDTO tokenModel)
         {
-            //var json = JsonConvert.SerializeObject(tokenModel);
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
                 url = Url + "api/Token/Revoke",
                 downloadHandler = new DownloadHandlerBuffer(),
                 //uploadHandler = UHR(json),
-                timeout = Constants.Timeout,
+                timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Authorization", "Bearer " + tokenModel.AuthToken );
-            req.certificateHandler = new AcceptAllCertificates();
-            //req.SetRequestHeader("Content-Type", "application/json");
+            req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
     }

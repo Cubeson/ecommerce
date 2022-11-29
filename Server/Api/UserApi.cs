@@ -43,7 +43,7 @@ namespace Server.Api
                 UserId = user.Id,
                 User = user,
                 ResetID = Rng.GetRandomStringResetId(8),
-                ExpirationDate = DateTime.Now.AddMinutes(Constants.PasswordResetLifetimeMinutes)
+                ExpirationDate = DateTime.Now.AddMinutes(Constants.PASSWORD_RESET_LIFETIME_MINUTES)
             };
             context.PasswordResets.Add(passRst);
             context.SaveChanges();
@@ -71,21 +71,25 @@ namespace Server.Api
                 return Results.BadRequest(new GenericResponseDTO() { Error = 4, Message = "Email already in use" });
             }
 
-        var rng = new Random();
-        var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
-        var hash = StringHasher.HashString(userDTO.Password, salt);
-        var user = new User()
-        {
-            FirstName = userDTO.FirstName,
-            LastName = userDTO.LastName,
-            Email = userDTO.Email,
-            Password = hash,
-            PasswordSalt = salt
-        };
-        context.Users.Add(user);
-        context.SaveChanges();
-        smtpService.UserCreated(user);
-        return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
+            var rng = new Random();
+            var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
+            var hash = StringHasher.HashString(userDTO.Password, salt);
+            //var defaultRole = rolesService.GetByName("Default");
+            var defaultRole = context.Roles.SingleOrDefault(r => r.Name == Constants.ROLE_DEFAULT);
+            var user = new User()
+            {
+                FirstName = userDTO.FirstName,
+                LastName = userDTO.LastName,
+                Email = userDTO.Email,
+                Password = hash,
+                PasswordSalt = salt,
+                Role = defaultRole,
+                RoleId = defaultRole.Id
+            };
+            context.Users.Add(user);
+            context.SaveChanges();
+            smtpService.UserCreated(user);
+            return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
         }
         public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
         {
@@ -102,7 +106,7 @@ namespace Server.Api
                 User = user,
                 AuthToken = StringHasher.HashString(accessToken),
                 RefreshToken = StringHasher.HashString(refreshToken),
-                RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.RefreshTokenExpirationTimeHours),
+                RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.REFRESH_TOKEN_EXPIRATION_TIME_HOURS),
                 //RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays),
             });
 

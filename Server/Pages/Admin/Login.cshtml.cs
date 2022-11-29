@@ -34,12 +34,13 @@ namespace Server.Pages.Admin
             if (credential.Email == null || credential.Password == null) return false;
             var user = shopContext.Users.SingleOrDefault(u => u.Email == credential.Email);
             if (user == null) return false;
-            if (!user.Role.Equals(Constants.RoleAdmin)) return false;
+            var roleAdmin = shopContext.Roles.SingleOrDefault(r => r.Name == Constants.ROLE_ADMIN);
+            if (!user.Role.Name.Equals(roleAdmin.Name)) return false;
             if (!user.Password.Equals(StringHasher.HashString(credential.Password, user.PasswordSalt))) return false;
 
             var identity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme, "Id", "Role");
             identity.AddClaim(new Claim("Id", user.Id.ToString()));
-            identity.AddClaim(new Claim("Role", Constants.RoleAdmin));
+            identity.AddClaim(new Claim("Role", Constants.ROLE_ADMIN));
             var principal = new ClaimsPrincipal(identity);
             //this.SignIn(principal, new AuthenticationProperties
             //{

@@ -48,7 +48,7 @@ a Reset Code will be sent to this email";
                 TextSendEmail.color = Color.red;
                 return;
             }
-            var req = UserApi.RequestResetPasswordCode(new RequestResetPasswordDTOUnity() { Email= InputEmail.text });
+            var req = UserApi.RequestResetPasswordCode(new RequestResetPasswordDTO() { Email= InputEmail.text });
             req.SendWebRequest();
             BlackPanel.SetActive(true);
         });

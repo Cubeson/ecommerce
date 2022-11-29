@@ -1,5 +1,5 @@
 public static class Constants
 {
-    public static readonly int Timeout = 8;
+    public static readonly int DEFAULT_TIMEOUT = 16;
     public static readonly string SessionFile = "session.json";
 }

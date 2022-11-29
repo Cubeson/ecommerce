@@ -14,39 +14,43 @@
         <form method="post" enctype="multipart/form-data">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="Product.Title" class="control-label"></label>
-                <input asp-for="Product.Title" class="form-control" />
-                <span asp-validation-for="Product.Title" class="text-danger"></span>
+                <label asp-for="ProductModel.Title" class="control-label"></label>
+                <input asp-for="ProductModel.Title" class="form-control" />
+                <span asp-validation-for="ProductModel.Title" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.Description" class="control-label"></label>
-                <input asp-for="Product.Description" class="form-control" />
-                <span asp-validation-for="Product.Description" class="text-danger"></span>
+                <label asp-for="ProductModel.Description" class="control-label"></label>
+                <input asp-for="ProductModel.Description" class="form-control" />
+                <span asp-validation-for="ProductModel.Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" step="0.01" type="number" />
-                <span asp-validation-for="Product.Price" class="text-danger"></span>
+                <label asp-for="ProductModel.CategoryId"></label>
+                <select asp-for="ProductModel.CategoryId" asp-items="@Model.Categories"></select> 
             </div>
             <div class="form-group">
-                <label asp-for="Product.DateCreated" class="control-label"></label>
-                <input asp-for="Product.DateCreated" class="form-control" />
-                <span asp-validation-for="Product.DateCreated" class="text-danger"></span>
+                <label asp-for="ProductModel.Price" class="control-label"></label>
+                <input asp-for="ProductModel.Price" class="form-control" step="0.01" type="number" />
+                <span asp-validation-for="ProductModel.Price" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Product.DateModified" class="control-label"></label>
-                <input asp-for="Product.DateModified" class="form-control" />
-                <span asp-validation-for="Product.DateModified" class="text-danger"></span>
+                <label asp-for="ProductModel.DateCreated" class="control-label"></label>
+                <input asp-for="ProductModel.DateCreated" class="form-control" />
+                <span asp-validation-for="ProductModel.DateCreated" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ProductModel.DateModified" class="control-label"></label>
+                <input asp-for="ProductModel.DateModified" class="form-control" />
+                <span asp-validation-for="ProductModel.DateModified" class="text-danger"></span>
             </div>
             <div vlass="form-group">
-                <label asp-for="ThumbnailImage" class="contol-label"></label>
-                <input type="file" asp-for="ThumbnailImage" class="form-control" accept="image/png,image/jpeg"/>
-                <span asp-validation-for="ThumbnailImage" class="text-danger"></span>
+                <label asp-for="ProductModel.ThumbnailImage" class="contol-label"></label>
+                <input type="file" asp-for="ProductModel.ThumbnailImage" class="form-control" accept="image/png,image/jpeg"/>
+                <span asp-validation-for="ProductModel.ThumbnailImage" class="text-danger"></span>
             </div>
             <div vlass="form-group">
-                <label asp-for="ArchiveImages" class="contol-label"></label>
-                <input type="file" asp-for="ArchiveImages" class="form-control" accept=".zip" />
-                <span asp-validation-for="ArchiveImages" class="text-danger"></span>
+                <label asp-for="ProductModel.ArchiveImages" class="contol-label"></label>
+                <input type="file" asp-for="ProductModel.ArchiveImages" class="form-control" accept=".zip" />
+                <span asp-validation-for="ProductModel.ArchiveImages" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
