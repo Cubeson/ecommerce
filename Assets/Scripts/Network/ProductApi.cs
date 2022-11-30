@@ -25,7 +25,7 @@ namespace Network
         }
         public static UnityWebRequest GetPictures(int id)
         {
-            var req = UnityWebRequest.Get($"{Url}api/Product/GetThumbnail?id={id}");
+            var req = UnityWebRequest.Get($"{Url}api/Product/GetPictures?id={id}");
             //req.timeout = DEFAULT_TIMEOUT;
             return req;
         }

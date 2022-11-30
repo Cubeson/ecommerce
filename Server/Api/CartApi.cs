@@ -27,7 +27,7 @@ public class CartApi : IApi
     }
 
     [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public IResult SaveCart(HttpContext httpContext, [FromServices] ShopContext shopContext, CartDTO newCartDTO)
+    public IResult SaveCart(HttpContext httpContext, [FromServices] ShopContext shopContext, ICollection<CartItemDTO> newCartDTO)
     {
         var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
         var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
@@ -57,10 +57,10 @@ public class CartApi : IApi
             }).ToArray();
     }
 
-    public static IResult SaveUserCart(ShopContext shopContext, CartDTO newCartDTO, User user)
+    public static IResult SaveUserCart(ShopContext shopContext, ICollection<CartItemDTO> newCartDTO, User user)
     {
-        if (newCartDTO.CartItems.GroupBy(c => c.ProductID).Count() != newCartDTO.CartItems.Length) return Results.BadRequest("Duplicate items in cart");
-        var ids = newCartDTO.CartItems.Select(ci => ci.ProductID);
+        if (newCartDTO.GroupBy(c => c.ProductID).Count() != newCartDTO.Count) return Results.BadRequest("Duplicate items in cart");
+        var ids = newCartDTO.Select(ci => ci.ProductID);
         var products = shopContext.Products.Where(p => ids.Any(i => p.Id == i)).ToArray();
         var currentCartItems = shopContext.CartItems.Where(c => c.UserId == user.Id).ToArray();
         CartItem[] newCartItems = ConvertCartItemDTOtoCartItem(newCartDTO, user, products);
@@ -70,10 +70,23 @@ public class CartApi : IApi
         shopContext.SaveChanges();
         return Results.Ok();
     }
+    //public static IResult SaveUserCart(ShopContext shopContext, CartDTO newCartDTO, User user)
+    //{
+    //    if (newCartDTO.CartItems.GroupBy(c => c.ProductID).Count() != newCartDTO.CartItems.Length) return Results.BadRequest("Duplicate items in cart");
+    //    var ids = newCartDTO.CartItems.Select(ci => ci.ProductID);
+    //    var products = shopContext.Products.Where(p => ids.Any(i => p.Id == i)).ToArray();
+    //    var currentCartItems = shopContext.CartItems.Where(c => c.UserId == user.Id).ToArray();
+    //    CartItem[] newCartItems = ConvertCartItemDTOtoCartItem(newCartDTO, user, products);
+    //
+    //    shopContext.CartItems.RemoveRange(currentCartItems);
+    //    shopContext.CartItems.AddRange(newCartItems);
+    //    shopContext.SaveChanges();
+    //    return Results.Ok();
+    //}
 
-    public static CartItem[] ConvertCartItemDTOtoCartItem(CartDTO newCartDTO, User user, Product[] products)
+    public static CartItem[] ConvertCartItemDTOtoCartItem(ICollection<CartItemDTO> newCartDTO, User user, ICollection<Product> products)
     {
-        return products.Join(newCartDTO.CartItems, p => p.Id, c => c.ProductID, (pro, ci) => new CartItem()
+        return products.Join(newCartDTO, p => p.Id, c => c.ProductID, (pro, ci) => new CartItem()
         {
             Product = pro,
             ProductId = pro.Id,

@@ -10,16 +10,18 @@ public class CameraRaycastScript : MonoBehaviour
     }
     void Update()
     {
+        RaycastHit HitInfo;
+        Physics.Raycast(cam.transform.position, cam.transform.forward, out HitInfo, 100.0f);
+        if (HitInfo.collider == null) return;
+        Clickable clickable;  
+        HitInfo.transform.gameObject.TryGetComponent<Clickable>(out clickable);
         if (Input.GetMouseButtonDown(0))
         {
-            RaycastHit HitInfo;
-            if (Physics.Raycast(cam.transform.position, cam.transform.forward, out HitInfo, 100.0f))
-            {
-                Clickable clickable;
-                HitInfo.transform.gameObject.TryGetComponent<Clickable>(out clickable);
-                clickable?.Click();
-            }
+            
+            clickable?.Click();
         }
+        clickable?.MouseOver();
+
 
     }
 }

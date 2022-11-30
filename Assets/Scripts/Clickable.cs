@@ -5,4 +5,5 @@ using UnityEngine;
 public interface Clickable
 {
     public void Click();
+    public void MouseOver();
 }

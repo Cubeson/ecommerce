@@ -11,7 +11,7 @@ namespace Network
         public static UnityWebRequest AddItem(CartItemDTO cartItemDTO)
         {
             var json = JsonConvert.SerializeObject(cartItemDTO);
-            UnityWebRequest req = new UnityWebRequest()
+            var req = new UnityWebRequest()
             {
                 method = "POST",
                 url = $"{Url}api/Cart/AddItem",
@@ -23,10 +23,10 @@ namespace Network
             return req;
         }
 
-        public static UnityWebRequest SaveCart(CartDTO cartDTO)
+        public static UnityWebRequest SaveCart(CartItemDTO[] cartDTO)
         {
             var json = JsonConvert.SerializeObject(cartDTO);
-            UnityWebRequest req = new UnityWebRequest()
+            var req = new UnityWebRequest()
             {
                 method = "POST",
                 url = $"{Url}api/Cart/SaveCart",
@@ -35,6 +35,13 @@ namespace Network
                 timeout = DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Content-Type", "application/json");
+            return req;
+        }
+
+        public static UnityWebRequest GetCart(TokenModelDTO tokenModel)
+        {
+            var req = UnityWebRequest.Get($"{Url}api/Cart/GetCart");
+            req.SetRequestHeader("Authorization", "Bearer " + tokenModel.AuthToken);
             return req;
         }
     }

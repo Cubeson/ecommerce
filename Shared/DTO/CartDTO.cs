@@ -4,8 +4,8 @@ using System.Text;
 
 namespace Shared.DTO
 {
-    public class CartDTO
-    {
-        public CartItemDTO[] CartItems { get; set; } = { };
-    }
+    // public class CartDTO
+    // {
+    //     public CartItemDTO[] CartItems { get; set; } = { };
+    // }
 }

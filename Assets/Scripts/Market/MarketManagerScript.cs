@@ -4,7 +4,7 @@ using UnityEngine;
 using Shared;
 using Shared.DTO;
 
-public class MarketManager : MonoBehaviour
+public class MarketManagerScript : MonoBehaviour
 {
     [SerializeField]
     GameObject StallPrefab;
