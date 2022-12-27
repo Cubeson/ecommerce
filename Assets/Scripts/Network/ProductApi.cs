@@ -34,5 +34,10 @@ namespace Network
             var req = UnityWebRequest.Get($"{Url}api/Product/GetCategories");
             return req;
         }
+        public static UnityWebRequest GetModel(int id)
+        {
+            var req = UnityWebRequest.Get($"{Url}api/Product/GetModel?id={id}");
+            return req;
+        }
     }
 }

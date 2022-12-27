@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using static Network.NetworkUtility;
 
-namespace Assets.Scripts.Network
+namespace Network
 {
     public static class TokenApi
     {

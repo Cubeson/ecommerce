@@ -8,7 +8,7 @@ using Server.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 
-namespace Server.Pages.Admin
+namespace Server.Pages.Admin.Products
 {
 
     public class ProdutRazorModel
@@ -19,6 +19,7 @@ namespace Server.Pages.Admin
         public int CategoryId { get; set; } = 0;
         public IFormFile ThumbnailImage { get; set; } = default!;
         public IFormFile ArchiveImages { get; set; } = default!;
+        public IFormFile Model3D { get; set; } = default!;
         [Column(TypeName = "decimal(18, 2)")]
         public string Price { get; set; } = default!;
         public DateTime DateCreated { get; set; } = DateTime.Now;
@@ -86,6 +87,10 @@ namespace Server.Pages.Admin
             using (FileStream stream2 = new FileStream(Path.Combine(path, "archive.zip"), FileMode.Create))
             {
                 await ProductModel.ArchiveImages.CopyToAsync(stream2);
+            }
+            using (FileStream stream3 = new FileStream(Path.Combine(path, "model.glb"), FileMode.Create))
+            {
+                await ProductModel.Model3D.CopyToAsync(stream3);
             }
 
             await taskDB;

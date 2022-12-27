@@ -11,6 +11,7 @@ namespace Server.Models
         public string Description { get; set; } = string.Empty;
         [Column(TypeName = "decimal(6,2)")]
         public decimal Price { get; set; }
+        [Required]
         public virtual Category Category { get; set; }
         public int CategoryId { get; set; }
         public DateTime DateCreated { get; set; }

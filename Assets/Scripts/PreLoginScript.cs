@@ -6,7 +6,7 @@ using Shared.DTO;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.SceneManagement;
-
+using Network;
 public class PreLoginScript : MonoBehaviour
 {
     [SerializeField]

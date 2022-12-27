@@ -6,20 +6,22 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Server.Data;
 using Server.Models;
 
-namespace Server.Pages.Admin
+namespace Server.Pages.Admin.Products
 {
     [Authorize(Policy = "Admin")]
     public class DeleteModel : PageModel
     {
         private readonly Server.Data.ShopContext _context;
+        private readonly IWebHostEnvironment _environment;
         
-        public DeleteModel(Server.Data.ShopContext context)
+        public DeleteModel(Server.Data.ShopContext context, IWebHostEnvironment environment)
         {
             _context = context;
-            
+            _environment = environment;
         }
 
         [BindProperty]
@@ -55,6 +57,13 @@ namespace Server.Pages.Admin
 
             if (product != null)
             {
+                if (!product.Path.IsNullOrEmpty())
+                {
+                    var path = Path.Combine(_environment.ContentRootPath, "products", product.Path);
+                    Directory.Delete(path, true);
+                }
+                
+
                 Product = product;
                 _context.Products.Remove(Product);
                 await _context.SaveChangesAsync();

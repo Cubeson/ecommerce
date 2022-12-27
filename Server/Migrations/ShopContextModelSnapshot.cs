@@ -40,7 +40,7 @@ namespace Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("CartItems");
+                    b.ToTable("CartItems", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.Category", b =>
@@ -55,7 +55,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Categories");
+                    b.ToTable("Categories", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.PasswordReset", b =>
@@ -77,7 +77,7 @@ namespace Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PasswordResets");
+                    b.ToTable("PasswordResets", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.Product", b =>
@@ -113,7 +113,7 @@ namespace Server.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.ToTable("Products");
+                    b.ToTable("Products", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.Role", b =>
@@ -128,7 +128,7 @@ namespace Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Roles");
+                    b.ToTable("Roles", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.User", b =>
@@ -167,7 +167,7 @@ namespace Server.Migrations
 
                     b.HasIndex("RoleId");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.UserSession", b =>
@@ -198,7 +198,7 @@ namespace Server.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserSessions");
+                    b.ToTable("UserSessions", (string)null);
                 });
 
             modelBuilder.Entity("Server.Models.CartItem", b =>

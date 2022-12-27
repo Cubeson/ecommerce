@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Network;
 [RequireComponent(typeof(Button))]
 public class LogoutScript : MonoBehaviour
 {

@@ -27,6 +27,7 @@ AddAuthentication(services,jwtSettings);
 AddAuthorization(services);
 RegisterServices(services);
 RegisterDBContext(services, configuration);
+
 var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();

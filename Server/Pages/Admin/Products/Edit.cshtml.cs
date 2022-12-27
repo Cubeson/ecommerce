@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Server.Data;
 using Server.Models;
 
-namespace Server.Pages.Admin
+namespace Server.Pages.Admin.Products
 {
     [Authorize(Policy = "Admin")]
     public class EditModel : PageModel
