@@ -8,9 +8,13 @@
 </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Resources\**" />
     <Compile Remove="StaticFiles\**" />
+    <Content Remove="Resources\**" />
     <Content Remove="StaticFiles\**" />
+    <EmbeddedResource Remove="Resources\**" />
     <EmbeddedResource Remove="StaticFiles\**" />
+    <None Remove="Resources\**" />
     <None Remove="StaticFiles\**" />
   </ItemGroup>
 	<ItemGroup>
@@ -50,7 +54,6 @@
     <Folder Include="Migrations\" />
     <Folder Include="Pages\Admin\Categories\" />
     <Folder Include="wwwroot\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>

@@ -23,21 +23,21 @@ public partial class ShopContext : DbContext
             .HasIndex(u => u.Email)
             .IsUnique();
 
-        builder.Entity<User>().HasMany(u => u.PasswordResets)
-            .WithOne(pr => pr.User)
-            .HasForeignKey(pr => pr.UserId);
-
-        builder.Entity<User>().HasMany(u => u.UserSessions)
-            .WithOne(us => us.User)
-            .HasForeignKey(us => us.UserId);
-
-        builder.Entity<Role>().HasMany(r => r.Users)
-            .WithOne(u => u.Role)
-            .HasForeignKey(u => u.RoleId);
-
-        builder.Entity<Category>().HasMany(r => r.Products)
-            .WithOne(p => p.Category)
-            .HasForeignKey(p => p.CategoryId);
+       //builder.Entity<User>().HasMany(u => u.PasswordResets)
+       //    .WithOne(pr => pr.User)
+       //    .HasForeignKey(pr => pr.UserId);
+       //
+       //builder.Entity<User>().HasMany(u => u.UserSessions)
+       //    .WithOne(us => us.User)
+       //    .HasForeignKey(us => us.UserId);
+       //
+       //builder.Entity<Role>().HasMany(r => r.Users)
+       //    .WithOne(u => u.Role)
+       //    .HasForeignKey(u => u.RoleId);
+       //
+       //builder.Entity<Category>().HasMany(r => r.Products)
+       //    .WithOne(p => p.Category)
+       //    .HasForeignKey(p => p.CategoryId);
 
     }
     public void ClearUserPasswordResets(User user)

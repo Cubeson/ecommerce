@@ -15,12 +15,12 @@ namespace Server.Api
             //app.MapGet("api/Resources/Tmp1",Tmp1);
             //app.MapGet("api/Resources/Tmp2",Tmp2);
             //app.MapGet("api/Resources/Tmp3",Tmp3);
-            //app.MapGet("api/Resources/GLTF",GLTF);
+            app.MapGet("api/Resources/GLTF",GLTF);
         }
 		private IResult GLTF(HttpResponse response,IWebHostEnvironment environment)
 		{
 			var contentRoot = environment.ContentRootPath;
-			var path = Path.Combine(contentRoot, "products/TMP/GLTF");
+			var path = Path.Combine(contentRoot, "products/TMP/");
 			var fpath = Directory.EnumerateFiles(path, "untitled.glb").SingleOrDefault();
             response.Headers.CacheControl = new[] { "public", "max-age=12" };
             return Results.File(fpath);
