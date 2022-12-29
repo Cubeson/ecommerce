@@ -1488,7 +1488,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &508176538
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4656,7 +4656,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 1000
-  field of view: 26.991467
+  field of view: 30
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -4967,6 +4967,11 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2049718150}
   m_CullTransparentMesh: 1
+--- !u!1 &2089636414 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8006680587290428203, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
+  m_PrefabInstance: {fileID: 5616439344918860204}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2090634858
 GameObject:
   m_ObjectHideFlags: 0
@@ -5265,20 +5270,16 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1979714936}
     - target: {fileID: 1552254924578406086, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
-      propertyPath: rotationSpeed
-      value: 5
+      propertyPath: ModelView
+      value: 
+      objectReference: {fileID: 2089636414}
+    - target: {fileID: 1552254924578406086, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
+      propertyPath: zoomSpeed
+      value: 100
       objectReference: {fileID: 0}
-    - target: {fileID: 4533840421859750603, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
+    - target: {fileID: 7793785890009284662, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
       propertyPath: m_Enabled
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5149143935652431374, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7675327374048185765, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 34.1
       objectReference: {fileID: 0}
     - target: {fileID: 8006680587290428203, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
       propertyPath: m_Name
@@ -5368,7 +5369,8 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7793785890009284662, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
     m_AddedGameObjects: []
   m_SourcePrefab: {fileID: 100100000, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
 --- !u!224 &5616439344918860205 stripped

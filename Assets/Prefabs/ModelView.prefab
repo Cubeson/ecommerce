@@ -39,7 +39,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 0}
+  m_AnchoredPosition: {x: 0, y: 34.1}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!33 &2341210417983294371
@@ -129,7 +129,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 47efeafdac9f72a479e23d2374d7719d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  rotationSpeed: 100
+  CamUI: {fileID: 0}
+  ModelView: {fileID: 0}
+  rotationSpeed: 5
+  movementSpeed: 250
+  zoomSpeed: 5000
+  moveBoundsXMax: 100
+  moveBoundsXMin: -100
+  moveBoundsYMax: 125
+  moveBoundsYMin: -15
+  moveBoundsZMax: 100
+  moveBoundsZMin: -800
 --- !u!114 &3081807555058693610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -153,6 +163,7 @@ GameObject:
   - component: {fileID: 8193129413138381674}
   - component: {fileID: 5260083986793361323}
   - component: {fileID: 4533840421859750603}
+  - component: {fileID: 7793785890009284662}
   m_Layer: 5
   m_Name: ModelView
   m_TagString: Untagged
@@ -219,3 +230,15 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &7793785890009284662
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8006680587290428203}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0

@@ -16,6 +16,7 @@ public class ModelViewControllerScript : MonoBehaviour
     public void SetModel(byte[] modelData)
     {
         DestroyCurrentModel();
+        _rotateScript.ResetPosition();
         var GO = Importer.LoadFromBytes(modelData);
         GO.transform.parent = transform;
         SetLayerRecursively(GO, gameObject.layer);
