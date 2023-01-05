@@ -2,8 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Siccity.GLTFUtility;
+using Cysharp.Threading.Tasks;
+
 public class ModelViewControllerScript : MonoBehaviour
 {
+    [SerializeField] Camera CameraMain;
+    [SerializeField] Camera CameraUI;
     ModelFitToContainerScript _fitContainerScript;
     ModelRotateScript _rotateScript;
     public ModelFitToContainerScript FitContainerScript { get { return _fitContainerScript; } }
@@ -13,6 +17,17 @@ public class ModelViewControllerScript : MonoBehaviour
         _fitContainerScript = GetComponent<ModelFitToContainerScript>();
         _rotateScript = GetComponent<ModelRotateScript>();
     }
+    private void OnEnable()
+    {
+        CameraMain.enabled = false;
+        CameraUI.enabled = true;
+    }
+    private void OnDisable()
+    {
+        if (CameraMain == null || CameraUI == null) return;
+        CameraMain.enabled = true;
+        CameraUI.enabled = false;
+    }
     public void SetModel(byte[] modelData)
     {
         DestroyCurrentModel();
@@ -20,8 +35,20 @@ public class ModelViewControllerScript : MonoBehaviour
         var GO = Importer.LoadFromBytes(modelData);
         GO.transform.parent = transform;
         SetLayerRecursively(GO, gameObject.layer);
-        _fitContainerScript.FitToContainer();
-        GO.transform.localPosition = new Vector3(0f,-0.5f,0f);
+        UniTask.Create( async () =>
+        {
+            await UniTask.NextFrame();
+            _fitContainerScript.FitToContainer();
+            return UniTask.CompletedTask;
+        });
+        //_fitContainerScript.FitToContainer();
+        GO.transform.localPosition = new Vector3(0f,0f,0f);
+        UniTask.Create(async () =>
+        {
+            await UniTask.NextFrame();
+            transform.Rotate(0, 180f, 0, Space.Self);
+            return UniTask.CompletedTask;
+        });
     }
     public void DestroyCurrentModel()
     {

@@ -1,5 +1,5 @@
 global using Xunit;
-global using Server.Data;
+global using Server.ShopDBContext;
 global using Shared.DTO;
 global using Microsoft.EntityFrameworkCore;
 global using System.Net;

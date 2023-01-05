@@ -8,7 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Server.Api;
 using Server.AuthRequirements;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Services;
 using Server.Services.SmtpService;
 using Server.Services.TokenService;

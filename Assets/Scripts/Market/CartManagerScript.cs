@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Linq;
+using System;
 
 public class CartManagerScript : MonoBehaviour
 {
@@ -37,15 +38,37 @@ public class CartManagerScript : MonoBehaviour
         }
         _cart = JsonConvert.DeserializeObject<List<CartItemDTO>>(resp.downloadHandler.text);
     }
-    public List<CartItemDTO> Cart { get { return _cart; } }
-    public void AddToCart(ProductDTO product)
+    //public List<CartItemDTO> Cart { get { return _cart; } }
+    public IEnumerable<CartItemDTO> GetItems() { return _cart; }
+    public int AddToCart(ProductDTO product, int count = 1)
     {
-        var productInCart = Cart.SingleOrDefault(p => p.ProductID == product.Id);
+        if (count < 1) throw new ArgumentOutOfRangeException("Count is 0 or negative");
+        var productInCart = _cart.SingleOrDefault(p => p.ProductID == product.Id);
         if (productInCart != null) {
-            productInCart.Quantity++;
-            return;
+            productInCart.Quantity += count;
+            return productInCart.Quantity;
         }
-        _cart.Add(new CartItemDTO { ProductID=product.Id,Quantity=1});
+        _cart.Add(new CartItemDTO{ProductID=product.Id,Quantity = count });
+        return count;
     }
-
+    public bool RemoveFromCart(ProductDTO product)
+    {
+        var productInCart = _cart.SingleOrDefault(p => p.ProductID == product.Id);
+        if (productInCart == null) return false;
+        _cart.Remove(productInCart);
+        return true;
+    }
+    public int SubstractFromCart(ProductDTO product, int count = 1)
+    {
+        if (count <= 0) throw new ArgumentOutOfRangeException("Count is 0 or negative");
+        var productInCart = _cart.SingleOrDefault(p => p.ProductID == product.Id);
+        if (productInCart == null) return -1;
+        productInCart.Quantity -= count;
+        if (productInCart.Quantity <= 0)
+        {
+            RemoveFromCart(product);
+            return 0;
+        }
+        return productInCart.Quantity;
+    }
 }

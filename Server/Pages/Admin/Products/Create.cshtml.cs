@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Models;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
@@ -30,9 +30,9 @@ namespace Server.Pages.Admin.Products
     [Authorize(Policy = "Admin")]
     public class CreateModel : PageModel
     {
-        private readonly Server.Data.ShopContext _shopContext;
+        private readonly Server.ShopDBContext.ShopContext _shopContext;
         private readonly IWebHostEnvironment _environment;
-        public CreateModel(Server.Data.ShopContext shopContext, IWebHostEnvironment environment)
+        public CreateModel(Server.ShopDBContext.ShopContext shopContext, IWebHostEnvironment environment)
         {
             _shopContext = shopContext;
             _environment = environment;

@@ -1,12 +1,9 @@
-﻿using Server.Data;
+﻿using Server.ShopDBContext;
 using Shared.DTO;
-using Shared.Validators;
 using Server.Models;
 using Server.Utility;
-using System.Net.Mail;
 using Microsoft.AspNetCore.Mvc;
 using Server.Services.TokenService;
-using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Server.Services.SmtpService;
@@ -22,6 +19,7 @@ namespace Server.Api
             app.MapPost("api/User/RequestResetPasswordCode",RequestResetPasswordCode);
             app.MapPost("api/User/ResetPassword", ResetPassword);
             app.MapPost("api/User/RevokeAllSessions", RevokeAllSessions);
+            app.MapGet("api/User/IsEmailInUse", IsEmailInUse);
         }
         public IResult ResetPassword([FromBody]ResetPasswordCredentialsDTO credentials, [FromServices] ShopContext context)
         {
@@ -51,7 +49,12 @@ namespace Server.Api
 
             return Results.Empty;
         }
-        public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService)
+
+        public bool IsEmailInUse([FromServices] ShopContext shopContext, string email)
+        {
+            return shopContext.Users.Any(u => u.Email == email);
+        }
+        public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext shopContext, [FromServices] ISmtpService smtpService)
         {
 
             if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
@@ -66,7 +69,7 @@ namespace Server.Api
                 return Results.BadRequest(new GenericResponseDTO() { Error = 3, Message = "Invalid email" });
             }
 
-            if(context.Users.Any(u => u.Email.Equals(userDTO.Email)))
+            if(shopContext.Users.Any(u => u.Email.Equals(userDTO.Email)))
             {
                 return Results.BadRequest(new GenericResponseDTO() { Error = 4, Message = "Email already in use" });
             }
@@ -75,7 +78,7 @@ namespace Server.Api
             var salt = rng.Next(int.MinValue, int.MaxValue).ToString();
             var hash = StringHasher.HashString(userDTO.Password, salt);
             //var defaultRole = rolesService.GetByName("Default");
-            var defaultRole = context.Roles.SingleOrDefault(r => r.Name == Constants.ROLE_DEFAULT);
+            var defaultRole = shopContext.Roles.SingleOrDefault(r => r.Name == Constants.ROLE_DEFAULT);
             var user = new User()
             {
                 FirstName = userDTO.FirstName,
@@ -86,8 +89,8 @@ namespace Server.Api
                 Role = defaultRole,
                 RoleId = defaultRole.Id
             };
-            context.Users.Add(user);
-            context.SaveChanges();
+            shopContext.Users.Add(user);
+            shopContext.SaveChanges();
             smtpService.UserCreated(user);
             return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
         }
@@ -107,7 +110,6 @@ namespace Server.Api
                 AuthToken = StringHasher.HashString(accessToken),
                 RefreshToken = StringHasher.HashString(refreshToken),
                 RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.REFRESH_TOKEN_EXPIRATION_TIME_HOURS),
-                //RefreshTokenExpiryTime = DateTime.Now.AddDays(Constants.RefreshTokenExpirationTimeDays),
             });
 
             context.SaveChanges();

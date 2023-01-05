@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Utility;
 using Shared.DTO;
 using System.ComponentModel.DataAnnotations;

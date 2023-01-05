@@ -9,7 +9,7 @@ namespace Server.Models
         public string? Path { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        [Column(TypeName = "decimal(6,2)")]
+        [Column(TypeName = "decimal(8,2)")]
         public decimal Price { get; set; }
         [Required]
         public virtual Category Category { get; set; }

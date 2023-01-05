@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Models;
 
 namespace Server.Pages.Admin.Products
@@ -15,9 +15,9 @@ namespace Server.Pages.Admin.Products
     [Authorize(Policy = "Admin")]
     public class EditModel : PageModel
     {
-        private readonly Server.Data.ShopContext _context;
+        private readonly Server.ShopDBContext.ShopContext _context;
 
-        public EditModel(Server.Data.ShopContext context)
+        public EditModel(Server.ShopDBContext.ShopContext context)
         {
             _context = context;
         }

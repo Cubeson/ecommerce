@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Models;
 
 namespace Server.Pages.Admin.Products
@@ -15,10 +15,10 @@ namespace Server.Pages.Admin.Products
     [Authorize(Policy = "Admin")]
     public class DeleteModel : PageModel
     {
-        private readonly Server.Data.ShopContext _context;
+        private readonly Server.ShopDBContext.ShopContext _context;
         private readonly IWebHostEnvironment _environment;
         
-        public DeleteModel(Server.Data.ShopContext context, IWebHostEnvironment environment)
+        public DeleteModel(Server.ShopDBContext.ShopContext context, IWebHostEnvironment environment)
         {
             _context = context;
             _environment = environment;

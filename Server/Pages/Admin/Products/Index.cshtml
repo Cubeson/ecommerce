@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Products";
+    Model.Logger.LogInformation(Model.Product.Count().ToString());
 }
 
 <h1>Index</h1>
@@ -15,6 +16,9 @@
         <tr>
             <th>
                 @Html.DisplayNameFor(model => model.Product[0].Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Product[0].Category)
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Product[0].Description)
@@ -38,6 +42,9 @@
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
+                @Html.DisplayFor(modelItem => item.Category.Name)
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
@@ -55,6 +62,7 @@
                 <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
             </td>
         </tr>
+        Model.Logger.LogInformation((Model.i++).ToString());
 }
     </tbody>
 </table>

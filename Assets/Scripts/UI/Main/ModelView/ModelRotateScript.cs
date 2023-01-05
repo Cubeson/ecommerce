@@ -16,8 +16,8 @@ public class ModelRotateScript : MonoBehaviour
     [SerializeField]float moveBoundsXMin = -100f;
     [SerializeField]float moveBoundsYMax = 125f;
     [SerializeField]float moveBoundsYMin = -15f;
-    [SerializeField]float moveBoundsZMax = 100f;
-    [SerializeField]float moveBoundsZMin = -100f;
+    //[SerializeField]float moveBoundsZMax = 100f;
+    //[SerializeField]float moveBoundsZMin = -100f;
     Renderer _renderer;
     Vector3 _origPosition;
     Quaternion _origRotation;

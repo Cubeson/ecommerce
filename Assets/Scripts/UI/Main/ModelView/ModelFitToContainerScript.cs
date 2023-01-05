@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 public class ModelFitToContainerScript : MonoBehaviour
 {
@@ -16,12 +18,17 @@ public class ModelFitToContainerScript : MonoBehaviour
         List<MeshRenderer> meshes = new();
         FindAndStoreComponentsFromChildren(TransformToScale, meshes);
         Vector3 furthest = GetFurthestBounds(meshes);
+
         float resizeX = referenceSize.x / furthest.x;
         float resizeY = referenceSize.y / furthest.y;
         float resizeZ = referenceSize.z / furthest.z;
-        TransformToScale.localScale = new Vector3(  TransformToScale.localScale.x * resizeX,
-                                                    TransformToScale.localScale.y * resizeY,
-                                                    TransformToScale.localScale.z * resizeZ);
+
+        float[] arr = { resizeX, resizeY, resizeZ };
+        var min = arr.Min();
+
+        TransformToScale.localScale = new Vector3(  TransformToScale.localScale.x * min,
+                                                    TransformToScale.localScale.y * min,
+                                                    TransformToScale.localScale.z * min);
     }
     private void FindAndStoreComponentsFromChildren<T>(Transform parent, ICollection<T> container)
     {

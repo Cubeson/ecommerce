@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Models;
 using Shared.DTO;
 using System.Security.Claims;

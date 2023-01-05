@@ -1,8 +1,9 @@
-﻿using Server.Data;
+﻿using Server.ShopDBContext;
 using Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OutputCaching;
-
+using Microsoft.EntityFrameworkCore;
+using Shared.SortOrderDB;
+using System.Linq.Dynamic.Core;
 namespace Server.Api;
 public sealed class ProductApi : IApi
 {
@@ -27,11 +28,24 @@ public sealed class ProductApi : IApi
             Title = p.Title,
         }).SingleOrDefault();
     }
-    public ProductDTO[] GetProducts([FromServices] ShopContext shopContext, int offset, int count, string category)
+    public ProductDTO[] GetProducts([FromServices] ShopContext shopContext,
+        int offset, int count,
+        string category, string titleContains = "",
+        decimal minPrice = 0, decimal maxPrice = 0,
+        SortOrderDB sortOrder = SortOrderDB.DateModified_Desc)
     {
+        if(maxPrice == 0)
+        {
+            var p = shopContext.Products.OrderByDescending(p => p.Price).FirstOrDefault();
+            if (p != null)
+                maxPrice = p.Price;
+        }
+        var data = new SortOrderDBData(sortOrder);
         return shopContext.Products.
             Where(p => p.Category.Name == category)
-            .OrderBy(p => p.DateModified)
+            .Where(p => p.Title.ToUpper().Contains(titleContains.ToUpper()))
+            .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+            .OrderBy($"{data.Row} {data.Direction}")
             .Skip(offset).Take(count)
             .Select(p => new ProductDTO()
             {
@@ -47,9 +61,14 @@ public sealed class ProductApi : IApi
         return shopContext.Categories.Where(c => c.Name.Equals(category)).Count();
 
     }
-    public CategoryDTO[] GetCategories([FromServices] ShopContext context)
+    public CategoryDTO[] GetCategories([FromServices] ShopContext shopContext, string pattern = "")
     {
-        return context.Categories.Select(c => new CategoryDTO { ID=c.Id, Name=c.Name }).ToArray();
+        return shopContext.Categories
+            .Where(c=>c.Name.ToUpper().Contains(pattern.ToUpper()))
+            .Include(c=>c.Products)
+            .Select(c => new CategoryDTO { ID=c.Id, Name=c.Name,Count=c.Products.Count() })
+            .OrderByDescending(c=>c.Count)
+            .ToArray();
     }
     public IResult GetThumbnail([FromServices] ShopContext shopContext, IWebHostEnvironment environment, int id)
     {

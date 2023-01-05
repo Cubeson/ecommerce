@@ -7,6 +7,7 @@ public class CartMenuScript : MonoBehaviour
 {
     [SerializeField] Button ButtonExit;
     [SerializeField] GameObject CartItemPrefab;
+    [SerializeField] ScrollRect ScrollRect;
     void Start()
     {
         
@@ -15,19 +16,24 @@ public class CartMenuScript : MonoBehaviour
     {
         Open();
     }
+    private void Clear()
+    {
+        foreach(Transform item in ScrollRect.content)
+        {
+            Destroy(item.gameObject);
+        }
+    }
     public void Open()
     {
-        int x = -350;
-        int y = 250;
-        //MenuScript.Instance.OpenMenu();
-        var cart = CartManagerScript.Instance.Cart;
+        Clear();
+        var cart = CartManagerScript.Instance.GetItems();
         foreach (var item in cart) 
         {
-            var go = Instantiate(CartItemPrefab,new Vector3(x,y,0),Quaternion.identity);
-            y -= 250;
-            go.transform.SetParent(transform,false);
+            var go = Instantiate(CartItemPrefab);
+            go.transform.SetParent(ScrollRect.content,false);
             go.SetActive(false);
-            go.GetComponent<CartItemScript>().GetProductFromServer(item);
+            go.GetComponent<CartItemScript>().Setup(item);
+            go.SetActive(true);
         }
     }
 

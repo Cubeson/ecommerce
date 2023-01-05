@@ -30,17 +30,8 @@ public class ProductSlotScript : MonoBehaviour, Clickable
     //private UniTask coolTask;
     public void Click()
     {
-        var instance = ProductDetailsScript.Instance;
-        instance.OpenProductDetails(productDTO.Id);
+        ProductDetailsScript.Instance.OpenMenu(productDTO);
 
-        //if (!(coolTask.Status == UniTaskStatus.Succeeded)) return;
-        //coolTask = UniTask.Create(async () =>
-        //{
-        //    MeshRendererMainImage.material.color = Color.red;
-        //    await UniTask.Delay(2500);
-        //    MeshRendererMainImage.material.color = Color.white;
-        //    return UniTask.CompletedTask;
-        //});
     }
     private UniTask MouseOverTask;
     public void MouseOver()

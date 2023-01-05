@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Server.Data;
+using Server.ShopDBContext;
 using Server.Utility;
 using System.Security.Claims;
 

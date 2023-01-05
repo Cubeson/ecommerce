@@ -1,14 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Server.Data;
+using Server.ShopDBContext;
 using Shared.DTO;
 using Server.Services.TokenService;
 using Server.Utility;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
-using Azure.Core;
 
 namespace Server.Api
 {
