@@ -60,11 +60,25 @@ public class ProductSlotScript : MonoBehaviour, Clickable
         TextTitle.text = this.productDTO.Title;
         TextPrice.text = this.productDTO.Price.ToString();
     }
-    public async void DownloadThumbnailAndSet()
+    public async UniTask DownloadThumbnailAndSet()
     {
-        var req = Network.ProductApi.GetThumbnail(productDTO.Id);
-        var resp = await req.SendWebRequest().ToUniTask();
-        var texture = ((DownloadHandlerTexture)resp.downloadHandler).texture;
-        SetMainImage(texture);
+        UnityWebRequest req = Network.ProductApi.GetThumbnail(productDTO.Id);
+        UnityWebRequest resp = null;
+        try
+        {
+            resp = await req.SendWebRequest().ToUniTask();
+            var texture = ((DownloadHandlerTexture)resp.downloadHandler).texture;
+            SetMainImage(texture);
+        }
+        catch (UnityWebRequestException)
+        {
+            throw;
+        }
+        finally
+        {
+            req?.Dispose();
+            resp?.Dispose();
+        }
+
     }
 }

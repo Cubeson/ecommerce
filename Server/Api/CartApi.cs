@@ -17,7 +17,18 @@ public class CartApi : IApi
         app.MapPost("/api/Cart/SaveCart", SaveCart);
         app.MapGet("/api/Cart/GetCart", GetCart);
         app.MapPost("/api/Cart/GetCartByUserId", GetCartByUserId);
+        app.MapGet("/api/Cart/IsProductInCart/{productId}", IsProductInCart);
+        
     }
+    [Authorize]
+    public IResult IsProductInCart(HttpContext httpContext, [FromServices] ShopContext shopContext, int productId)
+    {
+        var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
+        var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
+        bool isInCart = shopContext.CartItems.Any(c => c.UserId == user.Id && c.ProductId == productId);
+        return Results.Ok(new IsInCartDTO { IsInCart = isInCart});
+    }
+
     [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IResult AddItem(HttpContext httpContext, [FromServices] ShopContext shopContext, CartItemDTO cartItemDTO)
     {
@@ -115,7 +126,7 @@ public class CartApi : IApi
             cartItem.Quantity += cartItemDTO.Quantity;
             shopContext.SaveChanges();
         }
-        return Results.Ok();
+        return Results.Ok(new NewQuantityDTO{Quantity = cartItem.Quantity });
     }
     public static IResult RemoveItemFromCart(ShopContext shopContext, CartItemDTO cartItemDTO, User user)
     {
@@ -130,7 +141,7 @@ public class CartApi : IApi
             shopContext.CartItems.Remove(cartItem);
         }
         shopContext.SaveChanges();
-        return Results.Ok();
+        return Results.Ok(new NewQuantityDTO { Quantity = Math.Max(0,cartItem.Quantity) });
 
     }
 

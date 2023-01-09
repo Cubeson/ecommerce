@@ -17,7 +17,7 @@ namespace Network
                 timeout = Constants.DEFAULT_TIMEOUT,
             };
             req.SetRequestHeader("Authorization", "Bearer " + tokenModel.AuthToken);
-            //req.SetRequestHeader("Content-Type", "application/json");
+            req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
         public static UnityWebRequest CancelOrder(TokenModelDTO tokenModel)

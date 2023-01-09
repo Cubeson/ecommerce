@@ -8,6 +8,8 @@ using Newtonsoft.Json;
 using Server.Models;
 using Newtonsoft.Json.Linq;
 using Microsoft.IdentityModel.Tokens;
+using Shared.DTO;
+using System.Collections.Immutable;
 
 namespace Server.Api;
 
@@ -48,6 +50,7 @@ public class OrderApi : IApi
             ProductId = c.ProductId,
             ProductName = c.Product.Title,
             ItemPrice = c.Product.Price,
+            Quantity = c.Quantity,
         }).ToList();
 
         order.OrderItems = orderItems;
@@ -55,7 +58,7 @@ public class OrderApi : IApi
         shopContext.Orders.Add(order);
         shopContext.SaveChanges();
         shopContext.Database.CommitTransaction();
-        return Results.Ok(order.Id);
+        return Results.Ok(new GenericResponseDTO {Error=0,Message=$"{order.Id}" });
     }
     public IResult GetOrder([FromServices] ShopContext shopContext, int orderId)
     {
@@ -123,6 +126,15 @@ public class OrderApi : IApi
         {
             return Results.BadRequest("Order doesn't exist or was cancelled");
         }
+        var items = shopContext.OrderItems.Where(o => o.OrderId == order.Id).Include(o => o.Product).ToList();
+        bool isOk = items.TrueForAll(item =>
+        {
+            return (item.Product.InStock - item.Quantity >= 0);
+        });
+        if (!isOk)
+        {
+            return Results.BadRequest("Not enough products in stock");
+        }
 
         var resp = await payPalService.CapturePayment(payPalOrderId);
         string text = await resp.Content.ReadAsStringAsync();
@@ -132,6 +144,15 @@ public class OrderApi : IApi
             return Results.BadRequest(obj);
         }
         order.IsCompleted = true;
+        
+        items.ForEach(item =>
+        {
+            int newVal = item.Product.InStock - item.Quantity;
+            Console.WriteLine("-------------------------------------");
+            Console.WriteLine($"{item.Product.InStock} - {item.Quantity} = {newVal}");
+            Console.WriteLine("-------------------------------------");
+            item.Product.InStock = newVal;
+        });
         shopContext.SaveChanges();
         return Results.Ok(obj);
     }

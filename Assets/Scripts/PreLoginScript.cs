@@ -25,11 +25,12 @@ public class PreLoginScript : MonoBehaviour
         }
         var token = SessionIO.LoadSession();
         var req = TokenApi.RefreshToken(token);
-        var task = req.SendWebRequest().ToUniTask();
         UnityWebRequest resp = null;
         try
         {
-            resp = await task;
+            resp = await req.SendWebRequest().ToUniTask();
+            var json = resp.downloadHandler.text;
+            token = JsonConvert.DeserializeObject<TokenModelDTO>(json);
         }
         catch (UnityWebRequestException)
         {
@@ -37,16 +38,16 @@ public class PreLoginScript : MonoBehaviour
             SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
             return;
         }
-        if(resp.responseCode == 200) {
-
-            var json = resp.downloadHandler.text;
-            token = JsonConvert.DeserializeObject<TokenModelDTO>(json);
-            CurrentSession.Instance.SetToken(token);
-            SessionIO.SaveSession(token);
-            SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
-
-            return;
+        finally
+        {
+            resp?.Dispose();
+            req?.Dispose();
         }
-        SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
+
+        CurrentSession.Instance.SetToken(token);
+        SessionIO.SaveSession(token);
+        SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
+
+
     }
 }

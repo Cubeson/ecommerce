@@ -51,7 +51,7 @@ public class CAController : MonoBehaviour
 
     private async UniTask CreateAccount()
     {
-        UserCreateDTO user = new UserCreateDTO()
+        UserCreateDTO user = new()
         {
             Email = InputEmail.text,
             FirstName = InputFirstName.text,
@@ -81,18 +81,20 @@ public class CAController : MonoBehaviour
             waitScreenScript.TextMessage.text = "Error creating an account: " + CAResponse.Message;
             return;
         }
-
-        if (resp.responseCode == 200)
+        finally
         {
-            waitScreenScript.Icon.SetActive(false);
-            waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-            waitScreenScript.TextMessage.text = "Created an accont";
-            waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
-            waitScreenScript.ButtonContinue.onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene("LoginScene",LoadSceneMode.Single);
-            });
-        }      
+            req?.Dispose();
+            resp?.Dispose();
+        }
+
+        waitScreenScript.Icon.SetActive(false);
+        waitScreenScript.ButtonContinue.gameObject.SetActive(true);
+        waitScreenScript.TextMessage.text = "Created an accont";
+        waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
+        waitScreenScript.ButtonContinue.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene("LoginScene",LoadSceneMode.Single);
+        });     
     }
 
     void Start()

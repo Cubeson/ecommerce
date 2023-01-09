@@ -12,7 +12,7 @@ namespace Assets.Scripts.Network
     {
         private CurrentSession() { }
         private static CurrentSession _instance;
-        private DateTime expires;
+        private DateTime expires = DateTime.MinValue;
 
         private TokenModelDTO _tokenModel = null;
         public static CurrentSession Instance
@@ -30,6 +30,11 @@ namespace Assets.Scripts.Network
         {
             if(DateTime.Now > expires)
             {
+                if(_tokenModel == null)
+                {
+                    SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
+                    throw new Exception("Authentication token doesn't exist");
+                }
                 var req = TokenApi.RefreshToken(_tokenModel);
                 UnityWebRequest resp = null;
                 try
@@ -40,7 +45,12 @@ namespace Assets.Scripts.Network
                     SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
                     _tokenModel= null;
                     expires = DateTime.MinValue;
-                    return null;
+                    throw new Exception("This session cannot be refreshed");
+                }
+                finally
+                {
+                    resp?.Dispose();
+                    req?.Dispose();
                 }
                 var token = JsonConvert.DeserializeObject<TokenModelDTO>(resp.downloadHandler.text);
                 SetToken(token);
@@ -52,6 +62,5 @@ namespace Assets.Scripts.Network
             _tokenModel = tokenModel;
             expires = DateTime.Now.AddSeconds(_tokenModel.ExpiresInSeconds);
         }
-
     }
 }

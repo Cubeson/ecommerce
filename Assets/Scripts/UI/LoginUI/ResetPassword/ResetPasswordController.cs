@@ -80,17 +80,19 @@ public class ResetPasswordController : MonoBehaviour
                 waitScreenScript.TextMessage.text = "Error resetting password: " + RPResponse.Message;
                 return;
             }
-            if(resp.responseCode== 200)
+            finally
             {
-                waitScreenScript.Icon.SetActive(false);
-                waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                waitScreenScript.TextMessage.text = "Password changed";
-                waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
-                waitScreenScript.ButtonContinue.onClick.AddListener(() =>
-                {
-                    SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
-                });
+                req?.Dispose();
+                resp?.Dispose();
             }
+            waitScreenScript.Icon.SetActive(false);
+            waitScreenScript.ButtonContinue.gameObject.SetActive(true);
+            waitScreenScript.TextMessage.text = "Password changed";
+            waitScreenScript.ButtonContinue.onClick.RemoveAllListeners();
+            waitScreenScript.ButtonContinue.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
+            });
         });
     }
 }

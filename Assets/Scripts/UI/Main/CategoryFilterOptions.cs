@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using System.Linq;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.Networking;
 
 public class CategoryFilterOptions : MonoBehaviour
 {
@@ -32,9 +33,23 @@ public class CategoryFilterOptions : MonoBehaviour
 
     async UniTask<CategoryDTO[]> GetCategories()
     {
-        var req = Network.ProductApi.GetCategories();
-        var resp = await req.SendWebRequest().ToUniTask();
-        var categories = JsonConvert.DeserializeObject<CategoryDTO[]>(resp.downloadHandler.text).Where(c => c.Count > 0);
+        UnityWebRequest req = Network.ProductApi.GetCategories();
+        UnityWebRequest resp = null;
+        IEnumerable<CategoryDTO> categories = null;
+        try
+        {
+            resp = await req.SendWebRequest().ToUniTask();
+            categories = JsonConvert.DeserializeObject<CategoryDTO[]>(resp.downloadHandler.text).Where(c => c.Count > 0);
+        }
+        catch(UnityWebRequestException)
+        {
+            throw;
+        }
+        finally
+        {
+            req?.Dispose();
+            resp?.Dispose();
+        }  
         return categories.ToArray();
     }
     CategoryTemplateScript[] allCategories;

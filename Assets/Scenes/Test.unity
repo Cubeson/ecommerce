@@ -145,6 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a831e5103acb84e91ca9d3fefb3cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ModelView: {fileID: 0}
 --- !u!224 &50227686 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 8193129413138381674, guid: 2b160a3a0cfb6884cb41a00ffe5a9235, type: 3}
@@ -388,7 +389,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!81 &739380733
 AudioListener:
   m_ObjectHideFlags: 0
@@ -669,7 +670,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1041472541
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -771,7 +772,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1092361714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -884,6 +885,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75a831e5103acb84e91ca9d3fefb3cb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  ModelView: {fileID: 0}
 --- !u!4 &1468315313
 Transform:
   m_ObjectHideFlags: 0

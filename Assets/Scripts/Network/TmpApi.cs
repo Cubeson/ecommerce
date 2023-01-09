@@ -6,24 +6,11 @@ namespace Network
 {
 	public static class TmpApi
 	{
-		public static UnityWebRequest GetModelObj()
+		public static UnityWebRequest TMP()
 		{
-			var req = UnityWebRequest.Get($"{Url}api/Resources/Tmp1");
+			var req = UnityWebRequest.Get($"{Url}api/TMP");
 			return req;
 		}
-		public static UnityWebRequest GetModelMtl()
-		{
-			var req = UnityWebRequest.Get($"{Url}api/Resources/Tmp2");
-			return req;
-		}
-		public static UnityWebRequest GetModel() {
-			var req = UnityWebRequest.Get($"{Url}api/Resources/Tmp3");
-			return req;
-		}
-		public static UnityWebRequest GetGLTF()
-		{
-			var req = UnityWebRequest.Get($"{Url}api/Resources/GLTF");
-			return req;
-		}
+
 	}
 }

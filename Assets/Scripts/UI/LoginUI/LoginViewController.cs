@@ -40,9 +40,13 @@ public class LoginViewController : MonoBehaviour
             {
                 Destroy(waitScreen);
             });
+
+            TokenModelDTO tm = null;
             try
             {
                 resp = await task;
+                var json = resp.downloadHandler.text;
+                tm = JsonConvert.DeserializeObject<TokenModelDTO>(json);
             }
             catch (UnityWebRequestException)
             {
@@ -50,21 +54,22 @@ public class LoginViewController : MonoBehaviour
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
                 waitScreenScript.TextMessage.text = "Provided login credentials are incorrect";
                 return;
-            } 
-            if(resp.responseCode == 200)
-            {
-                var json = resp.downloadHandler.text;
-                TokenModelDTO tm = JsonConvert.DeserializeObject<TokenModelDTO>(json);
-                CurrentSession.Instance.SetToken(tm);
-                SessionIO.SaveSession(tm);
-                waitScreenScript.Icon.SetActive(false);
-                waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                waitScreenScript.TextMessage.text = "Logged in";
-                waitScreenScript.ButtonContinue.onClick.AddListener(() =>
-                {
-                    SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
-                });
             }
+            finally
+            {
+                req?.Dispose();
+                resp?.Dispose();
+            }
+
+            CurrentSession.Instance.SetToken(tm);
+            SessionIO.SaveSession(tm);
+            waitScreenScript.Icon.SetActive(false);
+            waitScreenScript.ButtonContinue.gameObject.SetActive(true);
+            waitScreenScript.TextMessage.text = "Logged in";
+            waitScreenScript.ButtonContinue.onClick.AddListener(() =>
+            {
+                SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
+            });
 
 
         });

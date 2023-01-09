@@ -25,6 +25,7 @@ public class ProductDetailsScript : MonoBehaviour
     [SerializeField] GameObject TextDescriptionGO;
     [SerializeField] GameObject TextPriceGO;
     [SerializeField] GameObject ModelView;
+    [SerializeField] TMP_Text InStockValue;
 
     TextMeshProUGUI TextTitle;
     TextMeshProUGUI TextDescription;
@@ -41,22 +42,99 @@ public class ProductDetailsScript : MonoBehaviour
         MenuScript.Instance.PushMenu(gameObject);
         images = new List<Texture2D>();
 
-        //var req = Network.ProductApi.GetProduct(productId);
-        //var resp = await req.SendWebRequest().ToUniTask();
-        //var product = JsonConvert.DeserializeObject<ProductDTO>(resp.downloadHandler.text);
-        productDTO = product;
+        ProductDTO _product = null;
+        {
+            UnityWebRequest reqProduct = Network.ProductApi.GetProduct(product.Id);
+            UnityWebRequest respProduct = null;
+            try
+            {
+                respProduct = await reqProduct.SendWebRequest().ToUniTask();
+                _product = JsonConvert.DeserializeObject<ProductDTO>(respProduct.downloadHandler.text);
+            }
+            catch(UnityWebRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                reqProduct?.Dispose();
+                respProduct?.Dispose();
+            }
+        }
 
-        TextTitle.text = product.Title;
-        TextDescription.text = product.Description;
-        TextPrice.text = product.Price.ToString();
 
-        var respThumbnail = await Network.ProductApi.GetThumbnail(productDTO.Id).SendWebRequest().ToUniTask();
-        var textureThumbnail = ((DownloadHandlerTexture)respThumbnail.downloadHandler).texture;
+        productDTO = _product;
+        TextTitle.text = _product.Title;
+        TextDescription.text = _product.Description;
+        TextPrice.text = _product.Price.ToString();
+        InStockValue.text = _product.InStock.ToString();
+
+        bool isInCart = false;
+        UnityWebRequest reqIsInCart = null;
+        UnityWebRequest respIsInCart = null;
+        try
+        {
+            reqIsInCart = Network.CartApi.IsProductInCart(_product.Id, await CurrentSession.Instance.GetToken());
+            respIsInCart = await reqIsInCart.SendWebRequest().ToUniTask();
+            var obj = JsonConvert.DeserializeObject<IsInCartDTO>(respIsInCart.downloadHandler.text);
+            isInCart = obj.IsInCart;
+        }
+        catch (UnityWebRequestException)
+        {
+            throw;
+        }
+        finally
+        {
+            reqIsInCart?.Dispose();
+            respIsInCart?.Dispose();
+        }
+        ButtonAddToCart.interactable = !isInCart;
+        Texture2D textureThumbnail = null;
+
+        {
+            UnityWebRequest reqThumbnail = Network.ProductApi.GetThumbnail(productDTO.Id);
+            UnityWebRequest respThumbnail = null;
+            try
+            {
+                respThumbnail = await reqThumbnail.SendWebRequest().ToUniTask();
+                textureThumbnail = ((DownloadHandlerTexture)respThumbnail.downloadHandler).texture;
+            }
+            catch (UnityWebRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                reqThumbnail?.Dispose();
+                respThumbnail?.Dispose();
+            }
+        }
+
         images.Add(textureThumbnail);
         Image.texture = textureThumbnail;
 
-        var respPictures = await Network.ProductApi.GetPictures(productDTO.Id).SendWebRequest().ToUniTask();
-        var archive = new ZipArchive(new MemoryStream(respPictures.downloadHandler.data));
+        ZipArchive archive = null;
+        {
+            UnityWebRequest reqPictures = Network.ProductApi.GetPictures(productDTO.Id);
+            UnityWebRequest respPictures = null;
+            try
+            {
+                respPictures = await reqPictures.SendWebRequest().ToUniTask();
+                archive = new ZipArchive(new MemoryStream(respPictures.downloadHandler.data));
+            }
+            catch (UnityWebRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                reqPictures?.Dispose();
+                respPictures?.Dispose();
+            }
+        }
+        
+
+        
         foreach(var entry in archive.Entries)
         {
             var st = entry.Open();
@@ -68,7 +146,7 @@ public class ProductDetailsScript : MonoBehaviour
         }
 
     }
-
+    UniTask addToCartTask;
     public void Init()
     {
         instance = this;
@@ -83,10 +161,31 @@ public class ProductDetailsScript : MonoBehaviour
         {
             MenuScript.Instance.PopMenu();
         });
-        ButtonAddToCart.onClick.AddListener(() =>
+        ButtonAddToCart.onClick.AddListener( () =>
         {
-            //var req = Network.CartApi.AddItem(new CartItemDTO { ProductID = productDTO.Id, Quantity = 1 }, await CurrentSession.Instance.GetToken());
-            CartManagerScript.Instance.AddToCart(productDTO); 
+            if (addToCartTask.Status != UniTaskStatus.Succeeded) return;
+            UnityWebRequest req = null;
+            UnityWebRequest resp = null;
+            addToCartTask = UniTask.Create(async () =>
+            {
+                try
+                {
+                    req = Network.CartApi.AddItem(new CartItemDTO { ProductID = productDTO.Id, Quantity = 1 }, await CurrentSession.Instance.GetToken());
+                    resp = await req.SendWebRequest().ToUniTask();
+                }
+                catch (UnityWebRequestException)
+                {
+                    throw;
+                }
+                finally
+                {
+                    req?.Dispose();
+                    resp?.Dispose();
+                }
+                ButtonAddToCart.interactable = false;
+            });
+
+            //CartManagerScript.Instance.AddToCart(productDTO); 
         });
         ButtonNext.onClick.AddListener(() =>
         {
@@ -111,11 +210,23 @@ public class ProductDetailsScript : MonoBehaviour
         ButtonView3DModel.onClick.AddListener(async () =>
         {
             MenuScript.Instance.PushMenu(ModelView);
+            UnityWebRequest req = Network.ProductApi.GetModel(productDTO.Id);
+            UnityWebRequest resp = null;
+            try
+            {
+                resp = await req.SendWebRequest().ToUniTask();
+                modelViewControllerScript.SetModel(resp.downloadHandler.data);
+            }
+            catch(UnityWebRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                req?.Dispose();
+                resp?.Dispose();
+            }
 
-            var req = Network.ProductApi.GetModel(productDTO.Id).SendWebRequest().ToUniTask();
-            var resp = await req;
-            Debug.Log(productDTO.Id);
-            modelViewControllerScript.SetModel(resp.downloadHandler.data);
         });
     }
     public static byte[] ReadFully(Stream input)

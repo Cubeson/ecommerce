@@ -13,13 +13,9 @@ namespace Server.Api
         {
             app.MapGet("/api/TMP", TMP);
         }
-        [Authorize]
-        private IResult TMP(HttpContext httpContext, [FromServices] ShopContext shopContext)
+        private IResult TMP()
         {
-            string id = httpContext.User.FindFirst("Id")?.Value ?? "";
-            if (id.IsNullOrEmpty()) return Results.BadRequest();
-
-            return Results.Ok($"{id}");
+            return Results.Ok(101);
         }
     }
 }

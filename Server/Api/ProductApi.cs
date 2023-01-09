@@ -16,6 +16,7 @@ public sealed class ProductApi : IApi
         app.MapGet("api/Product/GetCategories", GetCategories);
         app.MapGet("api/Product/GetModel", GetModel);
         app.MapGet("api/Product/GetCategoryProductsCount",GetCategoryProductsCount);
+        //app.MapGet("api/Product/GetProduct",GetCategoryProductsCount);
 
     } 
     public ProductDTO? GetProduct([FromServices] ShopContext shopContext, int id)
@@ -26,6 +27,7 @@ public sealed class ProductApi : IApi
             Description = p.Description,
             Price = p.Price,
             Title = p.Title,
+            InStock = p.InStock
         }).SingleOrDefault();
     }
     public ProductDTO[] GetProducts([FromServices] ShopContext shopContext,
@@ -53,6 +55,7 @@ public sealed class ProductApi : IApi
                 Title = p.Title,
                 Description = p.Description,
                 Price = p.Price,
+                InStock = p.InStock
             }).ToArray();
 
     }

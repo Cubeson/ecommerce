@@ -39,7 +39,7 @@ namespace Server.Api
             if (userSession == null) return Results.BadRequest();
             userSession.IsRevoked = true;
             context.SaveChanges();
-            return Results.NoContent();
+            return Results.Ok();
         }
 
         public static IResult RefreshToken(TokenModelDTO tokenApiModel, ShopContext context, ITokenService tokenService)

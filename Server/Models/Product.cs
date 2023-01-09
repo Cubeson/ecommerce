@@ -15,6 +15,7 @@ namespace Server.Models
         public int CategoryId { get; set; }
         public DateTime DateCreated { get; set; }
         public DateTime DateModified { get; set; }
+        public int InStock { get; set; }
 
 
     }

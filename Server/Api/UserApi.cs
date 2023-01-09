@@ -121,14 +121,15 @@ namespace Server.Api
                 ExpiresInSeconds = (Constants.TOKEN_EXPIRATION_TIME_MINUTES * 60) - 60
             });;
         }
-        public async Task<IResult> RevokeAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext context)
+        public async Task<IResult> RevokeAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext shopContext)
         {
             if(userDTO.Email.IsNullOrEmpty() || userDTO.Password.IsNullOrEmpty()) return Results.BadRequest();
             var hashedPass = StringHasher.HashString(userDTO.Password);
-            var user = context.Users.Include(u=>u.UserSessions).SingleOrDefault(u => u.Email == userDTO.Email); if(user == null) return Results.BadRequest();
+            var user = shopContext.Users.Include(u=>u.UserSessions).SingleOrDefault(u => u.Email == userDTO.Email); if(user == null) return Results.BadRequest();
             if (!user.Password.Equals(hashedPass)) return Results.BadRequest();
             var sessions = user.UserSessions;
-            await context.UserSessions.ForEachAsync(s => s.IsRevoked= true);
+            await shopContext.UserSessions.ForEachAsync(s => s.IsRevoked= true);
+            shopContext.SaveChanges();
             return Results.Ok();
         }
 

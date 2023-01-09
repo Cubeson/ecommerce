@@ -1,5 +1,7 @@
 using Assets.Scripts.Network;
 using Cysharp.Threading.Tasks;
+using Newtonsoft.Json;
+using Shared.DTO;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -50,19 +52,34 @@ public class CartMenuScript : MonoBehaviour
     {
         Clear();
 
-        //Network.CartApi.GetCart(await CurrentSession.Instance.GetToken());
-
-        var cart = CartManagerScript.Instance.GetItems();
+        UnityWebRequest req = null;
+        UnityWebRequest resp = null;
+        List<CartItemDTO> cart = null;
+        try
+        {
+            req = Network.CartApi.GetCart(await CurrentSession.Instance.GetToken());
+            resp = await req.SendWebRequest().ToUniTask();
+            cart = JsonConvert.DeserializeObject<List<CartItemDTO>>(resp.downloadHandler.text);
+        }
+        catch (UnityWebRequestException)
+        {
+            throw;
+        }
+        finally
+        {
+            req?.Dispose();
+            resp?.Dispose();
+        }
         List<UniTask> tasks = new(cart.Count());
-        foreach (var item in cart) 
+        foreach (var item in cart)
         {
             var go = Instantiate(CartItemPrefab);
-            go.transform.SetParent(ScrollRect.content,false);
+            go.transform.SetParent(ScrollRect.content, false);
             go.SetActive(false);
             tasks.Add(go.GetComponent<CartItemScript>().Setup(item));
             go.SetActive(true);
         }
-        await UniTask.WhenAll(tasks.ToArray());
+        await UniTask.WhenAll(tasks);
         RecalculatePrice();
     }
     UniTask checkoutTask;
@@ -79,20 +96,27 @@ public class CartMenuScript : MonoBehaviour
             if (checkoutTask.Status != UniTaskStatus.Succeeded) return;
             checkoutTask = UniTask.Create( async () =>
             {
-                var items = CartManagerScript.Instance.GetItems();
-                if (items.Count() == 0) return UniTask.CompletedTask;
+                //var items = CartManagerScript.Instance.GetItems();
+                //if (items.Count() == 0) return UniTask.CompletedTask;
 
                 var req = Network.OrderApi.CreateOrder(await CurrentSession.Instance.GetToken());
                 UnityWebRequest resp = null;
+                string id;
                 try
                 {
                     resp = await req.SendWebRequest().ToUniTask();
+                    var genericResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(resp.downloadHandler.text);
+                    id = genericResponse.Message;
                 }
                 catch(UnityWebRequestException)
                 {
                     return UniTask.CompletedTask;
                 }
-                var id = resp.downloadHandler.text;
+                finally
+                {
+                    req?.Dispose();
+                    resp?.Dispose();
+                }
                 Application.OpenURL($"{Network.NetworkUtility.Url}checkout/{id}");
                 return UniTask.CompletedTask;
             });

@@ -7,6 +7,7 @@ using Cysharp.Threading.Tasks;
 using Newtonsoft.Json;
 using TMPro;
 using Shared.SortOrderDB;
+using UnityEngine.Networking;
 
 public class StallScript : MonoBehaviour
 {
@@ -82,9 +83,23 @@ public class StallScript : MonoBehaviour
 
     async UniTask<ProductDTO[]> RequestProducts(int offset)
     {
-        var req = Network.ProductApi.GetProducts(offset, count, Category.Name, _sortOrder, _nameFilter,_minPrice,_maxPrice);
-        var resp = await req.SendWebRequest().ToUniTask();
-        return JsonConvert.DeserializeObject<ProductDTO[]>(resp.downloadHandler.text);
+        UnityWebRequest req = Network.ProductApi.GetProducts(offset, count, Category.Name, _sortOrder, _nameFilter,_minPrice,_maxPrice);
+        UnityWebRequest resp = null;
+        try
+        {
+            resp = await req.SendWebRequest().ToUniTask();
+            return JsonConvert.DeserializeObject<ProductDTO[]>(resp.downloadHandler.text);
+        }
+        catch(UnityWebRequestException)
+        {
+            throw;
+        }
+        finally
+        {
+            req?.Dispose();
+            resp?.Dispose();
+        }
+
     }
     void DisableAllSlots()
     {
@@ -102,7 +117,7 @@ public class StallScript : MonoBehaviour
             {
                 slots[i].gameObject.SetActive(true);
                 slots[i].SetProduct(products[i]);
-                slots[i].DownloadThumbnailAndSet();
+                _ = slots[i].DownloadThumbnailAndSet();
             }
         }
     }
@@ -124,7 +139,7 @@ public class StallScript : MonoBehaviour
                 {
                     slots[i].gameObject.SetActive(true);
                     slots[i].SetProduct(products[i]);
-                    slots[i].DownloadThumbnailAndSet();
+                    _ = slots[i].DownloadThumbnailAndSet();
                 }
             }
         });
