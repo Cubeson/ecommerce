@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Server.ShopDBContext;
 using Shared.SortOrderDB;
 using System.Linq.Dynamic.Core;
@@ -6,17 +9,17 @@ namespace Server.Api
 {
     public class TemporatyApi : IApi
     {
-        public void Register(WebApplication app)
+        public void Register(IEndpointRouteBuilder app)
         {
-            //app.MapGet("/TMP", TMP);
+            app.MapGet("/api/TMP", TMP);
         }
-        //private IResult TMP([FromServices]ShopContext shopContext, SortOrderDB sortOrder)
-        //{
-        //    var data = new SortOrderDBData(sortOrder);
-        //    var query = shopContext.Products
-        //                    .Where(p => p.Category.Name == "Laptop")
-        //                    .OrderBy($"{data.Row} {data.Direction}");
-        //    return Results.Ok(query.ToArray());
-        //}
+        [Authorize]
+        private IResult TMP(HttpContext httpContext, [FromServices] ShopContext shopContext)
+        {
+            string id = httpContext.User.FindFirst("Id")?.Value ?? "";
+            if (id.IsNullOrEmpty()) return Results.BadRequest();
+
+            return Results.Ok($"{id}");
+        }
     }
 }

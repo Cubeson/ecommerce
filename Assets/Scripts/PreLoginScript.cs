@@ -41,7 +41,7 @@ public class PreLoginScript : MonoBehaviour
 
             var json = resp.downloadHandler.text;
             token = JsonConvert.DeserializeObject<TokenModelDTO>(json);
-            CurrentSession.GetInstance().SetToken(token);
+            CurrentSession.Instance.SetToken(token);
             SessionIO.SaveSession(token);
             SceneManager.LoadScene("MainScene", LoadSceneMode.Single);
 

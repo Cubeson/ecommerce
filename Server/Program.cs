@@ -23,6 +23,7 @@ var services = builder.Services;
 var configuration = builder.Configuration;
 var jwtSettings = RegisterJWTSettings(services, configuration);
 var smtpSettings = RegisterSmtpSettings(services, configuration);
+var payPaySettings = RegisterPayPalSettings(services, configuration);
 AddAuthentication(services,jwtSettings);
 AddAuthorization(services);
 RegisterServices(services);
@@ -59,6 +60,13 @@ JWTSettings RegisterJWTSettings(IServiceCollection services, IConfiguration conf
     services.AddSingleton<JWTSettings>(jwtSettings);
     return jwtSettings;
 }
+PayPalSettings RegisterPayPalSettings(IServiceCollection services, IConfiguration configuration)
+{
+    var payPalSettings = configuration.GetSection("PayPalSettings").Get<PayPalSettings>();
+    if(payPalSettings == null) throw new Exception();
+    services.AddSingleton<PayPalSettings>(payPalSettings);
+    return payPalSettings;
+}
 void AddAuthentication(IServiceCollection services, JWTSettings jwtSettings)
 {
     services.AddAuthentication(o =>
@@ -90,10 +98,14 @@ void AddAuthentication(IServiceCollection services, JWTSettings jwtSettings)
         {
             o.ForwardDefaultSelector = context =>
             {
-                string auth = context.Request.Headers.Authorization;
-                if (!string.IsNullOrEmpty(auth) && auth.StartsWith("Bearer "))
+                if (context.Request.Path.StartsWithSegments("/api")) // rest api client app
+                {
                     return JwtBearerDefaults.AuthenticationScheme;
-                return CookieAuthenticationDefaults.AuthenticationScheme;
+                }
+                else // cookies admin panel
+                {
+                    return CookieAuthenticationDefaults.AuthenticationScheme;
+                }
             };
         });
 }
@@ -141,6 +153,8 @@ void RegisterServices(IServiceCollection services)
             { jwtSecurityScheme,Array.Empty<string>()}
         });
     });
+    services.AddHttpClient();
+    services.AddSingleton<PayPalService>();
     services.AddTransient<ITokenService,TokenService>();
     services.AddTransient<ISmtpService, SmtpService>();
     services.AddRazorPages();

@@ -16,6 +16,8 @@ public class ModelRotateScript : MonoBehaviour
     [SerializeField]float moveBoundsXMin = -100f;
     [SerializeField]float moveBoundsYMax = 125f;
     [SerializeField]float moveBoundsYMin = -15f;
+    [SerializeField]float minFov = 3;
+    [SerializeField]float maxFox = 80;
     //[SerializeField]float moveBoundsZMax = 100f;
     //[SerializeField]float moveBoundsZMin = -100f;
     Renderer _renderer;
@@ -83,7 +85,7 @@ public class ModelRotateScript : MonoBehaviour
             //ModelView.transform.localScale = new Vector3(ModelView.transform.localScale.x)
 
             CamUI.fieldOfView += correctedMouseWheelDelta;
-            CamUI.fieldOfView = Mathf.Clamp(CamUI.fieldOfView, 10, 50);
+            CamUI.fieldOfView = Mathf.Clamp(CamUI.fieldOfView, minFov, maxFox);
 
 
             //transform.localPosition += new Vector3(0, 0, correctedMouseWheelDelta);

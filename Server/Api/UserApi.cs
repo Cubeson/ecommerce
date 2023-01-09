@@ -12,7 +12,7 @@ namespace Server.Api
 {
     public sealed class UserApi : IApi
     {
-        public void Register(WebApplication app)
+        public void Register(IEndpointRouteBuilder app)
         {
             app.MapPost("api/User/Create", CreateUser);
             app.MapPost("api/User/Login", LoginUser);
@@ -117,8 +117,9 @@ namespace Server.Api
             return Results.Ok(new TokenModelDTO
             {
                 AuthToken = accessToken,
-                RefreshToken = refreshToken
-            });
+                RefreshToken = refreshToken,
+                ExpiresInSeconds = (Constants.TOKEN_EXPIRATION_TIME_MINUTES * 60) - 60
+            });;
         }
         public async Task<IResult> RevokeAllSessions([FromBody] UserLoginDTO userDTO, [FromServices] ShopContext context)
         {

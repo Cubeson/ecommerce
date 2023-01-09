@@ -10,11 +10,13 @@ using System.Security.Claims;
 namespace Server.Api;
 public class CartApi : IApi
 {
-    public void Register(WebApplication app)
+    public void Register(IEndpointRouteBuilder app)
     {
-        app.MapPost("/api/Cart/AddItem", AddItem);
+        app.MapPatch("/api/Cart/AddItem", AddItem);
+        app.MapPatch("/api/Cart/RemoveItem", RemoveItem);
         app.MapPost("/api/Cart/SaveCart", SaveCart);
-        app.MapPost("/api/Cart/GetCart", GetCart);
+        app.MapGet("/api/Cart/GetCart", GetCart);
+        app.MapPost("/api/Cart/GetCartByUserId", GetCartByUserId);
     }
     [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public IResult AddItem(HttpContext httpContext, [FromServices] ShopContext shopContext, CartItemDTO cartItemDTO)
@@ -24,6 +26,14 @@ public class CartApi : IApi
         if (cartItemDTO.ProductID <= 0) return Results.BadRequest("Invalid quantity");
 
         return AddItemToCart(shopContext, cartItemDTO, user);
+    }
+    [Authorize]
+    public IResult RemoveItem(HttpContext httpContext, [FromServices] ShopContext shopContext, CartItemDTO cartItemDTO)
+    {
+        var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
+        var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
+        if (cartItemDTO.ProductID <= 0) return Results.BadRequest("Invalid quantity");
+        return RemoveItemFromCart(shopContext, cartItemDTO, user);
     }
 
     [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
@@ -42,6 +52,11 @@ public class CartApi : IApi
         var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
         return GetUserCart(shopContext, userId);
     }
+    public ICollection<CartItemDTO> GetCartByUserId([FromServices] ShopContext shopContext, int id)
+    {
+        return GetUserCart(shopContext, id);
+    }
+
 
 
                                     ///////////////////////////
@@ -70,19 +85,6 @@ public class CartApi : IApi
         shopContext.SaveChanges();
         return Results.Ok();
     }
-    //public static IResult SaveUserCart(ShopContext shopContext, CartDTO newCartDTO, User user)
-    //{
-    //    if (newCartDTO.CartItems.GroupBy(c => c.ProductID).Count() != newCartDTO.CartItems.Length) return Results.BadRequest("Duplicate items in cart");
-    //    var ids = newCartDTO.CartItems.Select(ci => ci.ProductID);
-    //    var products = shopContext.Products.Where(p => ids.Any(i => p.Id == i)).ToArray();
-    //    var currentCartItems = shopContext.CartItems.Where(c => c.UserId == user.Id).ToArray();
-    //    CartItem[] newCartItems = ConvertCartItemDTOtoCartItem(newCartDTO, user, products);
-    //
-    //    shopContext.CartItems.RemoveRange(currentCartItems);
-    //    shopContext.CartItems.AddRange(newCartItems);
-    //    shopContext.SaveChanges();
-    //    return Results.Ok();
-    //}
 
     public static CartItem[] ConvertCartItemDTOtoCartItem(ICollection<CartItemDTO> newCartDTO, User user, ICollection<Product> products)
     {
@@ -114,6 +116,22 @@ public class CartApi : IApi
             shopContext.SaveChanges();
         }
         return Results.Ok();
+    }
+    public static IResult RemoveItemFromCart(ShopContext shopContext, CartItemDTO cartItemDTO, User user)
+    {
+        var cartItem = shopContext.CartItems.Where(c => c.User.Id == user.Id && c.ProductId == cartItemDTO.ProductID).SingleOrDefault();
+        if (cartItem == null)
+        {
+            return Results.BadRequest("No such item in cart");
+        }
+        cartItem.Quantity -= cartItemDTO.Quantity;
+        if(cartItem.Quantity <= 0)
+        {
+            shopContext.CartItems.Remove(cartItem);
+        }
+        shopContext.SaveChanges();
+        return Results.Ok();
+
     }
 
 }

@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "{id:int}"
 @model Server.Pages.CheckoutModel
 @{
     <html>
@@ -19,30 +19,38 @@
         <!-- Set up a container element for the button -->
         <div id="paypal-button-container" class="center"></div>
         <script>
+            var myOrder;
             paypal.Buttons({
-              // Sets up the transaction when a payment button is clicked
-              createOrder: (data, actions) => {
-                return actions.order.create({
-                  purchase_units: [{
-                    amount: {
-                      value: '0.99' // Can also reference a variable or function
-                    }
-                  }]
-                });
-              },
-              // Finalize the transaction after payer approval
-              onApprove: (data, actions) => {
-                return actions.order.capture().then(function(orderData) {
-                  // Successful capture! For dev/demo purposes:
-                  console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                  const transaction = orderData.purchase_units[0].payments.captures[0];
-                  alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
-                  // When ready to go live, remove the alert and show a success message within this page. For example:
-                  // const element = document.getElementById('paypal-button-container');
-                  // element.innerHTML = '<h3>Thank you for your payment!</h3>';
-                  // Or go to another URL:  actions.redirect('thank_you.html');
-                });
-              }
+                createOrder: (data, actions) => 
+                {
+                          return fetch("/api/Order/CreatePayPalOrder/@Model.OrderId.ToString()" , {
+                            method: "post",
+                          })
+                          .then((response) => response.json())
+                          .then((order) => {
+                              return order.id;
+                          })
+                },
+                onApprove: (data, actions) => 
+                {
+                    console.log(data.orderID);
+                    return fetch(`/api/Order/CapturePayPalOrder/${data.orderID}`, {
+                        method: "post",
+                    })
+                        .then( (response) => {
+                            console.log(response);
+                            return response.json();
+                        })
+                        .then((orderData) => {
+                            myOrder = orderData;
+                            console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
+                            const transaction = orderData.purchase_units[0].payments.captures[0];
+                            alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                        });
+                },
+                onError: (err) => {
+                    console.error(err);
+                }
             }).render('#paypal-button-container');
         </script>
     </body>

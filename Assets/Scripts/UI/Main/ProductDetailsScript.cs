@@ -8,6 +8,7 @@ using Newtonsoft.Json;
 using UnityEngine.Networking;
 using System.IO.Compression;
 using System.IO;
+using Assets.Scripts.Network;
 
 public class ProductDetailsScript : MonoBehaviour
 {
@@ -84,7 +85,8 @@ public class ProductDetailsScript : MonoBehaviour
         });
         ButtonAddToCart.onClick.AddListener(() =>
         {
-            CartManagerScript.Instance.AddToCart(productDTO);
+            //var req = Network.CartApi.AddItem(new CartItemDTO { ProductID = productDTO.Id, Quantity = 1 }, await CurrentSession.Instance.GetToken());
+            CartManagerScript.Instance.AddToCart(productDTO); 
         });
         ButtonNext.onClick.AddListener(() =>
         {
@@ -112,7 +114,7 @@ public class ProductDetailsScript : MonoBehaviour
 
             var req = Network.ProductApi.GetModel(productDTO.Id).SendWebRequest().ToUniTask();
             var resp = await req;
-
+            Debug.Log(productDTO.Id);
             modelViewControllerScript.SetModel(resp.downloadHandler.data);
         });
     }

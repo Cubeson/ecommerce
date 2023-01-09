@@ -11,7 +11,7 @@ namespace Server.Api
 {
     public class TokenApi : IApi
     {
-        public void Register(WebApplication app)
+        public void Register(IEndpointRouteBuilder app)
         {
             app.MapPost("api/Token/Refresh",Refresh);
             app.MapPost("api/Token/Revoke",Revoke);
@@ -61,7 +61,8 @@ namespace Server.Api
             {
                 AuthToken = newAuthToken,
                 RefreshToken = newRefreshToken,
-            });
+                ExpiresInSeconds = (Constants.TOKEN_EXPIRATION_TIME_MINUTES * 60) - 60
+            }) ;
         }
 
     }

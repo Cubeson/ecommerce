@@ -33,7 +33,10 @@ public class ModelViewControllerScript : MonoBehaviour
         DestroyCurrentModel();
         _rotateScript.ResetPosition();
         var GO = Importer.LoadFromBytes(modelData);
-        GO.transform.parent = transform;
+        var scaler = new GameObject("scaler");
+        scaler.AddComponent<MeshRenderer>();
+        scaler.transform.SetParent(transform,false);
+        GO.transform.SetParent(scaler.transform,false);
         SetLayerRecursively(GO, gameObject.layer);
         UniTask.Create( async () =>
         {
@@ -41,7 +44,6 @@ public class ModelViewControllerScript : MonoBehaviour
             _fitContainerScript.FitToContainer();
             return UniTask.CompletedTask;
         });
-        //_fitContainerScript.FitToContainer();
         GO.transform.localPosition = new Vector3(0f,0f,0f);
         UniTask.Create(async () =>
         {

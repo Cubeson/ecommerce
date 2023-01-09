@@ -23,8 +23,8 @@ public class MainUIScript : MonoBehaviour
         {
             MenuScript.Instance.PushMenu(CategoryFilters);
         });
-        ButtonLogout.onClick.AddListener(() => {
-            var req = Network.TokenApi.RevokeToken(CurrentSession.GetInstance().GetToken());
+        ButtonLogout.onClick.AddListener(async () => {
+            var req = Network.TokenApi.RevokeToken(await CurrentSession.Instance.GetToken());
             req.SendWebRequest();
             SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
         });

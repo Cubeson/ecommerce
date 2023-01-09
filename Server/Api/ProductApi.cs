@@ -7,7 +7,7 @@ using System.Linq.Dynamic.Core;
 namespace Server.Api;
 public sealed class ProductApi : IApi
 {
-    public void Register(WebApplication app)
+    public void Register(IEndpointRouteBuilder app)
     {
         app.MapGet("api/Product/GetProducts", GetProducts);
         app.MapGet("api/Product/GetProduct", GetProduct);

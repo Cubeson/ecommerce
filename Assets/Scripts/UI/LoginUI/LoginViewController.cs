@@ -55,7 +55,7 @@ public class LoginViewController : MonoBehaviour
             {
                 var json = resp.downloadHandler.text;
                 TokenModelDTO tm = JsonConvert.DeserializeObject<TokenModelDTO>(json);
-                CurrentSession.GetInstance().SetToken(tm);
+                CurrentSession.Instance.SetToken(tm);
                 SessionIO.SaveSession(tm);
                 waitScreenScript.Icon.SetActive(false);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);

@@ -8,4 +8,5 @@ public class WaitScreenScript : MonoBehaviour
     public Text TextMessage;
     public Button ButtonContinue;
     public GameObject Icon;
+    public Button ButtonCancel;
 }

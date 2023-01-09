@@ -20,7 +20,7 @@ public class CartManagerScript : MonoBehaviour
     private List<CartItemDTO> _cart = new List<CartItemDTO>();
     async void Start()
     {
-        var token = CurrentSession.GetInstance().GetToken();
+        var token = await CurrentSession.Instance.GetToken();
         if(token == null)
         {
             return;

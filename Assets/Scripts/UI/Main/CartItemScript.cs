@@ -23,9 +23,12 @@ public class CartItemScript : MonoBehaviour
     TextMeshProUGUI TextPrice;
     TextMeshProUGUI TextQuantity;
 
+    public decimal price;
+    public int quantity;
+
     //CartItemDTO _cartItem;
     //ProductDTO _product;
-    public async void Setup(CartItemDTO cartItem)
+    public async UniTask Setup(CartItemDTO cartItem)
     {
         TextTitle = TextTitleGO.GetComponent<TextMeshProUGUI>();
         TextPrice = TextPriceGO.GetComponent<TextMeshProUGUI>();
@@ -43,6 +46,8 @@ public class CartItemScript : MonoBehaviour
         TextTitle.text = _product.Title;
         TextPrice.text = _product.Price.ToString();
         TextQuantity.text = cartItem.Quantity.ToString();
+        price = (decimal)_product.Price;
+        quantity = cartItem.Quantity;
         gameObject.SetActive(true);
 
         ButtonShowDetails.onClick.AddListener(() =>
@@ -53,16 +58,19 @@ public class CartItemScript : MonoBehaviour
         {
             int newQuantity = CartManagerScript.Instance.AddToCart(_product);
             TextQuantity.text = newQuantity.ToString();
+            decimal price = (decimal)_product.Price;
+            CartMenuScript.Instance.ChangePrice(price);
         });
         ButtonSubstact.onClick.AddListener(() =>
         {
             int newQuantity = CartManagerScript.Instance.SubstractFromCart(_product);
-            if(newQuantity > 0) TextQuantity.text = newQuantity.ToString();
+            CartMenuScript.Instance.ChangePrice(-price);
+            if (newQuantity > 0) TextQuantity.text = newQuantity.ToString();
             else Destroy(gameObject);
         });
         ButtonRemove.onClick.AddListener(() =>
         {
-            bool isRemoved = CartManagerScript.Instance.RemoveFromCart(_product);
+            bool isRemoved = CartManagerScript.Instance.RemoveFromCart(_product); 
             if (isRemoved)
             {
                 Destroy(gameObject);
