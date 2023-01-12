@@ -32,7 +32,7 @@ namespace Assets.Scripts.Network
             {
                 if(_tokenModel == null)
                 {
-                    SceneManager.LoadScene("LoginScene", LoadSceneMode.Single);
+                    SceneManager.LoadScene("PreLoginScene", LoadSceneMode.Single);
                     throw new Exception("Authentication token doesn't exist");
                 }
                 var req = TokenApi.RefreshToken(_tokenModel);

@@ -21,7 +21,6 @@ public class User
     public virtual ICollection<PasswordReset>? PasswordResets { get; set; }
     [InverseProperty("User")]
     public virtual ICollection<UserSession>? UserSessions { get; set; }
-    
     public bool SetPassword(string? password)
     {
         if (!Validators.IsValidPassword(password)) return false;
@@ -32,6 +31,4 @@ public class User
         PasswordSalt = salt;
         return true;
     }
-
-
 }

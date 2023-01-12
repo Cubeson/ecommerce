@@ -56,14 +56,14 @@
     <Analyzer Include="C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\Extensions\Microsoft\Visual Studio Tools for Unity\Analyzers\Microsoft.Unity.Analyzers.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\Plugins\SimpleJSON.cs" />
-    <Compile Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\Scripts\PackageData.cs" />
-    <Compile Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\InstallationConfig.cs" />
-    <Compile Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\Plugins\SemVersion.cs" />
-    <Compile Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\Scripts\ManifestTools.cs" />
+    <Compile Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\Plugins\SimpleJSON.cs" />
+    <Compile Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\Scripts\PackageData.cs" />
+    <Compile Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\InstallationConfig.cs" />
+    <Compile Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\Plugins\SemVersion.cs" />
+    <Compile Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\Scripts\ManifestTools.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Packages\installer.com.atteneder.gltfast\Editor\AutoInstaller\AutoInstaller.Editor.asmdef" />
+    <None Include="Packages\installer.com.atteneder.draco\Editor\AutoInstaller\AutoInstaller.Editor.asmdef" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">

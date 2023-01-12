@@ -20,9 +20,15 @@ namespace Server.Pages
             _shopContext = shopContext;
         }
 
-        public void OnGet([FromRoute]int id)
+        public IActionResult OnGet([FromRoute]int id)
         {
+            var order = _shopContext.Orders.SingleOrDefault(o => o.Id == id);
+            if(order == null || order.IsCompleted)
+            {
+                return new RedirectToPageResult("/Error");
+            }
             OrderId = id;
+            return Page();
         }
     }
 }

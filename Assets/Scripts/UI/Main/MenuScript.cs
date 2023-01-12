@@ -13,6 +13,15 @@ public class MenuScript : MonoBehaviour
     Camera cam;
     CameraRaycastScript cameraRaycastScript;
     PlayerInput playerInput;
+    private bool shortcutEnabled = true;
+    public void DisableBackShortcut()
+    {
+        shortcutEnabled = false;
+    }
+    public void EnableBackShortcut()
+    {
+        shortcutEnabled = true;
+    }
 
     private void Awake()
     {
@@ -67,6 +76,7 @@ public class MenuScript : MonoBehaviour
             }
             else
             {
+                if(shortcutEnabled)
                 PopMenu();
             }
         }

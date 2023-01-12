@@ -9,6 +9,7 @@ using UnityEngine.Networking;
 using Assets.Scripts.Network;
 using Assets.Scripts.ClientIO;
 using Newtonsoft.Json;
+using TMPro;
 
 public class LoginViewController : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class LoginViewController : MonoBehaviour
     [SerializeField] InputField InputPassword;
     [SerializeField] Button ButtonLogin;
     [SerializeField] GameObject WaitScreenPrefab;
+    [SerializeField] TMP_Text BadInputText;
     GameObject canvas;
     void Start()
     {
@@ -28,7 +30,16 @@ public class LoginViewController : MonoBehaviour
         });
         ButtonLogin.onClick.AddListener(async () =>
         {
-            if (!Validators.isValidEmail(InputEmail.text) || !Validators.IsValidPassword(InputPassword.text)) return;
+            if (!Validators.isValidEmail(InputEmail.text))
+            {
+                BadInputText.text = "Invalid email addres";
+                return;
+            } 
+            if(!Validators.IsValidPassword(InputPassword.text))
+            {
+                BadInputText.text = "Invalid password";
+                return;
+            }
             var req = UserApi.LoginUser(new UserLoginDTO() {Email = InputEmail.text, Password = InputPassword.text });
             var task = req.SendWebRequest().ToUniTask();
             var waitScreen = Instantiate(WaitScreenPrefab, new Vector3(), Quaternion.identity);
@@ -48,11 +59,19 @@ public class LoginViewController : MonoBehaviour
                 var json = resp.downloadHandler.text;
                 tm = JsonConvert.DeserializeObject<TokenModelDTO>(json);
             }
-            catch (UnityWebRequestException)
+            catch (UnityWebRequestException e)
             {
                 waitScreenScript.Icon.SetActive(true);
                 waitScreenScript.ButtonContinue.gameObject.SetActive(true);
-                waitScreenScript.TextMessage.text = "Provided login credentials are incorrect";
+                if (e.ResponseCode == 0)
+                {
+                    waitScreenScript.TextMessage.text = "Couldn't connect to the server";
+                }
+                else
+                {
+                    waitScreenScript.TextMessage.text = "Provided login credentials are incorrect";
+                }
+                
                 return;
             }
             finally

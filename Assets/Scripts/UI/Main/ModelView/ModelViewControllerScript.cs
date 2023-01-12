@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Siccity.GLTFUtility;
 using Cysharp.Threading.Tasks;
+using UnityEngine.UI;
 
 public class ModelViewControllerScript : MonoBehaviour
 {
     [SerializeField] Camera CameraMain;
     [SerializeField] Camera CameraUI;
+    [SerializeField] Button ButtonExit;
     ModelFitToContainerScript _fitContainerScript;
     ModelRotateScript _rotateScript;
     public ModelFitToContainerScript FitContainerScript { get { return _fitContainerScript; } }
@@ -21,9 +23,11 @@ public class ModelViewControllerScript : MonoBehaviour
     {
         CameraMain.enabled = false;
         CameraUI.enabled = true;
+        ButtonExit.gameObject.SetActive(true);
     }
     private void OnDisable()
     {
+        ButtonExit.gameObject.SetActive(false);
         if (CameraMain == null || CameraUI == null) return;
         CameraMain.enabled = true;
         CameraUI.enabled = false;
@@ -38,7 +42,7 @@ public class ModelViewControllerScript : MonoBehaviour
         scaler.transform.SetParent(transform,false);
         GO.transform.SetParent(scaler.transform,false);
         SetLayerRecursively(GO, gameObject.layer);
-        UniTask.Create( async () =>
+        UniTask.Create(async () =>
         {
             await UniTask.NextFrame();
             _fitContainerScript.FitToContainer();

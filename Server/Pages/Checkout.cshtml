@@ -44,8 +44,22 @@
                         .then((orderData) => {
                             myOrder = orderData;
                             console.log('Capture result', orderData, JSON.stringify(orderData, null, 2));
-                            const transaction = orderData.purchase_units[0].payments.captures[0];
-                            alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                            let ppButtons = document.getElementById('paypal-button-container');
+                            ppButtons.hidden = true;
+                            let parent = ppButtons.parentElement;
+                            
+                            let summary = document.createElement("div");
+                            summary.classList += "center";
+                            let thanks = document.createElement("p");
+                            thanks.style = "font-size: 30px";
+                            let address = orderData.purchase_units[0].shipping.address
+                            thanks.textContent = 'Thank you for your purchase! You can now return to the application.Products will be delivered to ' + address.address_line_1 + ' in ' + address.admin_area_2;
+                            parent.appendChild(thanks);
+
+                            //const transaction = orderData.purchase_units[0].payments.captures[0];
+                            //alert(`Transaction ${transaction.status}: ${transaction.id}\n\nSee console for all available details`);
+                            //sessionStorage.setItem("transaction",orderData);
+                            //window.open("/Summary",'_blank').focus();
                         });
                 },
                 onError: (err) => {

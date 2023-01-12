@@ -1,5 +1,4 @@
 using Shared.DTO;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine.Networking;
 using static Constants;
 using static Network.NetworkUtility;
@@ -20,12 +19,12 @@ namespace Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
-        public static UnityWebRequest CancelOrder(TokenModelDTO tokenModel)
+        public static UnityWebRequest CancelOrder(TokenModelDTO tokenModel, int orderId)
         {
             UnityWebRequest req = new UnityWebRequest
             {
                 method = "DELETE",
-                url = $"{Url}api/Order/CancelOrder",
+                url = $"{Url}api/Order/CancelOrder/{orderId}",
                 downloadHandler = new DownloadHandlerBuffer(),
                 timeout = Constants.DEFAULT_TIMEOUT,
             };
@@ -37,6 +36,13 @@ namespace Network
         {
             UnityWebRequest req = UnityWebRequest.Get($"{Url}api/Order/GetOrder/{orderId}");
             req.timeout= Constants.DEFAULT_TIMEOUT;
+            return req;
+        }
+        public static UnityWebRequest GetOrderStatus(int orderId)
+        {
+            UnityWebRequest req = UnityWebRequest.Get($"{Url}api/Order/GetOrderStatus/{orderId}");
+            req.timeout = Constants.DEFAULT_TIMEOUT;
+            req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
     }

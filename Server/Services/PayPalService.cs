@@ -118,7 +118,6 @@ public class PayPalService
         req.Content = new FormUrlEncodedContent(formData);
 
         var resp = await client.SendAsync(req);
-        resp.EnsureSuccessStatusCode();
         var text = await resp.Content.ReadAsStringAsync();
         var authResponse = JsonConvert.DeserializeObject<PPJson.Auth.AuthResponse>(text);
         var seconds = authResponse.expires_in;

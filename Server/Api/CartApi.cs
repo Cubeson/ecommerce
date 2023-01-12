@@ -6,7 +6,7 @@ using Server.ShopDBContext;
 using Server.Models;
 using Shared.DTO;
 using System.Security.Claims;
-
+using Z.EntityFramework.Plus;
 namespace Server.Api;
 public class CartApi : IApi
 {
@@ -88,10 +88,10 @@ public class CartApi : IApi
         if (newCartDTO.GroupBy(c => c.ProductID).Count() != newCartDTO.Count) return Results.BadRequest("Duplicate items in cart");
         var ids = newCartDTO.Select(ci => ci.ProductID);
         var products = shopContext.Products.Where(p => ids.Any(i => p.Id == i)).ToArray();
-        var currentCartItems = shopContext.CartItems.Where(c => c.UserId == user.Id).ToArray();
+        //var currentCartItems = shopContext.CartItems.Where(c => c.UserId == user.Id).ToArray();
         CartItem[] newCartItems = ConvertCartItemDTOtoCartItem(newCartDTO, user, products);
 
-        shopContext.CartItems.RemoveRange(currentCartItems);
+        shopContext.CartItems.Where(c => c.UserId == user.Id).Delete();
         shopContext.CartItems.AddRange(newCartItems);
         shopContext.SaveChanges();
         return Results.Ok();

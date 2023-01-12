@@ -15,11 +15,12 @@ public class CartMenuScript : MonoBehaviour
     private static CartMenuScript instance;
     public static CartMenuScript Instance { get { return instance; } }
 
-    [SerializeField] Button ButtonExit;
+    //[SerializeField] Button ButtonExit;
     [SerializeField] GameObject CartItemPrefab;
     [SerializeField] ScrollRect ScrollRect;
     [SerializeField] TMP_Text TotalPrice;
     [SerializeField] Button ButtonCheckout;
+    [SerializeField] GameObject WaitScreenPrefab;
     private decimal totalPrice = 0;
     public void ChangePrice(decimal price)
     {
@@ -30,7 +31,7 @@ public class CartMenuScript : MonoBehaviour
     {
         await Open();
     }
-    public void RecalculatePrice()
+    public void CalculatePrice()
     {
         decimal total = 0;
         foreach (Transform item in ScrollRect.content)
@@ -40,6 +41,7 @@ public class CartMenuScript : MonoBehaviour
         }
         TotalPrice.text = total.ToString();
         totalPrice = total;
+        TotalPrice.text = totalPrice.ToString();
     }
     private void Clear()
     {
@@ -47,6 +49,8 @@ public class CartMenuScript : MonoBehaviour
         {
             Destroy(item.gameObject);
         }
+        totalPrice = 0;
+        TotalPrice.text = totalPrice.ToString();
     }
     public async UniTask Open()
     {
@@ -80,48 +84,109 @@ public class CartMenuScript : MonoBehaviour
             go.SetActive(true);
         }
         await UniTask.WhenAll(tasks);
-        RecalculatePrice();
+        CalculatePrice();
     }
-    UniTask checkoutTask;
-
     public void Init()
     {
         instance = this;
-        ButtonExit.onClick.AddListener(() =>
+        ButtonCheckout.onClick.AddListener(async () =>
         {
-            MenuScript.Instance.PopMenu();
-        });
-        ButtonCheckout.onClick.AddListener(() =>
-        {
-            if (checkoutTask.Status != UniTaskStatus.Succeeded) return;
-            checkoutTask = UniTask.Create( async () =>
+            //ButtonCheckout.interactable = false;
+            if(ScrollRect.content == null || ScrollRect.content.childCount== 0) return;
+            var req = Network.OrderApi.CreateOrder(await CurrentSession.Instance.GetToken());
+            UnityWebRequest resp = null;
+            int id;
+            try
             {
-                //var items = CartManagerScript.Instance.GetItems();
-                //if (items.Count() == 0) return UniTask.CompletedTask;
-
-                var req = Network.OrderApi.CreateOrder(await CurrentSession.Instance.GetToken());
-                UnityWebRequest resp = null;
-                string id;
-                try
-                {
-                    resp = await req.SendWebRequest().ToUniTask();
-                    var genericResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(resp.downloadHandler.text);
-                    id = genericResponse.Message;
-                }
-                catch(UnityWebRequestException)
-                {
-                    return UniTask.CompletedTask;
-                }
-                finally
-                {
-                    req?.Dispose();
-                    resp?.Dispose();
-                }
-                Application.OpenURL($"{Network.NetworkUtility.Url}checkout/{id}");
-                return UniTask.CompletedTask;
-            });
-
+                resp = await req.SendWebRequest().ToUniTask();
+                var genericResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(resp.downloadHandler.text);
+                id = int.Parse(genericResponse.Message);
+            }
+            catch(UnityWebRequestException)
+            {
+                throw;
+            }
+            finally
+            {
+                req?.Dispose();
+                resp?.Dispose();
+            }
+            _ = GoToCheckout(id);
 
         });
+    }
+
+    private async UniTask GoToCheckout(int id)
+    {
+        MenuScript.Instance.DisableBackShortcut();
+        Application.OpenURL($"{Network.NetworkUtility.Url}checkout/{id}");
+        var waitScreen = Instantiate(WaitScreenPrefab, new Vector3(0, 0, 0), Quaternion.identity);
+        waitScreen.transform.SetParent(transform, false);
+        var waitScreenScript = waitScreen.GetComponent<WaitScreenScript>();
+        waitScreenScript.ButtonCancel.gameObject.SetActive(true);
+        waitScreenScript.ButtonCancel.onClick.AddListener(async () => {
+            Destroy(waitScreenScript.gameObject);
+
+            UnityWebRequest req = null;
+            UnityWebRequest resp = null;
+            try
+            {
+                req = Network.OrderApi.CancelOrder(await CurrentSession.Instance.GetToken(), id);
+                resp = await req.SendWebRequest().ToUniTask();
+                // It's not really that important if it fails or not
+            }
+            catch(UnityWebRequestException)
+            {
+                //throw;
+            }
+            finally { req?.Dispose(); resp?.Dispose(); MenuScript.Instance.EnableBackShortcut(); }
+            
+        });
+        waitScreenScript.ButtonContinue.onClick.AddListener(() =>
+        {
+            Destroy(waitScreenScript.gameObject);
+            Clear();
+            MenuScript.Instance.EnableBackShortcut();
+        });
+        bool x = false;
+        do
+        {
+            Debug.Log(waitScreen);
+            if (waitScreen == null) return;
+            x = await GetShouldStopWaiting(id, waitScreenScript);
+            await UniTask.Delay(3500);
+        }while(x == false);
+        waitScreenScript.ButtonContinue.gameObject.SetActive(true);
+        waitScreenScript.ButtonCancel.gameObject.SetActive(false);
+        waitScreenScript.TextMessage.text = "Your order was completed successfuly";
+    }
+
+    private async UniTask<bool> GetShouldStopWaiting(int id, WaitScreenScript waitScreenScript)
+    {
+        UnityWebRequest req = Network.OrderApi.GetOrderStatus(id);
+        UnityWebRequest resp = null;
+        try
+        {
+            resp = await req.SendWebRequest().ToUniTask();
+            var status = JsonConvert.DeserializeObject<OrderStatusDTO>(resp.downloadHandler.text);
+            //Debug.Log(status.Status);
+            if (status.Status == OrderStatusDTO.COMPLETED){
+                return true;
+            }
+            return false;
+            
+        }
+        catch (UnityWebRequestException)
+        {
+            //Destroy(script.gameObject);
+            waitScreenScript.ButtonContinue.gameObject.SetActive(true);
+            waitScreenScript.ButtonCancel.gameObject.SetActive(false);
+            waitScreenScript.TextMessage.text = "An error occured while processing your order";
+            throw;
+        }
+        finally
+        {
+            req?.Dispose(); resp?.Dispose(); 
+        }
     }
 }

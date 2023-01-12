@@ -7,6 +7,4 @@ public class Category
     public string Name { get; set; } = default!;
     [InverseProperty("Category")]
     public virtual ICollection<Product> Products { get; set; }
-
-
 }

@@ -13,7 +13,7 @@ public class ModelFitToContainerScript : MonoBehaviour
     }
 
     public void FitToContainer() {
-        if (gameObject.transform.childCount < 0) throw new System.Exception("Attempted to resize mesh, but Container GameObject has no children");
+        //if (gameObject.transform.childCount < 0) throw new System.Exception("Attempted to resize mesh, but Container GameObject has no children");
         Transform TransformToScale = gameObject.transform.GetChild(0).transform;
 
         Vector3 referenceSize = _containerMeshRenderer.bounds.size;

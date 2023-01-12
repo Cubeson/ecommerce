@@ -6,11 +6,9 @@ using Server.Services;
 using System.Dynamic;
 using Newtonsoft.Json;
 using Server.Models;
-using Newtonsoft.Json.Linq;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTO;
-using System.Collections.Immutable;
-
+using Z.EntityFramework.Plus;
 namespace Server.Api;
 
 public class OrderApi : IApi
@@ -20,9 +18,32 @@ public class OrderApi : IApi
 
         app.MapPost("api/Order/CreateOrder", CreateOrder);
         app.MapGet("api/Order/GetOrder/{orderId}", GetOrder);
-        app.MapDelete("api/Order/CancelOrder", CancelOrder);
+        app.MapGet("api/Order/GetOrderStatus/{orderId}", GetOrderStatus);
+        app.MapDelete("api/Order/CancelOrder/{orderId}", CancelOrder);
         app.MapPost("api/Order/CreatePayPalOrder/{orderId}", CreatePayPalOrder);
         app.MapPost("api/Order/CapturePayPalOrder/{payPalOrderId}", CapturePayPalOrder);
+    }
+    //[Authorize]
+    public IResult GetOrderStatus(HttpContext httpContext, [FromServices] ShopContext shopContext, int orderId)
+    {
+        //var strId = httpContext.User.FindFirst("Id").Value;
+        //var id = int.Parse(strId);
+        //var user = shopContext.Users.SingleOrDefault(u => u.Id == id);
+        var order = shopContext.Orders.SingleOrDefault(o => o.Id == orderId);
+        if(order == null)
+        {
+            return Results.BadRequest("No order found");
+        }
+        if(order.IsCompleted == true)
+        {
+            return Results.Ok(new OrderStatusDTO { Status = OrderStatusDTO.COMPLETED });
+        }
+        else
+        {
+            return Results.Ok(new OrderStatusDTO { Status = OrderStatusDTO.WAITING});
+
+        }
+
     }
     [Authorize]
     public IResult CreateOrder(HttpContext httpContext, [FromServices] ShopContext shopContext)
@@ -73,13 +94,14 @@ public class OrderApi : IApi
         });
     }
     [Authorize]
-    public IResult CancelOrder(HttpContext httpContext, [FromServices] ShopContext shopContext)
+    public IResult CancelOrder(HttpContext httpContext, [FromServices] ShopContext shopContext, int orderId)
     {
         var strId = httpContext.User.FindFirst("Id").Value;
-        var id = int.Parse(strId);
+        var userId = int.Parse(strId);
 
-        var order = shopContext.Orders.SingleOrDefault(o => o.UserId == id);
+        var order = shopContext.Orders.SingleOrDefault(o => o.UserId == userId && o.Id == orderId);
         if (order == null) return Results.BadRequest("No order to cancel");
+        if(order.IsCompleted) return Results.BadRequest("This order cannot be canceled");
         shopContext.Orders.Remove(order);
         shopContext.SaveChanges();
         return Results.Ok();
@@ -91,6 +113,7 @@ public class OrderApi : IApi
         {
             return Results.BadRequest("No order found");
         }
+       
         if (!order.BrokerOrderId.IsNullOrEmpty())
         {
             var respExisting = await payPalService.GetOrderDetails(order.BrokerOrderId);
@@ -110,6 +133,7 @@ public class OrderApi : IApi
         var resp = await payPalService.CreateOrder(order);
         string text = await resp.Content.ReadAsStringAsync();
         dynamic obj = JsonConvert.DeserializeObject<ExpandoObject>(text);
+        resp.Dispose();
         if (!resp.IsSuccessStatusCode)
         {
             return Results.BadRequest(obj);
@@ -139,6 +163,7 @@ public class OrderApi : IApi
         var resp = await payPalService.CapturePayment(payPalOrderId);
         string text = await resp.Content.ReadAsStringAsync();
         dynamic obj = JsonConvert.DeserializeObject<ExpandoObject>(text);
+        resp.Dispose();
         if (!resp.IsSuccessStatusCode)
         {
             return Results.BadRequest(obj);
@@ -148,11 +173,10 @@ public class OrderApi : IApi
         items.ForEach(item =>
         {
             int newVal = item.Product.InStock - item.Quantity;
-            Console.WriteLine("-------------------------------------");
-            Console.WriteLine($"{item.Product.InStock} - {item.Quantity} = {newVal}");
-            Console.WriteLine("-------------------------------------");
             item.Product.InStock = newVal;
         });
+        int userId = order.UserId;
+        shopContext.CartItems.Where(c => c.UserId == userId).Delete();
         shopContext.SaveChanges();
         return Results.Ok(obj);
     }
