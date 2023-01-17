@@ -1,7 +1,5 @@
-﻿namespace Server.Api
+﻿namespace Server.Api;
+public interface IApi
 {
-    public interface IApi
-    {
-        public void Register(IEndpointRouteBuilder app);
-    }
+    public void Register(IEndpointRouteBuilder app);
 }

@@ -15,7 +15,6 @@ public class OrderApi : IApi
 {
     public void Register(IEndpointRouteBuilder app)
     {
-
         app.MapPost("api/Order/CreateOrder", CreateOrder);
         app.MapGet("api/Order/GetOrder/{orderId}", GetOrder);
         app.MapGet("api/Order/GetOrderStatus/{orderId}", GetOrderStatus);
@@ -23,12 +22,8 @@ public class OrderApi : IApi
         app.MapPost("api/Order/CreatePayPalOrder/{orderId}", CreatePayPalOrder);
         app.MapPost("api/Order/CapturePayPalOrder/{payPalOrderId}", CapturePayPalOrder);
     }
-    //[Authorize]
     public IResult GetOrderStatus(HttpContext httpContext, [FromServices] ShopContext shopContext, int orderId)
     {
-        //var strId = httpContext.User.FindFirst("Id").Value;
-        //var id = int.Parse(strId);
-        //var user = shopContext.Users.SingleOrDefault(u => u.Id == id);
         var order = shopContext.Orders.SingleOrDefault(o => o.Id == orderId);
         if(order == null)
         {

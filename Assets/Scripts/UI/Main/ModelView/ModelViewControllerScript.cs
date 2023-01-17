@@ -36,7 +36,16 @@ public class ModelViewControllerScript : MonoBehaviour
     {
         DestroyCurrentModel();
         _rotateScript.ResetPosition();
-        var GO = Importer.LoadFromBytes(modelData);
+        GameObject GO = null;
+        try
+        {
+            GO = Importer.LoadFromBytes(modelData);
+        }
+        catch
+        {
+
+        };
+        
         var scaler = new GameObject("scaler");
         scaler.AddComponent<MeshRenderer>();
         scaler.transform.SetParent(transform,false);
