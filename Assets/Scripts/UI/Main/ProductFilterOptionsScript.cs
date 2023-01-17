@@ -70,10 +70,10 @@ public class ProductFilterOptionsScript : MonoBehaviour
         OptionData x = new OptionData(SortOrderDB.Price_Asc.ToString());
         dropdown.options = optionsWrapper.Select(o => new OptionData(o.Name)).ToList();
 
-        ButtonExit.GetComponent<Button>().onClick.AddListener( () =>
-        {
-            MenuScript.Instance.PopMenu();
-        } );
+        //ButtonExit.GetComponent<Button>().onClick.AddListener( () =>
+        //{
+        //    MenuScript.Instance.PopMenu();
+        //} );
         ButtonSearch.GetComponent<Button>().onClick.AddListener(() =>
         {
             decimal min = 0, max = 0;

@@ -122,10 +122,10 @@ public class CategoryFilterOptions : MonoBehaviour
             MenuScript.Instance.PopMenu();
 
         });
-        ButtonExit.onClick.AddListener(() =>
-        {
-            MenuScript.Instance.PopMenu();
-        });
+        //ButtonExit.onClick.AddListener(() =>
+        //{
+        //    MenuScript.Instance.PopMenu();
+        //});
         ButtonClear.onClick.AddListener(() =>
         {
             foreach(var script in allCategories) 

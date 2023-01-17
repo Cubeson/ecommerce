@@ -61,7 +61,7 @@ public class ProductDetailsScript : MonoBehaviour
                 respProduct?.Dispose();
             }
         }
-
+        Debug.Log(product.Id);
 
         productDTO = _product;
         TextTitle.text = _product.Title;

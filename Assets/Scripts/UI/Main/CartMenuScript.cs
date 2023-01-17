@@ -156,6 +156,7 @@ public class CartMenuScript : MonoBehaviour
             x = await GetShouldStopWaiting(id, waitScreenScript);
             await UniTask.Delay(3500);
         }while(x == false);
+        waitScreenScript.Icon.gameObject.SetActive(false);
         waitScreenScript.ButtonContinue.gameObject.SetActive(true);
         waitScreenScript.ButtonCancel.gameObject.SetActive(false);
         waitScreenScript.TextMessage.text = "Your order was completed successfuly";
