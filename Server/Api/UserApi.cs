@@ -7,6 +7,7 @@ using Server.Services.TokenService;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Server.Services.SmtpService;
+using Server.Services;
 
 namespace Server.Api;
 public sealed class UserApi : IApi
@@ -20,17 +21,17 @@ public sealed class UserApi : IApi
         app.MapPost("api/User/RevokeAllSessions", RevokeAllSessions);
         app.MapGet("api/User/IsEmailInUse", IsEmailInUse);
     }
-    public IResult ResetPassword([FromBody]ResetPasswordCredentialsDTO credentials, [FromServices] ShopContext context)
+    public IResult ResetPassword([FromBody]ResetPasswordCredentialsDTO credentials, [FromServices] ShopContext context,[FromServices]DateTimeProvider dateTimeProvider)
     {
         var passRst = context.PasswordResets.Include(pr => pr.User).SingleOrDefault(x => x.ResetID == credentials.ResetId);
-        if (passRst == null || passRst.ExpirationDate < DateTime.Now) return Results.BadRequest(new GenericResponseDTO() { Error = 1,Message= "Invalid or expired Reset Code" });
+        if (passRst == null || passRst.ExpirationDate < dateTimeProvider.Now) return Results.BadRequest(new GenericResponseDTO() { Error = 1,Message= "Invalid or expired Reset Code" });
         var user = passRst.User;
         if (!user.SetPassword(credentials.Password)) return Results.BadRequest(new GenericResponseDTO() { Error = 2, Message = "Invalid password" });
         context.ClearUserPasswordResets(user);
         context.SaveChanges();
         return Results.Ok(new GenericResponseDTO() { Message = "Password changed" });
     }
-    public IResult RequestResetPasswordCode([FromBody] RequestResetPasswordDTO requestReset, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService)
+    public IResult RequestResetPasswordCode([FromBody] RequestResetPasswordDTO requestReset, [FromServices] ShopContext context, [FromServices] ISmtpService smtpService, [FromServices] DateTimeProvider dateTimeProvider)
     {
         var user = context.Users.SingleOrDefault(x => x.Email == requestReset.Email);
         if (user == null) return Results.Empty;
@@ -40,7 +41,7 @@ public sealed class UserApi : IApi
             UserId = user.Id,
             User = user,
             ResetID = Rng.GetRandomStringResetId(8),
-            ExpirationDate = DateTime.Now.AddMinutes(Constants.PASSWORD_RESET_LIFETIME_MINUTES)
+            ExpirationDate = dateTimeProvider.Now.AddMinutes(Constants.PASSWORD_RESET_LIFETIME_MINUTES)
         };
         context.PasswordResets.Add(passRst);
         context.SaveChanges();
@@ -93,7 +94,7 @@ public sealed class UserApi : IApi
         smtpService.UserCreated(user);
         return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
     }
-    public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService)
+    public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService,[FromServices]DateTimeProvider dateTimeProvider)
     {
         var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
         if (user == null) return Results.BadRequest("Provided data is incorrect");
@@ -108,7 +109,7 @@ public sealed class UserApi : IApi
             User = user,
             AuthToken = StringHasher.HashString(accessToken),
             RefreshToken = StringHasher.HashString(refreshToken),
-            RefreshTokenExpiryTime = DateTime.Now.AddHours(Constants.REFRESH_TOKEN_EXPIRATION_TIME_HOURS),
+            RefreshTokenExpiryTime = dateTimeProvider.Now.AddHours(Constants.REFRESH_TOKEN_EXPIRATION_TIME_HOURS),
         });
 
         context.SaveChanges();

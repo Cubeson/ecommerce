@@ -99,8 +99,8 @@ public class CartMenuScript : MonoBehaviour
             try
             {
                 resp = await req.SendWebRequest().ToUniTask();
-                var genericResponse = JsonConvert.DeserializeObject<GenericResponseDTO>(resp.downloadHandler.text);
-                id = int.Parse(genericResponse.Message);
+                var order = JsonConvert.DeserializeObject<OrderDTO>(resp.downloadHandler.text);
+                id = order.OrderId;
             }
             catch(UnityWebRequestException)
             {

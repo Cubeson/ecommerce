@@ -1,15 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System.Text;
 using System.Net.Http.Headers;
-using System.Text.Json.Nodes;
 using Newtonsoft.Json;
 using Server.Models;
 using System.Globalization;
-using System.Dynamic;
-using Newtonsoft.Json.Converters;
-
 namespace Server.Services;
-
 public class PayPalService
 {
     private PayPalSettings _payPalSettings;
@@ -18,10 +13,10 @@ public class PayPalService
     private DateTime expirationDate = DateTime.MinValue;
 
     private readonly string urlBase = "https://api-m.sandbox.paypal.com";
-    private readonly string urlAuthenticate = "/v1/oauth2/token";
-    private readonly string urlCreateOrder = "/v2/checkout/orders";
-    private readonly string urlCapturePayment = "/v2/checkout/orders/{id}/capture";
-    private readonly string urlGetOrderDetails = "/v2/checkout/orders/{id}";
+    private string urlAuthenticate { get => urlBase + "/v1/oauth2/token"; }
+    private string urlCreateOrder { get => urlBase + "/v2/checkout/orders"; }
+    private string urlCapturePayment { get => urlBase + "/v2/checkout/orders/{id}/capture"; }
+    private string urlGetOrderDetails { get => urlBase + "/v2/checkout/orders/{id}"; }
     private string BasicAuth { get => $"{_payPalSettings.ClientId}:{_payPalSettings.ClientSecret}"; }
 
     public PayPalService([FromServices]PayPalSettings payPalSettings, [FromServices] IHttpClientFactory httpClientFactory) {
@@ -33,7 +28,7 @@ public class PayPalService
         var token = await GetAuthToken();
         var client = _httpClientFactory.CreateClient();
         var urlCapture = urlCapturePayment.Replace("{id}", orderId);
-        var req = new HttpRequestMessage(HttpMethod.Post, urlBase + urlCapture);
+        var req = new HttpRequestMessage(HttpMethod.Post, urlCapture);
         req.Content = new StringContent("");
         req.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
@@ -42,9 +37,8 @@ public class PayPalService
     public async Task<HttpResponseMessage> CreateOrder(Order order)
     {
         var token = await GetAuthToken();
-
         var client = _httpClientFactory.CreateClient();
-        var req = new HttpRequestMessage(HttpMethod.Post, urlBase + urlCreateOrder);
+        var req = new HttpRequestMessage(HttpMethod.Post, urlCreateOrder);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         req.Content = JsonContent.Create(MakePayPalOrder(order));
@@ -55,10 +49,9 @@ public class PayPalService
         var token = await GetAuthToken();
         var client = _httpClientFactory.CreateClient();
         var urlDetails = urlGetOrderDetails.Replace("{id}", payPalOrderId);
-        var req = new HttpRequestMessage(HttpMethod.Get, urlBase + urlDetails);
+        var req = new HttpRequestMessage(HttpMethod.Get, urlDetails);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
         client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //req.Content = JsonContent.Create(MakePayPalOrder(order));
         return await client.SendAsync(req);
 
     }
@@ -108,7 +101,7 @@ public class PayPalService
     private async Task<string> GetNewToken()
     {
         var client = _httpClientFactory.CreateClient();
-        var req = new HttpRequestMessage(HttpMethod.Post, urlBase + urlAuthenticate);
+        var req = new HttpRequestMessage(HttpMethod.Post, urlAuthenticate);
         var byteArray = new UTF8Encoding().GetBytes(BasicAuth);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(byteArray));
         var formData = new List<KeyValuePair<string, string>>

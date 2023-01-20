@@ -13,31 +13,21 @@ public class ModelFitToContainerScript : MonoBehaviour
     }
 
     public void FitToContainer() {
-        //if (gameObject.transform.childCount < 0) throw new System.Exception("Attempted to resize mesh, but Container GameObject has no children");
         Transform TransformToScale = gameObject.transform.GetChild(0).transform;
-
         Vector3 referenceSize = _containerMeshRenderer.bounds.size;
         List<MeshRenderer> meshes = new();
-        
         FindAndStoreComponentsFromChildren(TransformToScale, meshes);
         Vector3 furthest = GetFurthestBounds(meshes);
-
-        var mr = TransformToScale.GetComponent<MeshRenderer>();
-
         float resizeX = referenceSize.x / furthest.x;
         float resizeY = referenceSize.y / furthest.y;
         float resizeZ = referenceSize.z / furthest.z;
-
         float[] arr = { resizeX, resizeY, resizeZ };
         var min = arr.Min();
         TransformToScale.localScale = new Vector3(min, min, min);
-
         var centerMeshes = GetCenter(meshes);
         var center1 = TransformToScale.gameObject.GetComponent<MeshRenderer>().bounds.center;
         var delta = centerMeshes - center1;
         TransformToScale.localPosition -= delta;
-        
-        
     }
     private void FindAndStoreComponentsFromChildren<T>(Transform parent, ICollection<T> container)
     {

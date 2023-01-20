@@ -3,7 +3,6 @@ using Server.Models;
 using Server.Utility;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace Server.Services.TokenService
@@ -23,20 +22,19 @@ namespace Server.Services.TokenService
                 new Claim("Role","User"),
                 new Claim("Id",user.Id.ToString()),
             };
-            var tokeOptions = new JwtSecurityToken(
+            var tokenOptions = new JwtSecurityToken(
                  issuer: _jwtSettings.Issuer,
                  audience: _jwtSettings.Audience,
                  claims: claims,
                  expires: DateTime.Now.AddMinutes(Constants.TOKEN_EXPIRATION_TIME_MINUTES),
                  signingCredentials: signinCredentials
              );
-            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+            var tokenString = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
             return tokenString;
         }
 
         public string GenerateRefreshToken()
         {
-            //return Rng.GetRandomString();
             return Guid.NewGuid().ToString();
         }
 

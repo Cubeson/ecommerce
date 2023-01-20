@@ -23,12 +23,12 @@ namespace Network
             req.SetRequestHeader("Content-Type", "application/json");
             return req;
         }
-        public static UnityWebRequest RevokeToken(TokenModelDTO tokenModel)
+        public static UnityWebRequest Logout(TokenModelDTO tokenModel)
         {
             UnityWebRequest req = new UnityWebRequest()
             {
                 method = "POST",
-                url = Url + "api/Token/Revoke",
+                url = Url + "api/Token/Logout",
                 downloadHandler = new DownloadHandlerBuffer(),
                 //uploadHandler = UHR(json),
                 timeout = Constants.DEFAULT_TIMEOUT,

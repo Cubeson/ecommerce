@@ -3,7 +3,7 @@ using Shared.DTO;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Shared.SortOrderDB;
-//using System.Linq.Dynamic.Core;
+using System.Linq.Dynamic.Core;
 namespace Server.Api;
 public sealed class ProductApi : IApi
 {
@@ -15,7 +15,6 @@ public sealed class ProductApi : IApi
         app.MapGet("api/Product/GetPictures", GetPictures);
         app.MapGet("api/Product/GetCategories", GetCategories);
         app.MapGet("api/Product/GetModel", GetModel);
-        app.MapGet("api/Product/GetCategoryProductsCount",GetCategoryProductsCount);
     } 
     public ProductDTO? GetProduct([FromServices] ShopContext shopContext, int id)
     {
@@ -55,11 +54,6 @@ public sealed class ProductApi : IApi
                 Price = p.Price,
                 InStock = p.InStock
             }).ToArray();
-
-    }
-    public int GetCategoryProductsCount([FromServices] ShopContext shopContext , string category)
-    {
-        return shopContext.Categories.Where(c => c.Name.Equals(category)).Count();
 
     }
     public CategoryDTO[] GetCategories([FromServices] ShopContext shopContext, string pattern = "")

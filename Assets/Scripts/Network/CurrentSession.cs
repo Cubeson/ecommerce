@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using Assets.Scripts.ClientIO;
+using Cysharp.Threading.Tasks;
 using Network;
 using Newtonsoft.Json;
 using Shared.DTO;
@@ -61,6 +62,7 @@ namespace Assets.Scripts.Network
         {
             _tokenModel = tokenModel;
             expires = DateTime.Now.AddSeconds(_tokenModel.ExpiresInSeconds);
+            SessionIO.SaveSession(tokenModel);
         }
     }
 }

@@ -15,7 +15,6 @@ using Server.Services.TokenService;
 using System.Reflection;
 using System.Text;
 
-
 var builder = WebApplication.CreateBuilder(args);
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
@@ -34,7 +33,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 app.UseSwagger();
 app.UseSwaggerUI();
-//app.MapGet("/", c => { return Task.Run(() => c.Response.Redirect("/swagger")); });
 RegisterApi(app);
 
 var option = new StaticFileOptions();
@@ -157,6 +155,7 @@ void RegisterServices(IServiceCollection services)
     services.AddSingleton<PayPalService>();
     services.AddTransient<ITokenService,TokenService>();
     services.AddTransient<ISmtpService, SmtpService>();
+    services.AddScoped<DateTimeProvider>();
     services.AddRazorPages();
     services.AddResponseCaching();
 }
@@ -165,7 +164,7 @@ void RegisterDBContext(IServiceCollection services, IConfiguration configuration
     var connectionString = configuration.GetConnectionString("localhost");
     services.AddDbContext<ShopContext>(options => options.UseMySql(connectionString, new MySqlServerVersion(new Version())));
 } 
-void RegisterApi(WebApplication app)
+void RegisterApi(IEndpointRouteBuilder app)
 {
     var typeIApi = typeof(IApi);
     var method = typeIApi.GetMethod("Register");
@@ -177,6 +176,5 @@ void RegisterApi(WebApplication app)
         var instance = Activator.CreateInstance(type);
         method.Invoke(instance, parameters);
     }
-
 }
 public partial class Program { }

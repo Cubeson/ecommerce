@@ -16,7 +16,6 @@ public class CartApi : IApi
         app.MapPatch("/api/Cart/RemoveItem", RemoveItem);
         app.MapPost("/api/Cart/SaveCart", SaveCart);
         app.MapGet("/api/Cart/GetCart", GetCart);
-        app.MapPost("/api/Cart/GetCartByUserId", GetCartByUserId);
         app.MapGet("/api/Cart/IsProductInCart/{productId}", IsProductInCart);
         
     }
@@ -62,10 +61,6 @@ public class CartApi : IApi
         var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
         var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
         return GetUserCart(shopContext, userId);
-    }
-    public ICollection<CartItemDTO> GetCartByUserId([FromServices] ShopContext shopContext, int id)
-    {
-        return GetUserCart(shopContext, id);
     }
 
 

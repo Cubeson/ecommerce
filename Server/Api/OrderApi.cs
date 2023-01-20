@@ -9,6 +9,8 @@ using Server.Models;
 using Microsoft.IdentityModel.Tokens;
 using Shared.DTO;
 using Z.EntityFramework.Plus;
+using Shared;
+
 namespace Server.Api;
 
 public class OrderApi : IApi
@@ -67,24 +69,31 @@ public class OrderApi : IApi
             ProductName = c.Product.Title,
             ItemPrice = c.Product.Price,
             Quantity = c.Quantity,
-        }).ToList();
+        }).ToArray();
+        if (!orderItems.Any()) return Results.BadRequest(new GenericResponseDTO { Error=1,Message="The cart is empty"});
+        var total = orderItems.Aggregate(0, (decimal total, Models.OrderItem next) => total + (next.ItemPrice * next.Quantity));
 
         order.OrderItems = orderItems;
         shopContext.OrderItems.AddRange(orderItems);
         shopContext.Orders.Add(order);
         shopContext.SaveChanges();
         shopContext.Database.CommitTransaction();
-        return Results.Ok(new GenericResponseDTO {Error=0,Message=$"{order.Id}" });
+        return Results.Ok(new OrderDTO
+        {
+            Total = total,
+            Items = orderItems.Select(oi => new OrderItemDTO { ProductName = oi.ProductName, ProductId = oi.ProductId, Price = oi.ItemPrice * oi.Quantity, Quantity = oi.Quantity }).ToArray(),
+            OrderId = order.Id,
+        });
     }
     public IResult GetOrder([FromServices] ShopContext shopContext, int orderId)
     {
         var order = shopContext.Orders.Include(o => o.OrderItems).FirstOrDefault(o => o.Id == orderId);
         if (order == null) return Results.BadRequest("Order not found");
         var total = order.OrderItems.Aggregate(0, (decimal total, Models.OrderItem next) => total + (next.ItemPrice * next.Quantity));
-        return Results.Ok(new
+        return Results.Ok(new OrderDTO
         {
             Total = total,
-            Items = order.OrderItems.Select(oi => new {oi.ProductName, oi.ProductId, Price = oi.ItemPrice * oi.Quantity, oi.Quantity }).ToArray(),
+            Items = order.OrderItems.Select(oi => new OrderItemDTO{ProductName = oi.ProductName, ProductId = oi.ProductId, Price = oi.ItemPrice * oi.Quantity, Quantity = oi.Quantity }).ToArray(),
             OrderId = order.Id,
         });
     }
@@ -144,6 +153,10 @@ public class OrderApi : IApi
         if(order == null)
         {
             return Results.BadRequest("Order doesn't exist or was cancelled");
+        }
+        if (order.IsCompleted)
+        {
+            return Results.BadRequest("This order is already completed");
         }
         var items = shopContext.OrderItems.Where(o => o.OrderId == order.Id).Include(o => o.Product).ToList();
         bool isOk = items.TrueForAll(item =>
