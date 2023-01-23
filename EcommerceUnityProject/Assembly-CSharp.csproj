@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{E596A8FE-22D6-81FE-5515-08E8240A02B8}</ProjectGuid>
+    <ProjectGuid>{E97200E3-11BC-CAB3-8BF9-2D36501033F1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -888,15 +888,15 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Siccity.GLTFUtility.csproj">
-      <Project>{D2230FEF-AE49-39F7-6DE4-4BAB49CD57C5}</Project>
+      <Project>{4DE74236-9EF7-4649-171A-96D3172253AE}</Project>
       <Name>Siccity.GLTFUtility</Name>
     </ProjectReference>
     <ProjectReference Include="Siccity.GLTFUtility.Editor.csproj">
-      <Project>{2DAEFB1B-FAB8-9314-D553-BCC15B58C8C0}</Project>
+      <Project>{1EB869E2-4275-4917-824C-8F9F66032AE2}</Project>
       <Name>Siccity.GLTFUtility.Editor</Name>
     </ProjectReference>
     <ProjectReference Include="EditorTests.csproj">
-      <Project>{93A924F4-E5DA-10E5-47F6-3F4B8003C2B7}</Project>
+      <Project>{EB3466AA-F451-B757-C66E-73FCB5250EA1}</Project>
       <Name>EditorTests</Name>
     </ProjectReference>
   </ItemGroup>

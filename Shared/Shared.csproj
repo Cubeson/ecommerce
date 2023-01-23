@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-    <Exec Command="xcopy &quot;$(ProjectDir)bin\$(ConfigurationName)\netstandard2.1\&quot; &quot;$(SolutionDir)Assets\ExternalDLLs\&quot; /Y /R /C" />
+    <Exec Command="xcopy &quot;$(ProjectDir)bin\$(ConfigurationName)\netstandard2.1\&quot; &quot;$(SolutionDir)EcommerceUnityProject\Assets\ExternalDLLs\&quot; /Y /R /C" />
   </Target>
 
 </Project>

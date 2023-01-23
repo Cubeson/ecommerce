@@ -9,7 +9,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{2DAEFB1B-FAB8-9314-D553-BCC15B58C8C0}</ProjectGuid>
+    <ProjectGuid>{1EB869E2-4275-4917-824C-8F9F66032AE2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Siccity.GLTFUtility.Editor</AssemblyName>
@@ -761,7 +761,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Siccity.GLTFUtility.csproj">
-      <Project>{D2230FEF-AE49-39F7-6DE4-4BAB49CD57C5}</Project>
+      <Project>{4DE74236-9EF7-4649-171A-96D3172253AE}</Project>
       <Name>Siccity.GLTFUtility</Name>
     </ProjectReference>
   </ItemGroup>
