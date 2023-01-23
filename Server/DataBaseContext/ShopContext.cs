@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Server.Models;
 using System.Configuration;
-
+using Server.Utility;
 namespace Server.ShopDBContext;
 
 public partial class ShopContext : DbContext

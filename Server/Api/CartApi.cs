@@ -28,12 +28,12 @@ public class CartApi : IApi
         return Results.Ok(new IsInCartDTO { IsInCart = isInCart});
     }
 
-    [Authorize(Policy = "Auth", AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+    [Authorize]
     public IResult AddItem(HttpContext httpContext, [FromServices] ShopContext shopContext, CartItemDTO cartItemDTO)
     {
         var userId = int.Parse(httpContext.User.FindFirstValue("Id"));
         var user = shopContext.Users.SingleOrDefault(u => u.Id == userId);
-        if (cartItemDTO.ProductID <= 0) return Results.BadRequest("Invalid quantity");
+        if (cartItemDTO.Quantity <= 0) return Results.BadRequest("Invalid quantity");
 
         return AddItemToCart(shopContext, cartItemDTO, user);
     }

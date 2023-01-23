@@ -54,7 +54,9 @@ public sealed class UserApi : IApi
     {
         return shopContext.Users.Any(u => u.Email == email);
     }
-    public IResult CreateUser([FromBody] UserCreateDTO userDTO, [FromServices] ShopContext shopContext, [FromServices] ISmtpService smtpService)
+    public IResult CreateUser([FromBody] UserCreateDTO userDTO,
+        [FromServices] ShopContext shopContext,
+        [FromServices] ISmtpService smtpService)
     {
 
         if(userDTO.FirstName.Length < 1 || userDTO.LastName.Length < 1)
@@ -94,25 +96,27 @@ public sealed class UserApi : IApi
         smtpService.UserCreated(user);
         return Results.Ok(new GenericResponseDTO() { Message = "Account created" });   
     }
-    public IResult LoginUser([FromBody] UserLoginDTO userDTO, [FromServices]ShopContext context, [FromServices]ITokenService tokenService,[FromServices]DateTimeProvider dateTimeProvider)
+    public IResult LoginUser([FromBody] UserLoginDTO userDTO,
+        [FromServices]ShopContext shopContext,
+        [FromServices]ITokenService tokenService,
+        [FromServices]DateTimeProvider dateTimeProvider)
     {
-        var user = context.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
+        var user = shopContext.Users.SingleOrDefault(u => u.Email.Equals(userDTO.Email));
         if (user == null) return Results.BadRequest("Provided data is incorrect");
-        //if (!user.Role.Equals(Constants.RoleDefault)) return Results.BadRequest("Provided data is incorrect");
-        var hash = StringHasher.HashString(userDTO.Password, user.PasswordSalt);
+        var hash = StringHasher.HashString(userDTO!.Password, user.PasswordSalt);
         if (!user.Password.Equals(hash)) return Results.BadRequest("Provided data is incorrect");
 
         var accessToken = tokenService.GenerateAccessToken(user);
         var refreshToken = tokenService.GenerateRefreshToken();
 
-        context.UserSessions.Add(new UserSession() {
+        shopContext.UserSessions.Add(new UserSession() {
             User = user,
             AuthToken = StringHasher.HashString(accessToken),
             RefreshToken = StringHasher.HashString(refreshToken),
             RefreshTokenExpiryTime = dateTimeProvider.Now.AddHours(Constants.REFRESH_TOKEN_EXPIRATION_TIME_HOURS),
         });
 
-        context.SaveChanges();
+        shopContext.SaveChanges();
 
         return Results.Ok(new TokenModelDTO
         {

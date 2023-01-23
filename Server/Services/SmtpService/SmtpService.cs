@@ -22,7 +22,7 @@ namespace Server.Services.SmtpService
                 mail.From = new MailAddress(_smtpSetings.Email);
                 mail.To.Add(user.Email);
                 mail.Subject = "Created new account";
-                mail.Body = "A new account has been created with this account";
+                mail.Body = "A new account has been created with this email";
                 mail.IsBodyHtml = false;
                 using SmtpClient smtp = new SmtpClient(host, port);
                 smtp.Credentials = new System.Net.NetworkCredential(_smtpSetings.Email, _smtpSetings.Password);

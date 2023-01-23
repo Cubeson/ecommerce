@@ -16,7 +16,10 @@ public class TokenApi : IApi
         app.MapPost("api/Token/Refresh",Refresh);
         app.MapPost("api/Token/Logout", Logout);
     }
-    public IResult Refresh([FromBody] TokenModelDTO tokenApiModel, [FromServices]ShopContext context, [FromServices]ITokenService tokenService, [FromServices] DateTimeProvider dateTimeProvider)
+    public IResult Refresh([FromBody] TokenModelDTO tokenApiModel, 
+        [FromServices] ShopContext context, 
+        [FromServices] ITokenService tokenService, 
+        [FromServices] DateTimeProvider dateTimeProvider)
     {
         return RefreshToken(tokenApiModel, context, tokenService,dateTimeProvider);
     }
@@ -24,7 +27,8 @@ public class TokenApi : IApi
     [Authorize]
     public IResult Logout(HttpRequest request ,[FromServices] ShopContext context)
     {
-        var token = request.Headers.Authorization[0]?.Substring("Bearer ".Length) ?? null;
+        var authorization = request.Headers.Authorization[0];
+        var token = authorization?.Substring("Bearer ".Length) ?? null;
         return RevokeToken(context, token);
     }
 
@@ -35,7 +39,8 @@ public class TokenApi : IApi
     public static IResult RevokeToken(ShopContext context, string token)
     {
         if (token == null) return Results.BadRequest();
-        var userSession = context.UserSessions.SingleOrDefault(s => s.AuthToken == StringHasher.HashString(token));
+        var hashedToken = StringHasher.HashString(token);
+        var userSession = context.UserSessions.SingleOrDefault(s => s.AuthToken == hashedToken);
         if (userSession == null) return Results.BadRequest();
         userSession.IsRevoked = true;
         context.SaveChanges();

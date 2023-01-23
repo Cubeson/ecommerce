@@ -18,7 +18,6 @@ public class MarketManagerScript : MonoBehaviour
     async void Start()
     {
         stallPlacerScript = MarketStallsGO.GetComponent<StallPlacerScript>();
-
         var req = Network.ProductApi.GetCategories();
         var resp = await req.SendWebRequest().ToUniTask();
         var categories = JsonConvert.DeserializeObject<CategoryDTO[]>(resp.downloadHandler.text);

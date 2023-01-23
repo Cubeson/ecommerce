@@ -26,6 +26,7 @@ var payPaySettings = RegisterPayPalSettings(services, configuration);
 AddAuthentication(services,jwtSettings);
 AddAuthorization(services);
 RegisterServices(services);
+RegisterSwagger(services);
 RegisterDBContext(services, configuration);
 
 var app = builder.Build();
@@ -127,6 +128,16 @@ void AddAuthorization(IServiceCollection services)
 void RegisterServices(IServiceCollection services)
 {
     services.AddEndpointsApiExplorer();
+    services.AddHttpClient();
+    services.AddSingleton<PayPalService>();
+    services.AddTransient<ITokenService,TokenService>();
+    services.AddTransient<ISmtpService, SmtpService>();
+    services.AddScoped<DateTimeProvider>();
+    services.AddRazorPages();
+    services.AddResponseCaching();
+}
+void RegisterSwagger(IServiceCollection services)
+{
     services.AddSwaggerGen(c =>
     {
         var jwtSecurityScheme = new OpenApiSecurityScheme
@@ -151,13 +162,6 @@ void RegisterServices(IServiceCollection services)
             { jwtSecurityScheme,Array.Empty<string>()}
         });
     });
-    services.AddHttpClient();
-    services.AddSingleton<PayPalService>();
-    services.AddTransient<ITokenService,TokenService>();
-    services.AddTransient<ISmtpService, SmtpService>();
-    services.AddScoped<DateTimeProvider>();
-    services.AddRazorPages();
-    services.AddResponseCaching();
 }
 void RegisterDBContext(IServiceCollection services, IConfiguration configuration)
 {
