@@ -197,7 +197,7 @@ PublishScripts/
 # NuGet Symbol Packages
 *.snupkg
 # The packages folder can be ignored because of Package Restore
-**/[Pp]ackages/*
+
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
 # Uncomment if necessary however generally it will be regenerated when needed
@@ -364,12 +364,6 @@ FodyWeavers.xsd
 
 # Unity Temporary files
 [Tt]emp/
-
-# Server Resources files (3D models)
-Server/Resources
-
-# Unity downloads from server
-downloads
 
 # Unity cache
 [Ll]ibrary
